@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
   Plus,
@@ -15,6 +15,7 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
+import { Modal } from '../components/ui/Modal';
 
 interface LineItemFormState {
   itemId?: string;
@@ -30,6 +31,7 @@ interface LineItemFormState {
 export const CreateQuotationPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const queryClient = useQueryClient();
 
   const prefillLeadId = searchParams.get('leadId') || '';
   const prefillCustomerId = searchParams.get('customerId') || '';
@@ -46,6 +48,16 @@ export const CreateQuotationPage: React.FC = () => {
   const [deliveryTerms, setDeliveryTerms] = useState('Ex-works, dispatch within 7-10 working days');
   const [notes, setNotes] = useState('Prices quoted include standard 1-year manufacturer warranty.');
   const [specifications, setSpecifications] = useState('');
+
+  // Quick Customer Creation modal state
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [newCustName, setNewCustName] = useState('');
+  const [newCustPhone, setNewCustPhone] = useState('');
+  const [newCustEmail, setNewCustEmail] = useState('');
+  const [newCustCity, setNewCustCity] = useState('');
+  const [newCustState, setNewCustState] = useState('');
+  const [newCustGst, setNewCustGst] = useState('');
+  const [newCustAddress, setNewCustAddress] = useState('');
 
   // Line items
   const [items, setItems] = useState<LineItemFormState[]>([
@@ -74,6 +86,71 @@ export const CreateQuotationPage: React.FC = () => {
   const { data: masterItemsResponse } = useQuery({
     queryKey: ['items-all'],
     queryFn: () => itemsApi.list({ limit: 200 }),
+  });
+
+  // Handle lead selection & auto-fill customer info
+  const handleLeadSelect = (selectedLeadId: string) => {
+    setLeadId(selectedLeadId);
+    if (!selectedLeadId) return;
+
+    const lead = leadsResponse?.data?.find((l) => l.id === selectedLeadId);
+    if (!lead) return;
+
+    if (lead.customerId) {
+      setCustomerId(lead.customerId);
+    } else {
+      // Pre-fill quick customer modal
+      setNewCustName(lead.customerName || '');
+      setNewCustPhone(lead.mobile || '');
+      setNewCustEmail(lead.email || '');
+      setNewCustCity(lead.city || '');
+      setNewCustState(lead.state || '');
+      setNewCustAddress(lead.address || '');
+      if (!customerId) {
+        setIsCustomerModalOpen(true);
+      }
+    }
+  };
+
+  // Quick create customer mutation
+  const createCustomerMutation = useMutation({
+    mutationFn: async () => {
+      if (!newCustName.trim()) {
+        throw new Error('Customer / Company name is required');
+      }
+      const payload: Record<string, unknown> = {
+        name: newCustName.trim(),
+        city: newCustCity.trim() || undefined,
+        state: newCustState.trim() || undefined,
+        address: newCustAddress.trim() || undefined,
+        gstNumber: newCustGst.trim() || undefined,
+      };
+      if (newCustPhone.trim() || newCustEmail.trim()) {
+        payload.contacts = [
+          {
+            name: newCustName.trim(),
+            mobile: newCustPhone.trim() || undefined,
+            email: newCustEmail.trim() || undefined,
+            isPrimary: true,
+          },
+        ];
+      }
+      return customersApi.create(payload);
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['customers-all'] });
+      if (res.data?.id) {
+        setCustomerId(res.data.id);
+      }
+      setIsCustomerModalOpen(false);
+      setNewCustName('');
+      setNewCustPhone('');
+      setNewCustEmail('');
+      setNewCustCity('');
+      setNewCustState('');
+      setNewCustGst('');
+      setNewCustAddress('');
+    },
   });
 
   // Calculate totals
@@ -222,29 +299,47 @@ export const CreateQuotationPage: React.FC = () => {
       {/* Header Form Card */}
       <GlassCard title="1. Quotation Details">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Select
-            label="Customer Account"
-            required
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-          >
-            <option value="">Select Customer...</option>
-            {customersResponse?.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-medium text-white/80">
+                Customer Account <span className="text-rose-400">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsCustomerModalOpen(true)}
+                className="text-xs text-teal-400 hover:text-teal-300 font-medium flex items-center gap-1 transition-colors hover:underline cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>New Customer</span>
+              </button>
+            </div>
+            <Select
+              value={customerId}
+              onChange={(e) => setCustomerId(e.target.value)}
+              required
+            >
+              <option value="">
+                {customersResponse?.data && customersResponse.data.length > 0
+                  ? 'Select Customer...'
+                  : '⚠️ No customers yet — Click + New Customer'}
               </option>
-            ))}
-          </Select>
+              {customersResponse?.data?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} {c.city ? `(${c.city})` : ''}
+                </option>
+              ))}
+            </Select>
+          </div>
 
           <Select
             label="Linked Opportunity"
             value={leadId}
-            onChange={(e) => setLeadId(e.target.value)}
+            onChange={(e) => handleLeadSelect(e.target.value)}
           >
             <option value="">Select Lead (Optional)...</option>
             {leadsResponse?.data?.map((l) => (
               <option key={l.id} value={l.id}>
-                {l.leadNumber} - {l.customerName}
+                {l.leadNumber} - {l.customerName} {l.city ? `(${l.city})` : ''}
               </option>
             ))}
           </Select>
@@ -451,6 +546,110 @@ export const CreateQuotationPage: React.FC = () => {
           </div>
         </div>
       </GlassCard>
+
+      {/* Quick Add Customer Modal */}
+      <Modal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
+        title="Add New Customer"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            createCustomerMutation.mutate();
+          }}
+          className="space-y-4"
+        >
+          <p className="text-xs text-white/60">
+            Quickly register a new company or client to immediately issue this quotation.
+          </p>
+
+          {createCustomerMutation.isError && (
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+              {(createCustomerMutation.error as any)?.response?.data?.error ||
+                (createCustomerMutation.error as Error).message ||
+                'Failed to create customer'}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <Input
+              label="Customer / Company Name *"
+              placeholder="e.g. Acme Industrial Valves Ltd"
+              value={newCustName}
+              onChange={(e) => setNewCustName(e.target.value)}
+              required
+              autoFocus
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Input
+                label="Phone / Mobile"
+                placeholder="e.g. +91 98765 43210"
+                value={newCustPhone}
+                onChange={(e) => setNewCustPhone(e.target.value)}
+              />
+              <Input
+                label="Email Address"
+                type="email"
+                placeholder="e.g. procurement@acme.com"
+                value={newCustEmail}
+                onChange={(e) => setNewCustEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Input
+                label="City"
+                placeholder="e.g. Pune, Ahmedabad"
+                value={newCustCity}
+                onChange={(e) => setNewCustCity(e.target.value)}
+              />
+              <Input
+                label="State"
+                placeholder="e.g. Maharashtra, Gujarat"
+                value={newCustState}
+                onChange={(e) => setNewCustState(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Input
+                label="GST Number (Optional)"
+                placeholder="e.g. 27ABCDE1234F1Z5"
+                value={newCustGst}
+                onChange={(e) => setNewCustGst(e.target.value.toUpperCase())}
+              />
+              <Input
+                label="Billing / Shipping Address"
+                placeholder="e.g. Plot 42, MIDC Industrial Area"
+                value={newCustAddress}
+                onChange={(e) => setNewCustAddress(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsCustomerModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              isLoading={createCustomerMutation.isPending}
+              disabled={!newCustName.trim()}
+            >
+              Create & Select Customer
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };
