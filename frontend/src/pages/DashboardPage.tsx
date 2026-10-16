@@ -47,61 +47,69 @@ export const DashboardPage: React.FC = () => {
     queryFn: () => dashboardApi.getStats(),
   });
 
-  const stats: DashboardStats = statsResponse?.data || {
-    totalLeads: 0,
-    activeOpportunities: 0,
-    totalEnquiryValue: 0,
-    wonOrderValue: 0,
-    todaysFollowUps: 0,
-    overdueFollowUps: 0,
-    monthlyTarget: 0,
-    achievementPercentage: 0,
-    monthlyPerformance: [
-      { month: 'Jan', enquiryValue: 450000, orderValue: 220000, target: 300000 },
-      { month: 'Feb', enquiryValue: 520000, orderValue: 310000, target: 350000 },
-      { month: 'Mar', enquiryValue: 610000, orderValue: 420000, target: 400000 },
-      { month: 'Apr', enquiryValue: 580000, orderValue: 390000, target: 400000 },
-      { month: 'May', enquiryValue: 710000, orderValue: 510000, target: 450000 },
-      { month: 'Jun', enquiryValue: 840000, orderValue: 640000, target: 500000 },
-    ],
-    leadsByStatus: [
-      { status: 'GENERAL' as LeadStatus, count: 18, percentage: 30 },
-      { status: 'MARKET' as LeadStatus, count: 12, percentage: 20 },
-      { status: 'QUOTE_SUBMITTED' as LeadStatus, count: 14, percentage: 23 },
-      { status: 'WON' as LeadStatus, count: 11, percentage: 18 },
-      { status: 'LOST' as LeadStatus, count: 5, percentage: 9 },
-    ],
-    teamPerformance: [
-      {
-        userId: '1',
-        name: 'Rajesh Sharma',
-        role: 'Sales Head',
-        leadsCount: 24,
-        wonValue: 1250000,
-        target: 1500000,
-        achievementRate: 83.3,
-      },
-      {
-        userId: '2',
-        name: 'Amit Patel',
-        role: 'Salesperson',
-        leadsCount: 19,
-        wonValue: 890000,
-        target: 1000000,
-        achievementRate: 89.0,
-      },
-      {
-        userId: '3',
-        name: 'Sunita Verma',
-        role: 'Salesperson',
-        leadsCount: 16,
-        wonValue: 740000,
-        target: 800000,
-        achievementRate: 92.5,
-      },
-    ],
-    upcomingFollowUps: [],
-    recentActivities: [],
+  const raw = (statsResponse?.data as any) || {};
+
+  const stats: DashboardStats = {
+    totalLeads: raw.totalLeads ?? 0,
+    activeOpportunities: raw.activeOpportunities ?? 0,
+    totalEnquiryValue: raw.totalEnquiryValue ?? 0,
+    wonOrderValue: raw.wonOrderValue ?? 0,
+    todaysFollowUps: raw.todayFollowUps ?? raw.todaysFollowUps ?? 0,
+    overdueFollowUps: raw.overdueFollowUps ?? 0,
+    monthlyTarget: raw.monthlyTarget ?? 0,
+    achievementPercentage: raw.achievementPercentage ?? raw.targetAchievement ?? 0,
+    monthlyPerformance: Array.isArray(raw.monthlyPerformance) && raw.monthlyPerformance.length > 0
+      ? raw.monthlyPerformance
+      : [
+          { month: 'Jan', enquiryValue: 450000, orderValue: 220000, target: 300000 },
+          { month: 'Feb', enquiryValue: 520000, orderValue: 310000, target: 350000 },
+          { month: 'Mar', enquiryValue: 610000, orderValue: 420000, target: 400000 },
+          { month: 'Apr', enquiryValue: 580000, orderValue: 390000, target: 400000 },
+          { month: 'May', enquiryValue: 710000, orderValue: 510000, target: 450000 },
+          { month: 'Jun', enquiryValue: 840000, orderValue: 640000, target: 500000 },
+        ],
+    leadsByStatus: Array.isArray(raw.leadsByStatus) && raw.leadsByStatus.length > 0
+      ? raw.leadsByStatus
+      : [
+          { status: 'GENERAL' as LeadStatus, count: 18, percentage: 30 },
+          { status: 'MARKET' as LeadStatus, count: 12, percentage: 20 },
+          { status: 'QUOTE_SUBMITTED' as LeadStatus, count: 14, percentage: 23 },
+          { status: 'WON' as LeadStatus, count: 11, percentage: 18 },
+          { status: 'LOST' as LeadStatus, count: 5, percentage: 9 },
+        ],
+    teamPerformance: Array.isArray(raw.teamPerformance) && raw.teamPerformance.length > 0
+      ? raw.teamPerformance
+      : [
+          {
+            userId: '1',
+            name: 'Rajesh Sharma',
+            role: 'Sales Head',
+            leadsCount: 24,
+            wonValue: 1250000,
+            target: 1500000,
+            achievementRate: 83.3,
+          },
+          {
+            userId: '2',
+            name: 'Amit Patel',
+            role: 'Salesperson',
+            leadsCount: 19,
+            wonValue: 890000,
+            target: 1000000,
+            achievementRate: 89.0,
+          },
+          {
+            userId: '3',
+            name: 'Sunita Verma',
+            role: 'Salesperson',
+            leadsCount: 16,
+            wonValue: 740000,
+            target: 800000,
+            achievementRate: 92.5,
+          },
+        ],
+    upcomingFollowUps: Array.isArray(raw.upcomingFollowUps) ? raw.upcomingFollowUps : [],
+    recentActivities: Array.isArray(raw.recentActivities) ? raw.recentActivities : [],
   };
 
   const formatCurrency = (val: number | string) => {
@@ -219,7 +227,7 @@ export const DashboardPage: React.FC = () => {
         />
         <StatCard
           label="Target Achievement"
-          value={`${stats.achievementPercentage.toFixed(1)}%`}
+          value={`${Number(stats.achievementPercentage || 0).toFixed(1)}%`}
           icon={<Trophy className="w-6 h-6" />}
           color="emerald"
           isLoading={isLoading}
@@ -388,12 +396,12 @@ export const DashboardPage: React.FC = () => {
                     <td className="py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <span className="font-semibold text-white">
-                          {person.achievementRate.toFixed(1)}%
+                          {Number(person.achievementRate || 0).toFixed(1)}%
                         </span>
                         <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
                           <div
                             className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
-                            style={{ width: `${Math.min(person.achievementRate, 100)}%` }}
+                            style={{ width: `${Math.min(Number(person.achievementRate || 0), 100)}%` }}
                           />
                         </div>
                       </div>
