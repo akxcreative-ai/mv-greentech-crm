@@ -1,0 +1,553 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── USERS & AUTH ──────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role            Role     @default(SALESPERSON)
+  isActive        Boolean  @default(true)
+  isEmailVerified Boolean  @default(false)
+  isPhoneVerified Boolean  @default(false)
+  lastLogin       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  leads          Lead[]           @relation("AccountOwner")
+  createdLeads   Lead[]           @relation("LeadCreatedBy")
+  customers      Customer[]       @relation("CustomerAccountOwner")
+  assignments    LeadAssignment[]
+  activities     LeadActivity[]
+  followUps      FollowUp[]
+  customerVisits CustomerVisit[]
+  quotations     Quotation[]
+  salesTargets   SalesTarget[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]
+
+  @@index([role])
+  @@index([isActive])
+}
+
+enum Role {
+  DIRECTOR
+  SALES_HEAD
+  SALESPERSON
+  ADMINISTRATOR
+}
+
+// ─── CUSTOMERS & CONTACTS ──────────────────────────────────
+
+model Customer {
+  id              String    @id @default(uuid())
+  customerCode    String?   @unique
+  name            String
+  industry        String?
+  customerType    String?
+  address         String?
+  city            String?
+  state           String?
+  country         String?   @default("India")
+  postalCode      String?
+  gstNumber       String?
+  website         String?
+  notes           String?
+  accountOwnerId  String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  accountOwner User?       @relation("CustomerAccountOwner", fields: [accountOwnerId], references: [id])
+  contacts     Contact[]
+  leads        Lead[]
+  quotations   Quotation[]
+  orders       Order[]
+
+  @@index([customerCode])
+  @@index([name])
+  @@index([city])
+  @@index([state])
+  @@index([industry])
+}
+
+model Contact {
+  id         String   @id @default(uuid())
+  customerId String
+  name       String
+  designation String?
+  mobile     String?
+  email      String?
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+  @@index([mobile])
+  @@index([email])
+}
+
+// ─── LEADS ─────────────────────────────────────────────────
+
+model Lead {
+  id                   String     @id @default(uuid())
+  leadNumber           String     @unique
+  loginDate            DateTime   @default(now())
+  customerVisitDate    DateTime?
+  firstOrderDate       DateTime?
+  customerId           String?
+  customerName         String
+  contactPerson        String?
+  designation          String?
+  mobile               String?
+  email                String?
+  address              String?
+  city                 String?
+  state                String?
+  country              String?    @default("India")
+  postalCode           String?
+  industry             String?
+  manufacturerOrTrader String?
+  productsManufactured String?
+  productsRequired     String?
+  partType             String?
+  requirementType      String?
+  annualQuantity       String?
+  competitors          String?
+  enquiryValue         Decimal?   @db.Decimal(15, 2)
+  currency             String     @default("INR")
+  accountOwnerId       String?
+  createdById          String?
+  updatedById          String?
+  status               LeadStatus @default(GENERAL)
+  nextAction           String?
+  nextFollowUpDate     DateTime?
+  remarks              String?
+  isArchived           Boolean    @default(false)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  customer     Customer?        @relation(fields: [customerId], references: [id])
+  accountOwner User?            @relation("AccountOwner", fields: [accountOwnerId], references: [id])
+  createdBy    User?            @relation("LeadCreatedBy", fields: [createdById], references: [id])
+  assignments  LeadAssignment[]
+  activities   LeadActivity[]
+  followUps    FollowUp[]
+  quotations   Quotation[]
+  orders       Order[]
+
+  @@index([status])
+  @@index([accountOwnerId])
+  @@index([customerName])
+  @@index([mobile])
+  @@index([city])
+  @@index([state])
+  @@index([country])
+  @@index([industry])
+  @@index([nextFollowUpDate])
+  @@index([isArchived])
+}
+
+enum LeadStatus {
+  GENERAL
+  MARKET
+  QUOTE_SUBMITTED
+  WON
+  LOST
+}
+
+model LeadAssignment {
+  id         String   @id @default(uuid())
+  leadId     String
+  userId     String
+  assignedAt DateTime @default(now())
+  notes      String?
+
+  lead Lead @relation(fields: [leadId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([leadId])
+  @@index([userId])
+}
+
+model LeadActivity {
+  id          String   @id @default(uuid())
+  leadId      String
+  userId      String
+  type        String
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([leadId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── FOLLOW-UPS & VISITS ───────────────────────────────────
+
+model FollowUp {
+  id            String         @id @default(uuid())
+  leadId        String?
+  customerId    String?
+  userId        String
+  type          String
+  scheduledDate DateTime
+  completedDate DateTime?
+  status        FollowUpStatus @default(PENDING)
+  notes         String?
+  nextAction    String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  lead Lead? @relation(fields: [leadId], references: [id])
+  user User  @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@index([leadId])
+}
+
+enum FollowUpStatus {
+  PENDING
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+model CustomerVisit {
+  id         String   @id @default(uuid())
+  customerId String?
+  leadId     String?
+  userId     String
+  visitDate  DateTime
+  purpose    String?
+  notes      String?
+  outcome    String?
+  nextAction String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([visitDate])
+}
+
+// ─── ITEM MASTER ───────────────────────────────────────────
+
+model Item {
+  id               String     @id @default(uuid())
+  itemCode         String     @unique
+  description      String
+  unit             String?    @default("PCS")
+  standardCost     Decimal?   @db.Decimal(15, 2)
+  standardPrice    Decimal?   @db.Decimal(15, 2)
+  currency         String     @default("INR")
+  ppq              String?
+  currentStock     Int?       @default(0)
+  leadTimeDays     Int?
+  supplierCode     String?
+  supplierCurrency String?
+  supplierCost     Decimal?   @db.Decimal(15, 2)
+  status           ItemStatus @default(ACTIVE)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  quotationItems QuotationItem[]
+  orderItems     OrderItem[]
+
+  @@index([itemCode])
+  @@index([description])
+  @@index([status])
+}
+
+enum ItemStatus {
+  ACTIVE
+  DISCONTINUED
+  SUPERSEDED
+}
+
+// ─── CURRENCY & EXCHANGE ───────────────────────────────────
+
+model Currency {
+  id     String @id @default(uuid())
+  code   String @unique
+  name   String
+  symbol String
+
+  exchangeRates ExchangeRate[]
+}
+
+model ExchangeRate {
+  id            String   @id @default(uuid())
+  currencyId    String
+  toINR         Decimal  @db.Decimal(15, 6)
+  effectiveDate DateTime
+  createdAt     DateTime @default(now())
+
+  currency Currency @relation(fields: [currencyId], references: [id])
+
+  @@index([currencyId, effectiveDate])
+}
+
+// ─── QUOTATIONS ────────────────────────────────────────────
+
+model Quotation {
+  id              String          @id @default(uuid())
+  quotationNumber String          @unique
+  revision        Int             @default(1)
+  parentId        String?
+  customerId      String
+  leadId          String?
+  userId          String
+  quotationDate   DateTime        @default(now())
+  validityDate    DateTime
+  currency        String          @default("INR")
+  subtotal        Decimal         @db.Decimal(15, 2) @default(0)
+  taxAmount       Decimal         @db.Decimal(15, 2) @default(0)
+  discountAmount  Decimal         @db.Decimal(15, 2) @default(0)
+  totalAmount     Decimal         @db.Decimal(15, 2) @default(0)
+  paymentTerms    String?
+  deliveryTerms   String?
+  notes           String?
+  specifications  String?
+  status          QuotationStatus @default(DRAFT)
+  lostReason      String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  customer Customer      @relation(fields: [customerId], references: [id])
+  lead     Lead?         @relation(fields: [leadId], references: [id])
+  user     User          @relation(fields: [userId], references: [id])
+  items    QuotationItem[]
+  orders   Order[]
+
+  @@index([customerId])
+  @@index([leadId])
+  @@index([userId])
+  @@index([status])
+  @@index([quotationDate])
+}
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  NEGOTIATION
+  APPROVED
+  LOST
+  EXPIRED
+  CONVERTED
+}
+
+model QuotationItem {
+  id          String  @id @default(uuid())
+  quotationId String
+  itemId      String?
+  description String
+  quantity    Decimal @db.Decimal(15, 2)
+  unit        String  @default("PCS")
+  unitPrice   Decimal @db.Decimal(15, 2)
+  discount    Decimal @db.Decimal(5, 2) @default(0)
+  taxRate     Decimal @db.Decimal(5, 2) @default(0)
+  lineTotal   Decimal @db.Decimal(15, 2)
+  sortOrder   Int     @default(0)
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  item      Item?     @relation(fields: [itemId], references: [id])
+
+  @@index([quotationId])
+}
+
+// ─── ORDERS ────────────────────────────────────────────────
+
+model Order {
+  id            String      @id @default(uuid())
+  orderNumber   String      @unique
+  quotationId   String?
+  customerId    String
+  leadId        String?
+  orderDate     DateTime    @default(now())
+  currency      String      @default("INR")
+  totalAmount   Decimal     @db.Decimal(15, 2)
+  status        OrderStatus @default(CONFIRMED)
+  paymentTerms  String?
+  deliveryTerms String?
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  quotation Quotation? @relation(fields: [quotationId], references: [id])
+  customer  Customer   @relation(fields: [customerId], references: [id])
+  lead      Lead?      @relation(fields: [leadId], references: [id])
+  items     OrderItem[]
+
+  @@index([customerId])
+  @@index([leadId])
+  @@index([orderDate])
+  @@index([status])
+}
+
+enum OrderStatus {
+  CONFIRMED
+  IN_PRODUCTION
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  itemId      String?
+  description String
+  quantity    Decimal @db.Decimal(15, 2)
+  unit        String  @default("PCS")
+  unitPrice   Decimal @db.Decimal(15, 2)
+  lineTotal   Decimal @db.Decimal(15, 2)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  item  Item? @relation(fields: [itemId], references: [id])
+
+  @@index([orderId])
+}
+
+// ─── SALES TARGETS ─────────────────────────────────────────
+
+model SalesTarget {
+  id           String  @id @default(uuid())
+  userId       String
+  month        Int
+  year         Int
+  targetAmount Decimal @db.Decimal(15, 2)
+  currency     String  @default("INR")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, month, year])
+  @@index([year, month])
+}
+
+// ─── NOTIFICATIONS ─────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+// ─── AUDIT LOG ─────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  changes   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── SETTINGS ──────────────────────────────────────────────
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// ─── OTP VERIFICATION & AUTH SECURITY ──────────────────────
+
+model OtpVerification {
+  id          String   @id @default(uuid())
+  identifier  String   // email or mobile number
+  purpose     String   // LOGIN, PASSWORD_RESET, ACCOUNT_ACTIVATION
+  otpHash     String   // cryptographically hashed OTP
+  expiresAt   DateTime
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(5)
+  isVerified  Boolean  @default(false)
+  lastSentAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([identifier, purpose])
+  @@index([expiresAt])
+}
+
+// ─── LOCATION MASTERS ──────────────────────────────────────
+
+model CountryMaster {
+  id           String        @id @default(uuid())
+  code         String        @unique // e.g. "IN", "US", "DE"
+  name         String        @unique
+  phoneCode    String?       // e.g. "+91", "+1"
+  currencyCode String?       @default("INR")
+  isActive     Boolean       @default(true)
+  states       StateMaster[]
+
+  @@index([code])
+  @@index([name])
+}
+
+model StateMaster {
+  id          String        @id @default(uuid())
+  countryId   String
+  code        String        // e.g. "MH", "DL", "CA"
+  name        String
+  isActive    Boolean       @default(true)
+  country     CountryMaster @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  cities      CityMaster[]
+
+  @@unique([countryId, code])
+  @@index([countryId])
+  @@index([name])
+}
+
+model CityMaster {
+  id        String      @id @default(uuid())
+  stateId   String
+  name      String
+  isActive  Boolean     @default(true)
+  state     StateMaster @relation(fields: [stateId], references: [id], onDelete: Cascade)
+
+  @@unique([stateId, name])
+  @@index([stateId])
+  @@index([name])
+}
