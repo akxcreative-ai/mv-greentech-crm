@@ -79,9 +79,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const normEmail = email.toLowerCase().trim();
       const demoAccounts: Record<string, { role: Role; name: string; first: string; last: string; pass: string }> = {
         'admin@mvgreentech.com': { role: 'ADMINISTRATOR', name: 'System Admin', first: 'System', last: 'Administrator', pass: 'Admin@123' },
-        'director@mvgreentech.com': { role: 'DIRECTOR', name: 'Rajesh Sharma', first: 'Rajesh', last: 'Sharma', pass: 'Director@123' },
-        'saleshead@mvgreentech.com': { role: 'SALES_HEAD', name: 'Amit Verma', first: 'Amit', last: 'Verma', pass: 'SalesHead@123' },
-        'sales@mvgreentech.com': { role: 'SALESPERSON', name: 'Priya Patel', first: 'Priya', last: 'Patel', pass: 'Sales@123' },
+        'director@mvgreentech.com': { role: 'DIRECTOR', name: 'Director', first: 'Director', last: 'MV Greentech', pass: 'Director@123' },
+        'saleshead@mvgreentech.com': { role: 'SALES_HEAD', name: 'Sales Head', first: 'Sales', last: 'Head', pass: 'SalesHead@123' },
+        'sales@mvgreentech.com': { role: 'SALESPERSON', name: 'Sales Rep', first: 'Sales', last: 'Representative', pass: 'Sales@123' },
       };
 
       const demo = demoAccounts[normEmail];

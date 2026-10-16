@@ -31,36 +31,11 @@ export const ReportsPage: React.FC = () => {
   );
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
 
-  // Sample data for the reports
-  const ownerEnquiryData = [
-    { name: 'Rajesh Sharma', enquiryValue: 4200000, leads: 34 },
-    { name: 'Amit Patel', enquiryValue: 2850000, leads: 26 },
-    { name: 'Sunita Verma', enquiryValue: 2100000, leads: 21 },
-    { name: 'Vikas Kumar', enquiryValue: 1650000, leads: 18 },
-  ];
-
-  const wonValueData = [
-    { month: 'Jan', wonValue: 820000, orders: 12 },
-    { month: 'Feb', wonValue: 1150000, orders: 16 },
-    { month: 'Mar', wonValue: 1420000, orders: 20 },
-    { month: 'Apr', wonValue: 1390000, orders: 18 },
-    { month: 'May', wonValue: 1740000, orders: 24 },
-    { month: 'Jun', wonValue: 1980000, orders: 28 },
-  ];
-
-  const conversionFunnelData = [
-    { stage: 'General Enquiries', count: 120, fill: '#38BDF8' },
-    { stage: 'Market Qualified', count: 86, fill: '#3B82F6' },
-    { stage: 'Quote Submitted', count: 54, fill: '#F59E0B' },
-    { stage: 'Won Orders', count: 32, fill: '#10B981' },
-  ];
-
-  const teamPerformanceData = [
-    { name: 'Rajesh Sharma', target: 2000000, achieved: 1840000, rate: '92%' },
-    { name: 'Amit Patel', target: 1500000, achieved: 1390000, rate: '93%' },
-    { name: 'Sunita Verma', target: 1200000, achieved: 1100000, rate: '91%' },
-    { name: 'Vikas Kumar', target: 1000000, achieved: 780000, rate: '78%' },
-  ];
+  // Data for the reports
+  const ownerEnquiryData: Array<{ name: string; enquiryValue: number; leads: number }> = [];
+  const wonValueData: Array<{ month: string; wonValue: number; orders: number }> = [];
+  const conversionFunnelData: Array<{ stage: string; count: number; fill: string }> = [];
+  const teamPerformanceData: Array<{ name: string; target: number; achieved: number; rate: string }> = [];
 
   const handleExportCsv = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
