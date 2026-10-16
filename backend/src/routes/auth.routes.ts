@@ -155,8 +155,8 @@ router.get(
   verifyToken,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      if (req.user?.id?.startsWith('demo-')) {
-        const found = Object.values(DEMO_USERS).find((u) => u.id === req.user!.id);
+      if (req.user?.id) {
+        const found = userStore.getById(req.user.id);
         if (found) {
           res.json({
             success: true,
@@ -167,9 +167,9 @@ router.get(
               lastName: found.lastName,
               role: found.role,
               isActive: found.isActive,
-              phone: '+91 98765 43210',
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              phone: found.phone || '+91 98765 43210',
+              createdAt: found.createdAt,
+              updatedAt: found.updatedAt,
             },
           });
           return;
@@ -325,8 +325,8 @@ router.post('/verify-otp-login', async (req: Request, res: Response, next: NextF
 
     const normEmail = identifier.toLowerCase().trim();
 
-    // Check demo user match
-    const demoUser = DEMO_USERS[normEmail];
+    // Check userStore match
+    const demoUser = userStore.getByEmail(normEmail);
     if (demoUser) {
       const token = jwt.sign(
         {
@@ -352,7 +352,7 @@ router.post('/verify-otp-login', async (req: Request, res: Response, next: NextF
             role: demoUser.role,
             isActive: demoUser.isActive,
             isEmailVerified: true,
-            createdAt: new Date(),
+            createdAt: demoUser.createdAt,
             updatedAt: new Date(),
           },
         },
