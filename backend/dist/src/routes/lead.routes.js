@@ -1,0 +1,535 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const zod_1 = require("zod");
+const client_1 = require("@prisma/client");
+const prisma_1 = require("../lib/prisma");
+const auth_1 = require("../middleware/auth");
+const validate_1 = require("../middleware/validate");
+const router = (0, express_1.Router)();
+router.use(auth_1.verifyToken);
+const leadStatusEnum = zod_1.z.enum(['GENERAL', 'MARKET', 'QUOTE_SUBMITTED', 'WON', 'LOST']);
+const createLeadSchema = zod_1.z.object({
+    customerId: zod_1.z.string().optional().nullable(),
+    customerName: zod_1.z.string().min(1, 'Customer name is required'),
+    contactPerson: zod_1.z.string().optional().nullable(),
+    designation: zod_1.z.string().optional().nullable(),
+    mobile: zod_1.z.string().optional().nullable(),
+    email: zod_1.z.string().email().optional().nullable().or(zod_1.z.literal('')),
+    address: zod_1.z.string().optional().nullable(),
+    city: zod_1.z.string().optional().nullable(),
+    country: zod_1.z.string().optional().default('India'),
+    industry: zod_1.z.string().optional().nullable(),
+    manufacturerOrTrader: zod_1.z.string().optional().nullable(),
+    productsManufactured: zod_1.z.string().optional().nullable(),
+    productsRequired: zod_1.z.string().optional().nullable(),
+    partType: zod_1.z.string().optional().nullable(),
+    requirementType: zod_1.z.string().optional().nullable(),
+    annualQuantity: zod_1.z.string().optional().nullable(),
+    competitors: zod_1.z.string().optional().nullable(),
+    enquiryValue: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
+    currency: zod_1.z.string().optional().default('INR'),
+    accountOwnerId: zod_1.z.string().optional().nullable(),
+    status: leadStatusEnum.optional().default('GENERAL'),
+    nextAction: zod_1.z.string().optional().nullable(),
+    nextFollowUpDate: zod_1.z.string().or(zod_1.z.date()).optional().nullable(),
+    customerVisitDate: zod_1.z.string().or(zod_1.z.date()).optional().nullable(),
+    firstOrderDate: zod_1.z.string().or(zod_1.z.date()).optional().nullable(),
+    remarks: zod_1.z.string().optional().nullable(),
+});
+const updateLeadSchema = createLeadSchema.partial();
+const addActivitySchema = zod_1.z.object({
+    type: zod_1.z.string().min(1, 'Activity type is required'), // note, call, email, visit, meeting
+    description: zod_1.z.string().min(1, 'Description is required'),
+    metadata: zod_1.z.record(zod_1.z.any()).optional().nullable(),
+});
+const assignLeadSchema = zod_1.z.object({
+    userId: zod_1.z.string().min(1, 'Target user ID is required'),
+    notes: zod_1.z.string().optional().nullable(),
+});
+// Helper for generating lead number
+const generateLeadNumber = async () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const prefix = `LD-${yyyy}${mm}${dd}`;
+    const lastLead = await prisma_1.prisma.lead.findFirst({
+        where: {
+            leadNumber: {
+                startsWith: prefix,
+            },
+        },
+        orderBy: { leadNumber: 'desc' },
+    });
+    let nextSeq = 1;
+    if (lastLead) {
+        const parts = lastLead.leadNumber.split('-');
+        const currentSeq = parseInt(parts[parts.length - 1], 10);
+        if (!isNaN(currentSeq)) {
+            nextSeq = currentSeq + 1;
+        }
+    }
+    return `${prefix}-${String(nextSeq).padStart(3, '0')}`;
+};
+// GET /export/csv - Export leads to CSV (Must be before /:id)
+router.get('/export/csv', async (req, res, next) => {
+    try {
+        const { status, owner, accountOwnerId, industry, city } = req.query;
+        const where = { isArchived: false };
+        if (status && Object.values(client_1.LeadStatus).includes(status)) {
+            where.status = status;
+        }
+        const targetOwner = (accountOwnerId || owner);
+        if (targetOwner) {
+            where.accountOwnerId = targetOwner;
+        }
+        if (industry) {
+            where.industry = { contains: industry, mode: 'insensitive' };
+        }
+        if (city) {
+            where.city = { contains: city, mode: 'insensitive' };
+        }
+        const leads = await prisma_1.prisma.lead.findMany({
+            where,
+            include: {
+                accountOwner: { select: { firstName: true, lastName: true, email: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+        const headers = [
+            'Lead Number',
+            'Customer Name',
+            'Contact Person',
+            'Mobile',
+            'Email',
+            'City',
+            'Industry',
+            'Status',
+            'Enquiry Value',
+            'Currency',
+            'Account Owner',
+            'Next Action',
+            'Next Follow Up Date',
+            'Created At',
+        ];
+        const escapeCsv = (val) => {
+            if (val === null || val === undefined)
+                return '""';
+            const str = String(val).replace(/"/g, '""');
+            return `"${str}"`;
+        };
+        const rows = leads.map((l) => [
+            escapeCsv(l.leadNumber),
+            escapeCsv(l.customerName),
+            escapeCsv(l.contactPerson),
+            escapeCsv(l.mobile),
+            escapeCsv(l.email),
+            escapeCsv(l.city),
+            escapeCsv(l.industry),
+            escapeCsv(l.status),
+            escapeCsv(l.enquiryValue ? l.enquiryValue.toString() : '0'),
+            escapeCsv(l.currency),
+            escapeCsv(l.accountOwner ? `${l.accountOwner.firstName} ${l.accountOwner.lastName}` : 'Unassigned'),
+            escapeCsv(l.nextAction),
+            escapeCsv(l.nextFollowUpDate ? l.nextFollowUpDate.toISOString().split('T')[0] : ''),
+            escapeCsv(l.createdAt.toISOString().split('T')[0]),
+        ]);
+        const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="leads-export-${new Date().toISOString().split('T')[0]}.csv"`);
+        res.status(200).send(csvContent);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// GET / - List leads with filters, pagination, sorting
+router.get('/', async (req, res, next) => {
+    try {
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+        const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 20));
+        const skip = (page - 1) * limit;
+        const { status, owner, accountOwnerId, industry, city, fromDate, toDate, search, isArchived, sortBy = 'createdAt', sortOrder = 'desc', } = req.query;
+        const where = {};
+        if (isArchived !== undefined) {
+            where.isArchived = isArchived === 'true';
+        }
+        else {
+            where.isArchived = false;
+        }
+        if (status && Object.values(client_1.LeadStatus).includes(status)) {
+            where.status = status;
+        }
+        const ownerFilter = (accountOwnerId || owner);
+        if (ownerFilter) {
+            where.accountOwnerId = ownerFilter;
+        }
+        if (industry) {
+            where.industry = { contains: industry, mode: 'insensitive' };
+        }
+        if (city) {
+            where.city = { contains: city, mode: 'insensitive' };
+        }
+        if (fromDate || toDate) {
+            where.loginDate = {};
+            if (fromDate)
+                where.loginDate.gte = new Date(fromDate);
+            if (toDate) {
+                const to = new Date(toDate);
+                to.setHours(23, 59, 59, 999);
+                where.loginDate.lte = to;
+            }
+        }
+        if (search) {
+            const q = search;
+            where.OR = [
+                { customerName: { contains: q, mode: 'insensitive' } },
+                { leadNumber: { contains: q, mode: 'insensitive' } },
+                { contactPerson: { contains: q, mode: 'insensitive' } },
+                { mobile: { contains: q, mode: 'insensitive' } },
+                { email: { contains: q, mode: 'insensitive' } },
+                { city: { contains: q, mode: 'insensitive' } },
+                { productsRequired: { contains: q, mode: 'insensitive' } },
+            ];
+        }
+        const validSortFields = ['createdAt', 'loginDate', 'customerName', 'enquiryValue', 'nextFollowUpDate', 'status'];
+        const sortField = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+        const direction = sortOrder === 'asc' ? 'asc' : 'desc';
+        const [total, leads] = await Promise.all([
+            prisma_1.prisma.lead.count({ where }),
+            prisma_1.prisma.lead.findMany({
+                where,
+                include: {
+                    accountOwner: {
+                        select: { id: true, firstName: true, lastName: true, email: true },
+                    },
+                    customer: {
+                        select: { id: true, name: true, city: true },
+                    },
+                    _count: {
+                        select: {
+                            activities: true,
+                            followUps: true,
+                            quotations: true,
+                        },
+                    },
+                },
+                skip,
+                take: limit,
+                orderBy: { [sortField]: direction },
+            }),
+        ]);
+        res.json({
+            success: true,
+            data: leads,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// GET /:id - Get lead details with relations
+router.get('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const lead = await prisma_1.prisma.lead.findUnique({
+            where: { id },
+            include: {
+                accountOwner: {
+                    select: { id: true, firstName: true, lastName: true, email: true },
+                },
+                customer: true,
+                activities: {
+                    include: {
+                        user: { select: { id: true, firstName: true, lastName: true } },
+                    },
+                    orderBy: { createdAt: 'desc' },
+                },
+                followUps: {
+                    include: {
+                        user: { select: { id: true, firstName: true, lastName: true } },
+                    },
+                    orderBy: { scheduledDate: 'desc' },
+                },
+                quotations: {
+                    include: {
+                        user: { select: { id: true, firstName: true, lastName: true } },
+                    },
+                    orderBy: { createdAt: 'desc' },
+                },
+                assignments: {
+                    include: {
+                        user: { select: { id: true, firstName: true, lastName: true } },
+                    },
+                    orderBy: { assignedAt: 'desc' },
+                },
+            },
+        });
+        if (!lead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        res.json({
+            success: true,
+            data: lead,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// POST / - Create lead with auto-generated leadNumber and log activity
+router.post('/', (0, validate_1.validate)(createLeadSchema), async (req, res, next) => {
+    try {
+        const leadNumber = await generateLeadNumber();
+        const currentUserId = req.user.id;
+        const { enquiryValue, nextFollowUpDate, customerVisitDate, firstOrderDate, accountOwnerId, ...rest } = req.body;
+        const lead = await prisma_1.prisma.lead.create({
+            data: {
+                ...rest,
+                leadNumber,
+                accountOwnerId: accountOwnerId || currentUserId,
+                enquiryValue: enquiryValue !== undefined && enquiryValue !== null
+                    ? new client_1.Prisma.Decimal(enquiryValue)
+                    : null,
+                nextFollowUpDate: nextFollowUpDate ? new Date(nextFollowUpDate) : null,
+                customerVisitDate: customerVisitDate ? new Date(customerVisitDate) : null,
+                firstOrderDate: firstOrderDate ? new Date(firstOrderDate) : null,
+            },
+            include: {
+                accountOwner: {
+                    select: { id: true, firstName: true, lastName: true, email: true },
+                },
+            },
+        });
+        // Log lead creation activity
+        await prisma_1.prisma.leadActivity.create({
+            data: {
+                leadId: lead.id,
+                userId: currentUserId,
+                type: 'CREATION',
+                description: `Lead ${lead.leadNumber} created for ${lead.customerName}`,
+                metadata: { initialStatus: lead.status },
+            },
+        });
+        // If initial owner is assigned, record assignment
+        if (lead.accountOwnerId) {
+            await prisma_1.prisma.leadAssignment.create({
+                data: {
+                    leadId: lead.id,
+                    userId: lead.accountOwnerId,
+                    notes: 'Initial assignment upon lead creation',
+                },
+            });
+        }
+        res.status(201).json({
+            success: true,
+            data: lead,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// PUT /:id - Update lead and log status changes
+router.put('/:id', (0, validate_1.validate)(updateLeadSchema), async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const currentUserId = req.user.id;
+        const existingLead = await prisma_1.prisma.lead.findUnique({ where: { id } });
+        if (!existingLead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        const { enquiryValue, nextFollowUpDate, customerVisitDate, firstOrderDate, ...rest } = req.body;
+        const dataToUpdate = { ...rest };
+        if (enquiryValue !== undefined) {
+            dataToUpdate.enquiryValue = enquiryValue !== null ? new client_1.Prisma.Decimal(enquiryValue) : null;
+        }
+        if (nextFollowUpDate !== undefined) {
+            dataToUpdate.nextFollowUpDate = nextFollowUpDate ? new Date(nextFollowUpDate) : null;
+        }
+        if (customerVisitDate !== undefined) {
+            dataToUpdate.customerVisitDate = customerVisitDate ? new Date(customerVisitDate) : null;
+        }
+        if (firstOrderDate !== undefined) {
+            dataToUpdate.firstOrderDate = firstOrderDate ? new Date(firstOrderDate) : null;
+        }
+        const updatedLead = await prisma_1.prisma.lead.update({
+            where: { id },
+            data: dataToUpdate,
+            include: {
+                accountOwner: { select: { id: true, firstName: true, lastName: true } },
+            },
+        });
+        // If status changed, record activity
+        if (req.body.status && req.body.status !== existingLead.status) {
+            await prisma_1.prisma.leadActivity.create({
+                data: {
+                    leadId: id,
+                    userId: currentUserId,
+                    type: 'STATUS_CHANGE',
+                    description: `Status changed from ${existingLead.status} to ${req.body.status}`,
+                    metadata: { oldStatus: existingLead.status, newStatus: req.body.status },
+                },
+            });
+        }
+        res.json({
+            success: true,
+            data: updatedLead,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// PUT /:id/assign - Assign lead to user
+router.put('/:id/assign', (0, validate_1.validate)(assignLeadSchema), async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { userId, notes } = req.body;
+        const currentUserId = req.user.id;
+        const [lead, targetUser] = await Promise.all([
+            prisma_1.prisma.lead.findUnique({ where: { id } }),
+            prisma_1.prisma.user.findUnique({ where: { id: userId } }),
+        ]);
+        if (!lead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        if (!targetUser) {
+            res.status(404).json({ success: false, error: 'Target user not found' });
+            return;
+        }
+        const [updatedLead] = await prisma_1.prisma.$transaction([
+            prisma_1.prisma.lead.update({
+                where: { id },
+                data: { accountOwnerId: userId },
+                include: {
+                    accountOwner: { select: { id: true, firstName: true, lastName: true } },
+                },
+            }),
+            prisma_1.prisma.leadAssignment.create({
+                data: {
+                    leadId: id,
+                    userId,
+                    notes: notes || null,
+                },
+            }),
+            prisma_1.prisma.leadActivity.create({
+                data: {
+                    leadId: id,
+                    userId: currentUserId,
+                    type: 'ASSIGNMENT',
+                    description: `Lead assigned to ${targetUser.firstName} ${targetUser.lastName}`,
+                    metadata: { assignedToUserId: userId, notes },
+                },
+            }),
+        ]);
+        res.json({
+            success: true,
+            data: updatedLead,
+            message: `Lead assigned to ${targetUser.firstName} ${targetUser.lastName}`,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// PUT /:id/archive - Archive lead
+router.put('/:id/archive', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const currentUserId = req.user.id;
+        const lead = await prisma_1.prisma.lead.findUnique({ where: { id } });
+        if (!lead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        const updatedLead = await prisma_1.prisma.lead.update({
+            where: { id },
+            data: { isArchived: true },
+        });
+        await prisma_1.prisma.leadActivity.create({
+            data: {
+                leadId: id,
+                userId: currentUserId,
+                type: 'ARCHIVE',
+                description: `Lead ${lead.leadNumber} was archived`,
+            },
+        });
+        res.json({
+            success: true,
+            data: updatedLead,
+            message: 'Lead archived successfully',
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// GET /:id/activities - Get lead activities
+router.get('/:id/activities', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const lead = await prisma_1.prisma.lead.findUnique({ where: { id }, select: { id: true } });
+        if (!lead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        const activities = await prisma_1.prisma.leadActivity.findMany({
+            where: { leadId: id },
+            include: {
+                user: { select: { id: true, firstName: true, lastName: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+        res.json({
+            success: true,
+            data: activities,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+// POST /:id/activities - Add activity
+router.post('/:id/activities', (0, validate_1.validate)(addActivitySchema), async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { type, description, metadata } = req.body;
+        const currentUserId = req.user.id;
+        const lead = await prisma_1.prisma.lead.findUnique({ where: { id }, select: { id: true } });
+        if (!lead) {
+            res.status(404).json({ success: false, error: 'Lead not found' });
+            return;
+        }
+        const activity = await prisma_1.prisma.leadActivity.create({
+            data: {
+                leadId: id,
+                userId: currentUserId,
+                type: type.toUpperCase(),
+                description,
+                metadata: metadata || null,
+            },
+            include: {
+                user: { select: { id: true, firstName: true, lastName: true } },
+            },
+        });
+        res.status(201).json({
+            success: true,
+            data: activity,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.default = router;

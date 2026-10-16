@@ -3,8 +3,7 @@ node_modules/
 */node_modules/
 
 # Production builds
-dist/
-*/dist/
+frontend/dist/
 build/
 */build/
 
