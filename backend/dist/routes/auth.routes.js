@@ -59,7 +59,60 @@ router.post('/login', (0, validate_1.validate)(loginSchema), async (req, res, ne
     try {
         const { email, password } = req.body;
         const normalizedEmail = email.toLowerCase().trim();
-        // 1. Check userStore (contains default roles + all dynamically created users)
+        // 1. Primary check: Real PostgreSQL database in Neon
+        let dbUser = null;
+        try {
+            dbUser = await prisma_1.prisma.user.findUnique({
+                where: { email: normalizedEmail },
+            });
+        }
+        catch (dbErr) {
+            console.warn('DB query failed during login, checking memory store:', dbErr);
+        }
+        if (dbUser) {
+            if (!dbUser.isActive) {
+                res.status(403).json({
+                    success: false,
+                    error: 'Account is deactivated. Please contact an administrator.',
+                });
+                return;
+            }
+            const isPasswordValid = await bcryptjs_1.default.compare(password, dbUser.password);
+            if (isPasswordValid) {
+                try {
+                    await prisma_1.prisma.user.update({
+                        where: { id: dbUser.id },
+                        data: { lastLogin: new Date() },
+                    });
+                }
+                catch { }
+                const token = jsonwebtoken_1.default.sign({
+                    id: dbUser.id,
+                    email: dbUser.email,
+                    role: dbUser.role,
+                    firstName: dbUser.firstName,
+                    lastName: dbUser.lastName,
+                }, JWT_SECRET, { expiresIn: '7d' });
+                res.json({
+                    success: true,
+                    data: {
+                        token,
+                        user: {
+                            id: dbUser.id,
+                            email: dbUser.email,
+                            firstName: dbUser.firstName,
+                            lastName: dbUser.lastName,
+                            role: dbUser.role,
+                            isActive: dbUser.isActive,
+                            createdAt: dbUser.createdAt,
+                            updatedAt: dbUser.updatedAt,
+                        },
+                    },
+                });
+                return;
+            }
+        }
+        // 2. Secondary fallback: in-memory store (for offline or unseeded users)
         const storedUser = userStore_1.userStore.getByEmail(normalizedEmail);
         if (storedUser) {
             if (!storedUser.isActive) {
@@ -70,91 +123,36 @@ router.post('/login', (0, validate_1.validate)(loginSchema), async (req, res, ne
                 return;
             }
             const isValid = userStore_1.userStore.verifyPassword(storedUser, password);
-            if (!isValid) {
-                res.status(401).json({ success: false, error: 'Invalid email or password' });
+            if (isValid) {
+                storedUser.lastLogin = new Date();
+                const token = jsonwebtoken_1.default.sign({
+                    id: storedUser.id,
+                    email: storedUser.email,
+                    role: storedUser.role,
+                    firstName: storedUser.firstName,
+                    lastName: storedUser.lastName,
+                }, JWT_SECRET, { expiresIn: '7d' });
+                res.json({
+                    success: true,
+                    data: {
+                        token,
+                        user: {
+                            id: storedUser.id,
+                            email: storedUser.email,
+                            firstName: storedUser.firstName,
+                            lastName: storedUser.lastName,
+                            role: storedUser.role,
+                            isActive: storedUser.isActive,
+                            createdAt: storedUser.createdAt,
+                            updatedAt: storedUser.updatedAt,
+                        },
+                    },
+                });
                 return;
             }
-            storedUser.lastLogin = new Date();
-            const token = jsonwebtoken_1.default.sign({
-                id: storedUser.id,
-                email: storedUser.email,
-                role: storedUser.role,
-                firstName: storedUser.firstName,
-                lastName: storedUser.lastName,
-            }, JWT_SECRET, { expiresIn: '7d' });
-            res.json({
-                success: true,
-                data: {
-                    token,
-                    user: {
-                        id: storedUser.id,
-                        email: storedUser.email,
-                        firstName: storedUser.firstName,
-                        lastName: storedUser.lastName,
-                        role: storedUser.role,
-                        isActive: storedUser.isActive,
-                        createdAt: storedUser.createdAt,
-                        updatedAt: storedUser.updatedAt,
-                    },
-                },
-            });
-            return;
         }
-        let user;
-        try {
-            user = await prisma_1.prisma.user.findUnique({
-                where: { email: normalizedEmail },
-            });
-        }
-        catch (dbErr) {
-            console.warn('DB query failed, fallback check:', dbErr);
-        }
-        if (!user) {
-            res.status(401).json({ success: false, error: 'Invalid email or password' });
-            return;
-        }
-        if (!user.isActive) {
-            res.status(403).json({
-                success: false,
-                error: 'Account is deactivated. Please contact an administrator.',
-            });
-            return;
-        }
-        const isPasswordValid = await bcryptjs_1.default.compare(password, user.password);
-        if (!isPasswordValid) {
-            res.status(401).json({ success: false, error: 'Invalid email or password' });
-            return;
-        }
-        const updatedUser = await prisma_1.prisma.user.update({
-            where: { id: user.id },
-            data: { lastLogin: new Date() },
-            select: {
-                id: true,
-                email: true,
-                firstName: true,
-                lastName: true,
-                phone: true,
-                role: true,
-                isActive: true,
-                lastLogin: true,
-                createdAt: true,
-                updatedAt: true,
-            },
-        });
-        const token = jsonwebtoken_1.default.sign({
-            id: updatedUser.id,
-            email: updatedUser.email,
-            role: updatedUser.role,
-            firstName: updatedUser.firstName,
-            lastName: updatedUser.lastName,
-        }, JWT_SECRET, { expiresIn: '24h' });
-        res.json({
-            success: true,
-            data: {
-                token,
-                user: updatedUser,
-            },
-        });
+        res.status(401).json({ success: false, error: 'Invalid email or password' });
+        return;
     }
     catch (error) {
         next(error);

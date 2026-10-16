@@ -26,7 +26,7 @@ const createUserSchema = zod_1.z.object({
 });
 const updateUserSchema = zod_1.z.object({
     email: zod_1.z.string().email().optional(),
-    password: zod_1.z.string().min(6, 'Password must be at least 6 characters').optional(),
+    password: zod_1.z.string().min(6, 'Password must be at least 6 characters').optional().or(zod_1.z.literal('')),
     firstName: zod_1.z.string().min(1).optional(),
     lastName: zod_1.z.string().min(1).optional(),
     phone: zod_1.z.string().optional().nullable(),
@@ -227,8 +227,9 @@ router.put('/:id', (0, validate_1.validate)(updateUserSchema), async (req, res, 
                 }
                 dataToUpdate.email = normalizedEmail;
             }
-            if (password)
-                dataToUpdate.password = await bcryptjs_1.default.hash(password, 10);
+            if (password && password.trim().length >= 6) {
+                dataToUpdate.password = await bcryptjs_1.default.hash(password.trim(), 10);
+            }
             if (firstName !== undefined)
                 dataToUpdate.firstName = firstName;
             if (lastName !== undefined)
