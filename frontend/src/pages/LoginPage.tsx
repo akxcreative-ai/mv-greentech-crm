@@ -27,7 +27,7 @@ export const LoginPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // OTP state
-  const [otpIdentifier, setOtpIdentifier] = useState('admin@mvgreentech.com');
+  const [otpIdentifier, setOtpIdentifier] = useState('');
   const [otpChannel, setOtpChannel] = useState<'EMAIL' | 'SMS'>('EMAIL');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
@@ -55,8 +55,8 @@ export const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'admin@mvgreentech.com',
-      password: 'Admin@123',
+      email: '',
+      password: '',
     },
   });
 
@@ -286,57 +286,6 @@ export const LoginPage: React.FC = () => {
           {/* TAB 1: PASSWORD LOGIN */}
           {activeTab === 'password' && (
             <>
-              {/* Quick Demo Logins */}
-              <div className="mb-5">
-                <p className="text-xs text-white/50 mb-2 font-medium">Quick Fill Demo Roles:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setValue('email', 'admin@mvgreentech.com');
-                      setValue('password', 'Admin@123');
-                    }}
-                    className="text-left px-2.5 py-1.5 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 text-xs text-blue-300 transition"
-                  >
-                    <span className="font-semibold block text-white">Administrator</span>
-                    admin@mvgreentech.com
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setValue('email', 'director@mvgreentech.com');
-                      setValue('password', 'Director@123');
-                    }}
-                    className="text-left px-2.5 py-1.5 rounded-lg bg-teal-600/10 hover:bg-teal-600/20 border border-teal-500/20 text-xs text-teal-300 transition"
-                  >
-                    <span className="font-semibold block text-white">Director</span>
-                    director@mvgreentech.com
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setValue('email', 'saleshead@mvgreentech.com');
-                      setValue('password', 'SalesHead@123');
-                    }}
-                    className="text-left px-2.5 py-1.5 rounded-lg bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/20 text-xs text-purple-300 transition"
-                  >
-                    <span className="font-semibold block text-white">Sales Head</span>
-                    saleshead@mvgreentech.com
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setValue('email', 'sales@mvgreentech.com');
-                      setValue('password', 'Sales@123');
-                    }}
-                    className="text-left px-2.5 py-1.5 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 text-xs text-emerald-300 transition"
-                  >
-                    <span className="font-semibold block text-white">Salesperson</span>
-                    sales@mvgreentech.com
-                  </button>
-                </div>
-              </div>
-
               <form onSubmit={handleSubmit(onPasswordSubmit)} className="space-y-4">
                 <Input
                   label="Email Address"
