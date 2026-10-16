@@ -322,4 +322,48 @@ const handleToggleActive = async (req, res, _next) => {
 // Support BOTH routes (Admin only)
 router.put('/:id/toggle-active', (0, auth_1.requireRole)('ADMINISTRATOR'), handleToggleActive);
 router.put('/:id/toggle-status', (0, auth_1.requireRole)('ADMINISTRATOR'), handleToggleActive);
+// DELETE /:id - Permanently delete user (Admin only)
+router.delete('/:id', (0, auth_1.requireRole)('ADMINISTRATOR'), async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        if (req.user?.id === id) {
+            res.status(400).json({ success: false, error: 'Cannot delete your own account' });
+            return;
+        }
+        try {
+            const user = await prisma_1.prisma.user.findUnique({ where: { id } });
+            if (user) {
+                await prisma_1.prisma.$transaction([
+                    prisma_1.prisma.lead.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
+                    prisma_1.prisma.customer.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
+                    prisma_1.prisma.customerVisit.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.followUp.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.salesTarget.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.leadActivity.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.leadAssignment.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.auditLog.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.user.delete({ where: { id } }),
+                ]);
+                userStore_1.userStore.delete(id);
+                res.json({
+                    success: true,
+                    message: `User ${user.firstName} ${user.lastName} has been permanently deleted.`,
+                });
+                return;
+            }
+        }
+        catch (dbErr) {
+            console.warn('DB delete error, checking fallback:', dbErr);
+        }
+        const memDeleted = userStore_1.userStore.delete(id);
+        if (memDeleted) {
+            res.json({ success: true, message: 'User permanently deleted.' });
+            return;
+        }
+        res.status(404).json({ success: false, error: 'User not found' });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 exports.default = router;

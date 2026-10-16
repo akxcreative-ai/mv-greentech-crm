@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { UserCog, Plus, Pencil, UserCheck, UserX, AlertCircle } from 'lucide-react';
+import { UserCog, Plus, Pencil, UserCheck, UserX, AlertCircle, Trash2 } from 'lucide-react';
 import { usersApi } from '../lib/api';
 import type { User, Column } from '../lib/types';
 import { DataTable } from '../components/ui/DataTable';
@@ -33,6 +33,7 @@ export const UserManagementPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
   const { data: usersResponse, isLoading } = useQuery({
@@ -108,6 +109,17 @@ export const UserManagementPage: React.FC = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => usersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setUserToDelete(null);
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.error || err.message || 'Failed to delete user');
+    },
+  });
+
   const columns: Column<User>[] = [
     {
       header: 'Name',
@@ -146,11 +158,22 @@ export const UserManagementPage: React.FC = () => {
     {
       header: 'Last Login',
       accessorKey: 'lastLogin',
-      render: (u) => (
-        <span className="text-xs text-white/50">
-          {u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : 'Never'}
-        </span>
-      ),
+      render: (u) => {
+        if (!u.lastLogin) {
+          return <span className="text-xs text-white/40">Never</span>;
+        }
+        const d = new Date(u.lastLogin);
+        return (
+          <div className="text-xs leading-tight">
+            <span className="text-white/80 font-medium block">
+              {d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </span>
+            <span className="text-emerald-400 font-mono text-[11px] block mt-0.5">
+              {d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
+            </span>
+          </div>
+        );
+      },
     },
     {
       header: 'Actions',
@@ -170,10 +193,17 @@ export const UserManagementPage: React.FC = () => {
             title={u.isActive ? 'Deactivate User' : 'Activate User'}
           >
             {u.isActive ? (
-              <UserX className="w-4 h-4 text-rose-400" />
+              <UserX className="w-4 h-4 text-amber-400" />
             ) : (
               <UserCheck className="w-4 h-4 text-emerald-400" />
             )}
+          </button>
+          <button
+            onClick={() => setUserToDelete(u)}
+            className="p-1.5 rounded-lg hover:bg-rose-500/20 text-white/50 hover:text-rose-400 transition-colors"
+            title="Permanently Delete User"
+          >
+            <Trash2 className="w-4 h-4 text-rose-400" />
           </button>
         </div>
       ),
@@ -305,6 +335,49 @@ export const UserManagementPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Permanent Delete Confirmation Modal */}
+      {userToDelete && (
+        <Modal
+          isOpen={!!userToDelete}
+          onClose={() => setUserToDelete(null)}
+          title="Permanently Delete User"
+        >
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 shrink-0 text-rose-400 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm text-rose-200">Warning: Irreversible Action</p>
+                <p className="mt-1 text-white/80">
+                  Are you sure you want to permanently delete account for <strong className="text-white">{userToDelete.firstName} {userToDelete.lastName}</strong> ({userToDelete.email})?
+                </p>
+                <p className="mt-1 text-white/50 text-[11px]">
+                  All assigned records will be unlinked and this user account will be permanently erased from the database.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setUserToDelete(null)}
+                disabled={deleteMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => deleteMutation.mutate(userToDelete.id)}
+                isLoading={deleteMutation.isPending}
+              >
+                Permanently Delete
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

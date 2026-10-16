@@ -77,37 +77,7 @@ export const DashboardPage: React.FC = () => {
           { status: 'WON' as LeadStatus, count: 11, percentage: 18 },
           { status: 'LOST' as LeadStatus, count: 5, percentage: 9 },
         ],
-    teamPerformance: Array.isArray(raw.teamPerformance) && raw.teamPerformance.length > 0
-      ? raw.teamPerformance
-      : [
-          {
-            userId: '1',
-            name: 'Rajesh Sharma',
-            role: 'Sales Head',
-            leadsCount: 24,
-            wonValue: 1250000,
-            target: 1500000,
-            achievementRate: 83.3,
-          },
-          {
-            userId: '2',
-            name: 'Amit Patel',
-            role: 'Salesperson',
-            leadsCount: 19,
-            wonValue: 890000,
-            target: 1000000,
-            achievementRate: 89.0,
-          },
-          {
-            userId: '3',
-            name: 'Sunita Verma',
-            role: 'Salesperson',
-            leadsCount: 16,
-            wonValue: 740000,
-            target: 800000,
-            achievementRate: 92.5,
-          },
-        ],
+    teamPerformance: Array.isArray(raw.teamPerformance) ? raw.teamPerformance : [],
     upcomingFollowUps: Array.isArray(raw.upcomingFollowUps) ? raw.upcomingFollowUps : [],
     recentActivities: Array.isArray(raw.recentActivities) ? raw.recentActivities : [],
   };
@@ -383,31 +353,39 @@ export const DashboardPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {stats.teamPerformance.map((person) => (
-                  <tr key={person.userId} className="hover:bg-white/[0.02]">
-                    <td className="py-3 font-medium text-white">
-                      <div>{person.name}</div>
-                      <div className="text-[10px] text-white/40">{person.role}</div>
-                    </td>
-                    <td className="py-3 text-center text-white/80">{person.leadsCount}</td>
-                    <td className="py-3 text-right text-emerald-400 font-semibold">
-                      {formatCurrency(person.wonValue)}
-                    </td>
-                    <td className="py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="font-semibold text-white">
-                          {Number(person.achievementRate || 0).toFixed(1)}%
-                        </span>
-                        <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
-                          <div
-                            className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
-                            style={{ width: `${Math.min(Number(person.achievementRate || 0), 100)}%` }}
-                          />
+                {stats.teamPerformance.length > 0 ? (
+                  stats.teamPerformance.map((person) => (
+                    <tr key={person.userId} className="hover:bg-white/[0.02]">
+                      <td className="py-3 font-medium text-white">
+                        <div>{person.name}</div>
+                        <div className="text-[10px] text-white/40">{person.role}</div>
+                      </td>
+                      <td className="py-3 text-center text-white/80">{person.leadsCount}</td>
+                      <td className="py-3 text-right text-emerald-400 font-semibold">
+                        {formatCurrency(person.wonValue)}
+                      </td>
+                      <td className="py-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="font-semibold text-white">
+                            {Number(person.achievementRate || 0).toFixed(1)}%
+                          </span>
+                          <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
+                            <div
+                              className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
+                              style={{ width: `${Math.min(Number(person.achievementRate || 0), 100)}%` }}
+                            />
+                          </div>
                         </div>
-                      </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-white/40 text-xs">
+                      No sales team members found. Add sales team members in User Management to track performance.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

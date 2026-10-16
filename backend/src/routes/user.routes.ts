@@ -361,4 +361,53 @@ const handleToggleActive = async (req: Request, res: Response, _next: NextFuncti
 router.put('/:id/toggle-active', requireRole('ADMINISTRATOR'), handleToggleActive);
 router.put('/:id/toggle-status', requireRole('ADMINISTRATOR'), handleToggleActive);
 
+// DELETE /:id - Permanently delete user (Admin only)
+router.delete('/:id', requireRole('ADMINISTRATOR'), async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (req.user?.id === id) {
+      res.status(400).json({ success: false, error: 'Cannot delete your own account' });
+      return;
+    }
+
+    try {
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (user) {
+        await prisma.$transaction([
+          prisma.lead.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
+          prisma.customer.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
+          prisma.customerVisit.deleteMany({ where: { userId: id } }),
+          prisma.followUp.deleteMany({ where: { userId: id } }),
+          prisma.salesTarget.deleteMany({ where: { userId: id } }),
+          prisma.leadActivity.deleteMany({ where: { userId: id } }),
+          prisma.leadAssignment.deleteMany({ where: { userId: id } }),
+          prisma.auditLog.deleteMany({ where: { userId: id } }),
+          prisma.user.delete({ where: { id } }),
+        ]);
+
+        userStore.delete(id);
+
+        res.json({
+          success: true,
+          message: `User ${user.firstName} ${user.lastName} has been permanently deleted.`,
+        });
+        return;
+      }
+    } catch (dbErr: any) {
+      console.warn('DB delete error, checking fallback:', dbErr);
+    }
+
+    const memDeleted = userStore.delete(id);
+    if (memDeleted) {
+      res.json({ success: true, message: 'User permanently deleted.' });
+      return;
+    }
+
+    res.status(404).json({ success: false, error: 'User not found' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

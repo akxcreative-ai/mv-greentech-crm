@@ -369,6 +369,10 @@ export const usersApi = {
     const res = await api.put(`/v1/users/${id}/toggle-status`);
     return res.data;
   },
+  delete: async (id: string): Promise<ApiResponse<{ message: string }>> => {
+    const res = await api.delete(`/v1/users/${id}`);
+    return res.data;
+  },
 };
 
 export const notificationsApi = {

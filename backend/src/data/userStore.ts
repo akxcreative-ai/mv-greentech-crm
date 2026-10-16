@@ -162,6 +162,15 @@ export const userStore = {
     return user;
   },
 
+  delete: (id: string) => {
+    const idx = USER_STORE.findIndex((u) => u.id === id);
+    if (idx !== -1) {
+      USER_STORE.splice(idx, 1);
+      return true;
+    }
+    return false;
+  },
+
   verifyPassword: (user: StoredUser, attemptPlain: string) => {
     if (user.passwordPlain && user.passwordPlain === attemptPlain) {
       return true;

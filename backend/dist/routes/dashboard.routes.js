@@ -92,6 +92,49 @@ router.get('/stats', async (req, res, next) => {
         const monthlyTarget = monthTargets.reduce((sum, t) => sum + Number(t.targetAmount), 0);
         const currentMonthAchieved = Number(monthOrdersAgg._sum.totalAmount || 0);
         const targetAchievementRate = monthlyTarget > 0 ? (currentMonthAchieved / monthlyTarget) * 100 : 0;
+        // Real dynamic team performance calculation
+        const salesUsers = await prisma_1.prisma.user.findMany({
+            where: {
+                role: { in: ['SALESPERSON', 'SALES_HEAD'] },
+                isActive: true,
+            },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                role: true,
+            },
+            orderBy: { firstName: 'asc' },
+        });
+        const teamPerformance = await Promise.all(salesUsers.map(async (u) => {
+            const [leadsCount, wonAgg, userTarget] = await Promise.all([
+                prisma_1.prisma.lead.count({
+                    where: { accountOwnerId: u.id, isArchived: false },
+                }),
+                prisma_1.prisma.order.aggregate({
+                    where: {
+                        OR: [{ lead: { accountOwnerId: u.id } }, { quotation: { userId: u.id } }],
+                        status: { not: 'CANCELLED' },
+                    },
+                    _sum: { totalAmount: true },
+                }),
+                prisma_1.prisma.salesTarget.findFirst({
+                    where: { userId: u.id, month: currentMonth, year: currentYear },
+                }),
+            ]);
+            const wonValue = Number(wonAgg._sum.totalAmount || 0);
+            const target = Number(userTarget?.targetAmount || 0);
+            const achievementRate = target > 0 ? (wonValue / target) * 100 : 0;
+            return {
+                userId: u.id,
+                name: `${u.firstName} ${u.lastName}`,
+                role: u.role === 'SALES_HEAD' ? 'Sales Head' : 'Salesperson',
+                leadsCount,
+                wonValue,
+                target,
+                achievementRate: Math.round(achievementRate * 10) / 10,
+            };
+        }));
         res.json({
             success: true,
             data: {
@@ -104,6 +147,7 @@ router.get('/stats', async (req, res, next) => {
                 monthlyTarget,
                 currentMonthAchieved,
                 targetAchievement: Math.round(targetAchievementRate * 10) / 10,
+                teamPerformance,
             },
         });
     }
