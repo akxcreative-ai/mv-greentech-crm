@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { LeadStatus, Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
-import { verifyToken } from '../middleware/auth';
+import { verifyToken, requireRole } from '../middleware/auth';
 import { validate } from '../middleware/validate';
 
 const router = Router();
@@ -93,9 +93,13 @@ router.get('/export/csv', async (req: Request, res: Response, next: NextFunction
     if (status && Object.values(LeadStatus).includes(status as LeadStatus)) {
       where.status = status as LeadStatus;
     }
-    const targetOwner = (accountOwnerId || owner) as string | undefined;
-    if (targetOwner) {
-      where.accountOwnerId = targetOwner;
+    if (req.user?.role === 'SALESPERSON') {
+      where.accountOwnerId = req.user.id;
+    } else {
+      const targetOwner = (accountOwnerId || owner) as string | undefined;
+      if (targetOwner) {
+        where.accountOwnerId = targetOwner;
+      }
     }
     if (industry) {
       where.industry = { contains: industry as string, mode: 'insensitive' };
@@ -195,9 +199,13 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
       where.status = status as LeadStatus;
     }
 
-    const ownerFilter = (accountOwnerId || owner) as string | undefined;
-    if (ownerFilter) {
-      where.accountOwnerId = ownerFilter;
+    if (req.user?.role === 'SALESPERSON') {
+      where.accountOwnerId = req.user.id;
+    } else {
+      const ownerFilter = (accountOwnerId || owner) as string | undefined;
+      if (ownerFilter) {
+        where.accountOwnerId = ownerFilter;
+      }
     }
 
     if (industry) {
@@ -319,6 +327,12 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
 
+    // Role-based record authorization: Salespersons can only view their own leads
+    if (req.user?.role === 'SALESPERSON' && lead.accountOwnerId !== req.user.id && lead.createdById !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to view this lead' });
+      return;
+    }
+
     res.json({
       success: true,
       data: lead,
@@ -390,7 +404,7 @@ router.post(
         data: {
           ...rest,
           leadNumber,
-          accountOwnerId: accountOwnerId || currentUserId,
+          accountOwnerId: req.user?.role === 'SALESPERSON' ? currentUserId : (accountOwnerId || currentUserId),
           createdById: currentUserId.startsWith('demo-') ? null : currentUserId,
           updatedById: currentUserId.startsWith('demo-') ? null : currentUserId,
           enquiryValue: enquiryValue !== undefined && enquiryValue !== null
@@ -454,6 +468,12 @@ router.put(
         return;
       }
 
+      // Record authorization: Salespersons can only update their own leads
+      if (req.user?.role === 'SALESPERSON' && existingLead.accountOwnerId !== currentUserId && existingLead.createdById !== currentUserId) {
+        res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to update this lead' });
+        return;
+      }
+
       const {
         enquiryValue,
         nextFollowUpDate,
@@ -508,9 +528,10 @@ router.put(
   }
 );
 
-// PUT /:id/assign - Assign lead to user
+// PUT /:id/assign - Assign lead to user (Managers only)
 router.put(
   '/:id/assign',
+  requireRole('ADMINISTRATOR', 'DIRECTOR', 'SALES_HEAD'),
   validate(assignLeadSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -575,6 +596,11 @@ router.put('/:id/archive', async (req: Request, res: Response, next: NextFunctio
   try {
     const { id } = req.params;
     const currentUserId = req.user!.id;
+
+    if (req.user?.role === 'SALESPERSON') {
+      res.status(403).json({ success: false, error: 'Access forbidden: Salespersons cannot archive leads' });
+      return;
+    }
 
     const lead = await prisma.lead.findUnique({ where: { id } });
     if (!lead) {

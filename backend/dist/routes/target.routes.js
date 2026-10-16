@@ -20,13 +20,13 @@ router.get('/achievement', async (req, res, next) => {
     try {
         const currentYear = new Date().getFullYear();
         const year = parseInt(req.query.year, 10) || currentYear;
-        const userId = req.query.userId;
+        const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : req.query.userId;
         const startOfYear = new Date(year, 0, 1);
         const endOfYear = new Date(year, 11, 31, 23, 59, 59, 999);
         // Fetch targets for year
         const targetWhere = { year };
-        if (userId)
-            targetWhere.userId = userId;
+        if (targetUserId)
+            targetWhere.userId = targetUserId;
         const targets = await prisma_1.prisma.salesTarget.findMany({
             where: targetWhere,
             include: {
@@ -38,10 +38,10 @@ router.get('/achievement', async (req, res, next) => {
             orderDate: { gte: startOfYear, lte: endOfYear },
             status: { not: 'CANCELLED' },
         };
-        if (userId) {
+        if (targetUserId) {
             orderWhere.OR = [
-                { lead: { accountOwnerId: userId } },
-                { quotation: { userId } },
+                { lead: { accountOwnerId: targetUserId } },
+                { quotation: { userId: targetUserId } },
             ];
         }
         const orders = await prisma_1.prisma.order.findMany({
@@ -77,7 +77,7 @@ router.get('/achievement', async (req, res, next) => {
             success: true,
             data: {
                 year,
-                userId: userId || null,
+                userId: targetUserId || null,
                 totalTarget: Math.round(totalTarget * 100) / 100,
                 totalAchieved: Math.round(totalAchieved * 100) / 100,
                 overallAchievementRate: Math.round(overallRate * 10) / 10,
@@ -96,12 +96,12 @@ router.get('/', async (req, res, next) => {
         const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 20));
         const skip = (page - 1) * limit;
         const year = req.query.year ? parseInt(req.query.year, 10) : undefined;
-        const userId = req.query.userId;
+        const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : req.query.userId;
         const where = {};
         if (year)
             where.year = year;
-        if (userId)
-            where.userId = userId;
+        if (targetUserId)
+            where.userId = targetUserId;
         const [total, targets] = await Promise.all([
             prisma_1.prisma.salesTarget.count({ where }),
             prisma_1.prisma.salesTarget.findMany({

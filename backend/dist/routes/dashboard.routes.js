@@ -10,7 +10,7 @@ router.use(auth_1.verifyToken);
 router.get('/stats', async (req, res, next) => {
     try {
         const isSalesperson = req.user?.role === 'SALESPERSON';
-        const userId = req.query.userId || (isSalesperson ? req.user.id : undefined);
+        const userId = isSalesperson ? req.user.id : req.query.userId;
         const leadWhere = { isArchived: false };
         const followUpWhere = {};
         const orderWhere = { status: { not: 'CANCELLED' } };
@@ -115,7 +115,7 @@ router.get('/stats', async (req, res, next) => {
 router.get('/charts/sales-performance', async (req, res, next) => {
     try {
         const isSalesperson = req.user?.role === 'SALESPERSON';
-        const userId = req.query.userId || (isSalesperson ? req.user.id : undefined);
+        const userId = isSalesperson ? req.user.id : req.query.userId;
         const currentYear = new Date().getFullYear();
         const year = parseInt(req.query.year, 10) || currentYear;
         const startOfYear = new Date(year, 0, 1);
@@ -170,7 +170,7 @@ router.get('/charts/sales-performance', async (req, res, next) => {
 router.get('/charts/lead-status', async (req, res, next) => {
     try {
         const isSalesperson = req.user?.role === 'SALESPERSON';
-        const userId = req.query.userId || (isSalesperson ? req.user.id : undefined);
+        const userId = isSalesperson ? req.user.id : req.query.userId;
         const where = { isArchived: false };
         if (userId) {
             where.accountOwnerId = userId;
@@ -207,7 +207,7 @@ router.get('/charts/lead-status', async (req, res, next) => {
 router.get('/recent-activities', async (req, res, next) => {
     try {
         const isSalesperson = req.user?.role === 'SALESPERSON';
-        const userId = req.query.userId || (isSalesperson ? req.user.id : undefined);
+        const userId = isSalesperson ? req.user.id : req.query.userId;
         const where = {};
         if (userId) {
             where.OR = [
@@ -237,7 +237,7 @@ router.get('/recent-activities', async (req, res, next) => {
 router.get('/upcoming-follow-ups', async (req, res, next) => {
     try {
         const isSalesperson = req.user?.role === 'SALESPERSON';
-        const userId = req.query.userId || (isSalesperson ? req.user.id : undefined);
+        const userId = isSalesperson ? req.user.id : req.query.userId;
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
         const where = {

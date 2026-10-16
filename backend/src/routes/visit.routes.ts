@@ -32,10 +32,10 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
 
     const where: any = {};
 
-    if (userId) {
-      where.userId = userId as string;
-    } else if (req.user?.role === 'SALESPERSON') {
+    if (req.user?.role === 'SALESPERSON') {
       where.userId = req.user.id;
+    } else if (userId) {
+      where.userId = userId as string;
     }
 
     if (customerId) {
@@ -105,6 +105,11 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
 
+    if (req.user?.role === 'SALESPERSON' && visit.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You cannot view visits of other users' });
+      return;
+    }
+
     res.json({
       success: true,
       data: visit,
@@ -121,7 +126,7 @@ router.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { customerId, leadId, userId, visitDate, purpose, notes, outcome, nextAction } = req.body;
-      const targetUserId = userId || req.user!.id;
+      const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (userId || req.user!.id);
       const parsedVisitDate = new Date(visitDate);
 
       const visit = await prisma.customerVisit.create({
@@ -179,6 +184,17 @@ router.put(
     try {
       const { id } = req.params;
       const { visitDate, ...rest } = req.body;
+
+      const existing = await prisma.customerVisit.findUnique({ where: { id } });
+      if (!existing) {
+        res.status(404).json({ success: false, error: 'Customer visit not found' });
+        return;
+      }
+
+      if (req.user?.role === 'SALESPERSON' && existing.userId !== req.user.id) {
+        res.status(403).json({ success: false, error: 'Access forbidden: You cannot update visits of other users' });
+        return;
+      }
 
       const dataToUpdate: any = { ...rest };
       if (visitDate) {

@@ -89,6 +89,18 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
       ];
     }
 
+    if (req.user?.role === 'SALESPERSON') {
+      where.AND = [
+        ...(where.AND || []),
+        {
+          OR: [
+            { accountOwnerId: req.user.id },
+            { accountOwnerId: null },
+          ],
+        },
+      ];
+    }
+
     const [total, customers] = await Promise.all([
       prisma.customer.count({ where }),
       prisma.customer.findMany({
@@ -154,6 +166,11 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
 
+    if (req.user?.role === 'SALESPERSON' && customer.accountOwnerId && customer.accountOwnerId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: This customer is managed by another salesperson' });
+      return;
+    }
+
     res.json({
       success: true,
       data: customer,
@@ -206,7 +223,7 @@ router.post(
         data: {
           ...customerData,
           customerCode: finalCode,
-          accountOwnerId: customerData.accountOwnerId || req.user?.id,
+          accountOwnerId: req.user?.role === 'SALESPERSON' ? req.user.id : (customerData.accountOwnerId || req.user?.id),
           contacts: contacts && contacts.length > 0 ? {
             create: contacts.map((c: any) => ({
               name: c.name,
@@ -246,6 +263,17 @@ router.put(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
+
+      const existing = await prisma.customer.findUnique({ where: { id } });
+      if (!existing) {
+        res.status(404).json({ success: false, error: 'Customer not found' });
+        return;
+      }
+
+      if (req.user?.role === 'SALESPERSON' && existing.accountOwnerId && existing.accountOwnerId !== req.user.id) {
+        res.status(403).json({ success: false, error: 'Access forbidden: Cannot update customer belonging to another account owner' });
+        return;
+      }
 
       const customer = await prisma.customer.update({
         where: { id },

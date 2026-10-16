@@ -37,7 +37,7 @@ const completeFollowUpSchema = zod_1.z.object({
 // GET /today - Today's follow-ups for current user (Must be before /:id)
 router.get('/today', async (req, res, next) => {
     try {
-        const userId = req.query.userId || req.user.id;
+        const userId = req.user?.role === 'SALESPERSON' ? req.user.id : (req.query.userId || req.user.id);
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date();
@@ -79,11 +79,11 @@ router.get('/overdue', async (req, res, next) => {
             scheduledDate: { lt: startOfDay },
             status: { in: ['PENDING', 'OVERDUE'] },
         };
-        if (userId) {
-            where.userId = userId;
-        }
-        else if (req.user?.role === 'SALESPERSON') {
+        if (req.user?.role === 'SALESPERSON') {
             where.userId = req.user.id;
+        }
+        else if (userId) {
+            where.userId = userId;
         }
         const followUps = await prisma_1.prisma.followUp.findMany({
             where,
@@ -120,11 +120,11 @@ router.get('/', async (req, res, next) => {
         if (type) {
             where.type = { contains: type, mode: 'insensitive' };
         }
-        if (userId) {
-            where.userId = userId;
-        }
-        else if (req.user?.role === 'SALESPERSON') {
+        if (req.user?.role === 'SALESPERSON') {
             where.userId = req.user.id;
+        }
+        else if (userId) {
+            where.userId = userId;
         }
         if (leadId) {
             where.leadId = leadId;
@@ -178,7 +178,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', (0, validate_1.validate)(createFollowUpSchema), async (req, res, next) => {
     try {
         const { leadId, customerId, userId, type, scheduledDate, notes, nextAction } = req.body;
-        const targetUserId = userId || req.user.id;
+        const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (userId || req.user.id);
         const followUp = await prisma_1.prisma.followUp.create({
             data: {
                 leadId: leadId || null,
@@ -222,6 +222,10 @@ router.put('/:id/complete', (0, validate_1.validate)(completeFollowUpSchema), as
         const followUp = await prisma_1.prisma.followUp.findUnique({ where: { id } });
         if (!followUp) {
             res.status(404).json({ success: false, error: 'Follow-up not found' });
+            return;
+        }
+        if (req.user?.role === 'SALESPERSON' && followUp.userId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You cannot complete follow-ups of other users' });
             return;
         }
         const updated = await prisma_1.prisma.followUp.update({
@@ -270,6 +274,15 @@ router.put('/:id', (0, validate_1.validate)(updateFollowUpSchema), async (req, r
     try {
         const { id } = req.params;
         const { scheduledDate, completedDate, ...rest } = req.body;
+        const existing = await prisma_1.prisma.followUp.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ success: false, error: 'Follow-up not found' });
+            return;
+        }
+        if (req.user?.role === 'SALESPERSON' && existing.userId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You cannot update follow-ups of other users' });
+            return;
+        }
         const dataToUpdate = { ...rest };
         if (scheduledDate)
             dataToUpdate.scheduledDate = new Date(scheduledDate);

@@ -22,14 +22,14 @@ router.get('/achievement', async (req: Request, res: Response, next: NextFunctio
   try {
     const currentYear = new Date().getFullYear();
     const year = parseInt(req.query.year as string, 10) || currentYear;
-    const userId = req.query.userId as string | undefined;
+    const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (req.query.userId as string | undefined);
 
     const startOfYear = new Date(year, 0, 1);
     const endOfYear = new Date(year, 11, 31, 23, 59, 59, 999);
 
     // Fetch targets for year
     const targetWhere: any = { year };
-    if (userId) targetWhere.userId = userId;
+    if (targetUserId) targetWhere.userId = targetUserId;
 
     const targets = await prisma.salesTarget.findMany({
       where: targetWhere,
@@ -44,10 +44,10 @@ router.get('/achievement', async (req: Request, res: Response, next: NextFunctio
       status: { not: 'CANCELLED' },
     };
 
-    if (userId) {
+    if (targetUserId) {
       orderWhere.OR = [
-        { lead: { accountOwnerId: userId } },
-        { quotation: { userId } },
+        { lead: { accountOwnerId: targetUserId } },
+        { quotation: { userId: targetUserId } },
       ];
     }
 
@@ -90,7 +90,7 @@ router.get('/achievement', async (req: Request, res: Response, next: NextFunctio
       success: true,
       data: {
         year,
-        userId: userId || null,
+        userId: targetUserId || null,
         totalTarget: Math.round(totalTarget * 100) / 100,
         totalAchieved: Math.round(totalAchieved * 100) / 100,
         overallAchievementRate: Math.round(overallRate * 10) / 10,
@@ -110,11 +110,11 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const skip = (page - 1) * limit;
 
     const year = req.query.year ? parseInt(req.query.year as string, 10) : undefined;
-    const userId = req.query.userId as string | undefined;
+    const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (req.query.userId as string | undefined);
 
     const where: any = {};
     if (year) where.year = year;
-    if (userId) where.userId = userId;
+    if (targetUserId) where.userId = targetUserId;
 
     const [total, targets] = await Promise.all([
       prisma.salesTarget.count({ where }),

@@ -9,8 +9,8 @@ import { userStore } from '../data/userStore';
 
 const router = Router();
 
-// Protect all user routes for ADMINISTRATOR and DIRECTOR
-router.use(verifyToken, requireRole('ADMINISTRATOR', 'DIRECTOR'));
+// Allow ADMINISTRATOR, DIRECTOR, and SALES_HEAD to access user routes
+router.use(verifyToken, requireRole('ADMINISTRATOR', 'DIRECTOR', 'SALES_HEAD'));
 
 const roleEnum = z.enum(['DIRECTOR', 'SALES_HEAD', 'SALESPERSON', 'ADMINISTRATOR']);
 
@@ -154,9 +154,10 @@ router.get('/:id', async (req: Request, res: Response, _next: NextFunction): Pro
   res.status(404).json({ success: false, error: 'User not found' });
 });
 
-// POST / - Create user
+// POST / - Create user (Admin only)
 router.post(
   '/',
+  requireRole('ADMINISTRATOR'),
   validate(createUserSchema),
   async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const { email, password, firstName, lastName, phone, role, isActive } = req.body;
@@ -230,13 +231,20 @@ router.post(
   }
 );
 
-// PUT /:id - Update user
+// PUT /:id - Update user (Admin only)
 router.put(
   '/:id',
+  requireRole('ADMINISTRATOR'),
   validate(updateUserSchema),
   async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const { id } = req.params;
     const { email, password, firstName, lastName, phone, role, isActive } = req.body;
+
+    // Prevent administrators from changing their own role
+    if (req.user?.id === id && role && role !== req.user.role) {
+      res.status(400).json({ success: false, error: 'Administrators cannot alter their own system role' });
+      return;
+    }
 
     try {
       const user = await prisma.user.findUnique({ where: { id } });
@@ -349,8 +357,8 @@ const handleToggleActive = async (req: Request, res: Response, _next: NextFuncti
   res.status(404).json({ success: false, error: 'User not found' });
 };
 
-// Support BOTH routes
-router.put('/:id/toggle-active', handleToggleActive);
-router.put('/:id/toggle-status', handleToggleActive);
+// Support BOTH routes (Admin only)
+router.put('/:id/toggle-active', requireRole('ADMINISTRATOR'), handleToggleActive);
+router.put('/:id/toggle-status', requireRole('ADMINISTRATOR'), handleToggleActive);
 
 export default router;

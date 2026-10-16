@@ -26,11 +26,11 @@ router.get('/', async (req, res, next) => {
         const skip = (page - 1) * limit;
         const { userId, customerId, leadId, fromDate, toDate } = req.query;
         const where = {};
-        if (userId) {
-            where.userId = userId;
-        }
-        else if (req.user?.role === 'SALESPERSON') {
+        if (req.user?.role === 'SALESPERSON') {
             where.userId = req.user.id;
+        }
+        else if (userId) {
+            where.userId = userId;
         }
         if (customerId) {
             where.customerId = customerId;
@@ -93,6 +93,10 @@ router.get('/:id', async (req, res, next) => {
             res.status(404).json({ success: false, error: 'Customer visit not found' });
             return;
         }
+        if (req.user?.role === 'SALESPERSON' && visit.userId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You cannot view visits of other users' });
+            return;
+        }
         res.json({
             success: true,
             data: visit,
@@ -106,7 +110,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', (0, validate_1.validate)(createVisitSchema), async (req, res, next) => {
     try {
         const { customerId, leadId, userId, visitDate, purpose, notes, outcome, nextAction } = req.body;
-        const targetUserId = userId || req.user.id;
+        const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (userId || req.user.id);
         const parsedVisitDate = new Date(visitDate);
         const visit = await prisma_1.prisma.customerVisit.create({
             data: {
@@ -156,6 +160,15 @@ router.put('/:id', (0, validate_1.validate)(updateVisitSchema), async (req, res,
     try {
         const { id } = req.params;
         const { visitDate, ...rest } = req.body;
+        const existing = await prisma_1.prisma.customerVisit.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ success: false, error: 'Customer visit not found' });
+            return;
+        }
+        if (req.user?.role === 'SALESPERSON' && existing.userId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You cannot update visits of other users' });
+            return;
+        }
         const dataToUpdate = { ...rest };
         if (visitDate) {
             dataToUpdate.visitDate = new Date(visitDate);

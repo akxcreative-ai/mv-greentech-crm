@@ -82,9 +82,14 @@ router.get('/export/csv', async (req, res, next) => {
         if (status && Object.values(client_1.LeadStatus).includes(status)) {
             where.status = status;
         }
-        const targetOwner = (accountOwnerId || owner);
-        if (targetOwner) {
-            where.accountOwnerId = targetOwner;
+        if (req.user?.role === 'SALESPERSON') {
+            where.accountOwnerId = req.user.id;
+        }
+        else {
+            const targetOwner = (accountOwnerId || owner);
+            if (targetOwner) {
+                where.accountOwnerId = targetOwner;
+            }
         }
         if (industry) {
             where.industry = { contains: industry, mode: 'insensitive' };
@@ -163,9 +168,14 @@ router.get('/', async (req, res, next) => {
         if (status && Object.values(client_1.LeadStatus).includes(status)) {
             where.status = status;
         }
-        const ownerFilter = (accountOwnerId || owner);
-        if (ownerFilter) {
-            where.accountOwnerId = ownerFilter;
+        if (req.user?.role === 'SALESPERSON') {
+            where.accountOwnerId = req.user.id;
+        }
+        else {
+            const ownerFilter = (accountOwnerId || owner);
+            if (ownerFilter) {
+                where.accountOwnerId = ownerFilter;
+            }
         }
         if (industry) {
             where.industry = { contains: industry, mode: 'insensitive' };
@@ -278,6 +288,11 @@ router.get('/:id', async (req, res, next) => {
             res.status(404).json({ success: false, error: 'Lead not found' });
             return;
         }
+        // Role-based record authorization: Salespersons can only view their own leads
+        if (req.user?.role === 'SALESPERSON' && lead.accountOwnerId !== req.user.id && lead.createdById !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to view this lead' });
+            return;
+        }
         res.json({
             success: true,
             data: lead,
@@ -334,7 +349,7 @@ router.post('/', (0, validate_1.validate)(createLeadSchema), async (req, res, ne
             data: {
                 ...rest,
                 leadNumber,
-                accountOwnerId: accountOwnerId || currentUserId,
+                accountOwnerId: req.user?.role === 'SALESPERSON' ? currentUserId : (accountOwnerId || currentUserId),
                 createdById: currentUserId.startsWith('demo-') ? null : currentUserId,
                 updatedById: currentUserId.startsWith('demo-') ? null : currentUserId,
                 enquiryValue: enquiryValue !== undefined && enquiryValue !== null
@@ -389,6 +404,11 @@ router.put('/:id', (0, validate_1.validate)(updateLeadSchema), async (req, res, 
             res.status(404).json({ success: false, error: 'Lead not found' });
             return;
         }
+        // Record authorization: Salespersons can only update their own leads
+        if (req.user?.role === 'SALESPERSON' && existingLead.accountOwnerId !== currentUserId && existingLead.createdById !== currentUserId) {
+            res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to update this lead' });
+            return;
+        }
         const { enquiryValue, nextFollowUpDate, customerVisitDate, firstOrderDate, ...rest } = req.body;
         const dataToUpdate = { ...rest };
         if (enquiryValue !== undefined) {
@@ -431,8 +451,8 @@ router.put('/:id', (0, validate_1.validate)(updateLeadSchema), async (req, res, 
         next(error);
     }
 });
-// PUT /:id/assign - Assign lead to user
-router.put('/:id/assign', (0, validate_1.validate)(assignLeadSchema), async (req, res, next) => {
+// PUT /:id/assign - Assign lead to user (Managers only)
+router.put('/:id/assign', (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR', 'SALES_HEAD'), (0, validate_1.validate)(assignLeadSchema), async (req, res, next) => {
     try {
         const { id } = req.params;
         const { userId, notes } = req.body;
@@ -489,6 +509,10 @@ router.put('/:id/archive', async (req, res, next) => {
     try {
         const { id } = req.params;
         const currentUserId = req.user.id;
+        if (req.user?.role === 'SALESPERSON') {
+            res.status(403).json({ success: false, error: 'Access forbidden: Salespersons cannot archive leads' });
+            return;
+        }
         const lead = await prisma_1.prisma.lead.findUnique({ where: { id } });
         if (!lead) {
             res.status(404).json({ success: false, error: 'Lead not found' });

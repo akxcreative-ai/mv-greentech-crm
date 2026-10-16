@@ -11,7 +11,7 @@ router.use(verifyToken);
 router.get('/stats', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const isSalesperson = req.user?.role === 'SALESPERSON';
-    const userId = (req.query.userId as string) || (isSalesperson ? req.user!.id : undefined);
+    const userId = isSalesperson ? req.user!.id : (req.query.userId as string | undefined);
 
     const leadWhere: any = { isArchived: false };
     const followUpWhere: any = {};
@@ -142,7 +142,7 @@ router.get('/stats', async (req: Request, res: Response, next: NextFunction): Pr
 router.get('/charts/sales-performance', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const isSalesperson = req.user?.role === 'SALESPERSON';
-    const userId = (req.query.userId as string) || (isSalesperson ? req.user!.id : undefined);
+    const userId = isSalesperson ? req.user!.id : (req.query.userId as string | undefined);
     const currentYear = new Date().getFullYear();
     const year = parseInt(req.query.year as string, 10) || currentYear;
 
@@ -206,7 +206,7 @@ router.get('/charts/sales-performance', async (req: Request, res: Response, next
 router.get('/charts/lead-status', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const isSalesperson = req.user?.role === 'SALESPERSON';
-    const userId = (req.query.userId as string) || (isSalesperson ? req.user!.id : undefined);
+    const userId = isSalesperson ? req.user!.id : (req.query.userId as string | undefined);
 
     const where: any = { isArchived: false };
     if (userId) {
@@ -247,7 +247,7 @@ router.get('/charts/lead-status', async (req: Request, res: Response, next: Next
 router.get('/recent-activities', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const isSalesperson = req.user?.role === 'SALESPERSON';
-    const userId = (req.query.userId as string) || (isSalesperson ? req.user!.id : undefined);
+    const userId = isSalesperson ? req.user!.id : (req.query.userId as string | undefined);
 
     const where: any = {};
     if (userId) {
@@ -280,7 +280,7 @@ router.get('/recent-activities', async (req: Request, res: Response, next: NextF
 router.get('/upcoming-follow-ups', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const isSalesperson = req.user?.role === 'SALESPERSON';
-    const userId = (req.query.userId as string) || (isSalesperson ? req.user!.id : undefined);
+    const userId = isSalesperson ? req.user!.id : (req.query.userId as string | undefined);
 
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);

@@ -33,29 +33,68 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse }) => {
   const { user } = useAuth();
 
-  const navItems = [
-    { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
-    { label: 'Leads', to: '/leads', icon: Target },
-    { label: 'Customers', to: '/customers', icon: Users },
-    { label: 'Visits', to: '/visits', icon: MapPin },
-    { label: 'Follow-ups', to: '/follow-ups', icon: Clock },
-    { label: 'Item Master', to: '/items', icon: Package },
-    { label: 'Quotations', to: '/quotations', icon: FileText },
-    { label: 'Orders', to: '/orders', icon: ShoppingCart },
-    { label: 'Sales Targets', to: '/targets', icon: TrendingUp },
-    { label: 'Reports', to: '/reports', icon: BarChart3 },
-    { label: 'Notifications', to: '/notifications', icon: Bell },
-  ];
+  const getNavItems = () => {
+    switch (user?.role) {
+      case 'ADMINISTRATOR':
+        return [
+          { label: 'Admin Console', to: '/admin/dashboard', icon: LayoutDashboard },
+          { label: 'Employee Accounts', to: '/users', icon: UserCog },
+          { label: 'Master Data & Forex', to: '/masters', icon: Globe },
+          { label: 'Audit & Security Logs', to: '/audit-logs', icon: ShieldCheck },
+          { label: 'Item Master', to: '/items', icon: Package },
+          { label: 'Company Settings', to: '/settings', icon: Settings },
+          { label: 'Notifications', to: '/notifications', icon: Bell },
+        ];
+      case 'DIRECTOR':
+        return [
+          { label: 'Executive Dashboard', to: '/director/dashboard', icon: LayoutDashboard },
+          { label: 'Lead Pipeline', to: '/leads', icon: Target },
+          { label: 'Quotations', to: '/quotations', icon: FileText },
+          { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
+          { label: 'Financial Reports', to: '/reports', icon: BarChart3 },
+          { label: 'Sales Targets', to: '/targets', icon: TrendingUp },
+          { label: 'Client Accounts', to: '/customers', icon: Users },
+          { label: 'Customer Visits', to: '/visits', icon: MapPin },
+          { label: 'Follow-ups', to: '/follow-ups', icon: Clock },
+          { label: 'Item Master', to: '/items', icon: Package },
+          { label: 'Audit Logs', to: '/audit-logs', icon: ShieldCheck },
+          { label: 'Forex & Currencies', to: '/masters', icon: Globe },
+          { label: 'Settings', to: '/settings', icon: Settings },
+        ];
+      case 'SALES_HEAD':
+        return [
+          { label: 'Sales Head Desk', to: '/sales-head/dashboard', icon: LayoutDashboard },
+          { label: 'Team Leads', to: '/leads', icon: Target },
+          { label: 'Quotations Review', to: '/quotations', icon: FileText },
+          { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
+          { label: 'Team Targets', to: '/targets', icon: TrendingUp },
+          { label: 'Team Performance', to: '/reports', icon: BarChart3 },
+          { label: 'Customers', to: '/customers', icon: Users },
+          { label: 'Client Visits', to: '/visits', icon: MapPin },
+          { label: 'Follow-ups', to: '/follow-ups', icon: Clock },
+          { label: 'Item Master', to: '/items', icon: Package },
+          { label: 'Notifications', to: '/notifications', icon: Bell },
+          { label: 'Settings', to: '/settings', icon: Settings },
+        ];
+      case 'SALESPERSON':
+      default:
+        return [
+          { label: 'My Sales Desk', to: '/salesperson/dashboard', icon: LayoutDashboard },
+          { label: 'My Leads', to: '/leads', icon: Target },
+          { label: 'Quotations', to: '/quotations', icon: FileText },
+          { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
+          { label: 'My Customers', to: '/customers', icon: Users },
+          { label: 'Client Visits', to: '/visits', icon: MapPin },
+          { label: 'Follow-ups', to: '/follow-ups', icon: Clock },
+          { label: 'Item Master', to: '/items', icon: Package },
+          { label: 'My Targets', to: '/targets', icon: TrendingUp },
+          { label: 'Notifications', to: '/notifications', icon: Bell },
+          { label: 'Settings', to: '/settings', icon: Settings },
+        ];
+    }
+  };
 
-  // Admin / Director / Configuration
-  const adminItems = [
-    { label: 'Masters & Forex', to: '/masters', icon: Globe },
-    { label: 'Audit Logs', to: '/audit-logs', icon: ShieldCheck, roles: ['DIRECTOR', 'ADMINISTRATOR'] },
-    { label: 'User Management', to: '/users', icon: UserCog, roles: ['DIRECTOR', 'ADMINISTRATOR'] },
-    { label: 'Settings', to: '/settings', icon: Settings },
-  ];
-
-  const canAccessAdmin = user?.role === 'DIRECTOR' || user?.role === 'ADMINISTRATOR';
+  const navItems = getNavItems();
 
   return (
     <aside
@@ -76,7 +115,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
                 MV GREENTECH
               </span>
               <span className="text-[10px] text-teal-400 font-semibold tracking-widest uppercase">
-                CRM Portal
+                {user?.role?.replace(/_/g, ' ') || 'CRM Portal'}
               </span>
             </div>
           )}
@@ -106,37 +145,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
                     'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative',
                     isActive
                       ? 'bg-blue-600/20 text-blue-400 border-l-4 border-blue-500 font-semibold shadow-inner shadow-blue-500/10'
-                      : 'text-white/70 hover:text-white hover:bg-white/[0.06]'
-                  )
-                }
-              >
-                <Icon className="w-5 h-5 shrink-0 transition-transform group-hover:scale-110" />
-                {!isCollapsed && <span className="truncate">{item.label}</span>}
-              </NavLink>
-            );
-          })}
-        </div>
-
-        {/* Admin Section */}
-        <div className="pt-4 mt-4 border-t border-white/10 space-y-1">
-          {!isCollapsed && (
-            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-white/40">
-              System
-            </p>
-          )}
-          {adminItems.map((item) => {
-            if (item.roles && !canAccessAdmin) return null;
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                title={isCollapsed ? item.label : undefined}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group',
-                    isActive
-                      ? 'bg-blue-600/20 text-blue-400 border-l-4 border-blue-500 font-semibold shadow-inner'
                       : 'text-white/70 hover:text-white hover:bg-white/[0.06]'
                   )
                 }

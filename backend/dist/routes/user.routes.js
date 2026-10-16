@@ -12,8 +12,8 @@ const auth_1 = require("../middleware/auth");
 const validate_1 = require("../middleware/validate");
 const userStore_1 = require("../data/userStore");
 const router = (0, express_1.Router)();
-// Protect all user routes for ADMINISTRATOR and DIRECTOR
-router.use(auth_1.verifyToken, (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR'));
+// Allow ADMINISTRATOR, DIRECTOR, and SALES_HEAD to access user routes
+router.use(auth_1.verifyToken, (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR', 'SALES_HEAD'));
 const roleEnum = zod_1.z.enum(['DIRECTOR', 'SALES_HEAD', 'SALESPERSON', 'ADMINISTRATOR']);
 const createUserSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -141,8 +141,8 @@ router.get('/:id', async (req, res, _next) => {
     }
     res.status(404).json({ success: false, error: 'User not found' });
 });
-// POST / - Create user
-router.post('/', (0, validate_1.validate)(createUserSchema), async (req, res, _next) => {
+// POST / - Create user (Admin only)
+router.post('/', (0, auth_1.requireRole)('ADMINISTRATOR'), (0, validate_1.validate)(createUserSchema), async (req, res, _next) => {
     const { email, password, firstName, lastName, phone, role, isActive } = req.body;
     const normEmail = email.toLowerCase().trim();
     try {
@@ -208,10 +208,15 @@ router.post('/', (0, validate_1.validate)(createUserSchema), async (req, res, _n
         }
     }
 });
-// PUT /:id - Update user
-router.put('/:id', (0, validate_1.validate)(updateUserSchema), async (req, res, _next) => {
+// PUT /:id - Update user (Admin only)
+router.put('/:id', (0, auth_1.requireRole)('ADMINISTRATOR'), (0, validate_1.validate)(updateUserSchema), async (req, res, _next) => {
     const { id } = req.params;
     const { email, password, firstName, lastName, phone, role, isActive } = req.body;
+    // Prevent administrators from changing their own role
+    if (req.user?.id === id && role && role !== req.user.role) {
+        res.status(400).json({ success: false, error: 'Administrators cannot alter their own system role' });
+        return;
+    }
     try {
         const user = await prisma_1.prisma.user.findUnique({ where: { id } });
         if (user) {
@@ -314,7 +319,7 @@ const handleToggleActive = async (req, res, _next) => {
     }
     res.status(404).json({ success: false, error: 'User not found' });
 };
-// Support BOTH routes
-router.put('/:id/toggle-active', handleToggleActive);
-router.put('/:id/toggle-status', handleToggleActive);
+// Support BOTH routes (Admin only)
+router.put('/:id/toggle-active', (0, auth_1.requireRole)('ADMINISTRATOR'), handleToggleActive);
+router.put('/:id/toggle-status', (0, auth_1.requireRole)('ADMINISTRATOR'), handleToggleActive);
 exports.default = router;

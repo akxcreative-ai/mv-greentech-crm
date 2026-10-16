@@ -184,6 +184,11 @@ router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): 
       return;
     }
 
+    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to download this quotation' });
+      return;
+    }
+
     const doc = new PDFDocument({ margin: 40, size: 'A4' });
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -384,9 +389,13 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
       where.customerId = targetCustomer;
     }
 
-    const targetUser = (userId || user) as string | undefined;
-    if (targetUser) {
-      where.userId = targetUser;
+    if (req.user?.role === 'SALESPERSON') {
+      where.userId = req.user.id;
+    } else {
+      const targetUser = (userId || user) as string | undefined;
+      if (targetUser) {
+        where.userId = targetUser;
+      }
     }
 
     if (fromDate || toDate) {
@@ -452,6 +461,12 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
 
     if (!quotation) {
       res.status(404).json({ success: false, error: 'Quotation not found' });
+      return;
+    }
+
+    // Role-based record authorization: Salesperson can only view their own quotations
+    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to view this quotation' });
       return;
     }
 
@@ -562,6 +577,11 @@ router.put(
         return;
       }
 
+      if (req.user?.role === 'SALESPERSON' && existing.userId !== req.user.id) {
+        res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to update this quotation' });
+        return;
+      }
+
       const {
         customerId,
         leadId,
@@ -651,6 +671,18 @@ router.put(
         return;
       }
 
+      // Salespersons cannot approve quotations or modify quotations of other reps
+      if (req.user?.role === 'SALESPERSON') {
+        if (status === 'APPROVED') {
+          res.status(403).json({ success: false, error: 'Access forbidden: Only Sales Head, Director, or Admin can approve quotations' });
+          return;
+        }
+        if (quotation.userId !== req.user.id) {
+          res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to alter this quotation' });
+          return;
+        }
+      }
+
       const updated = await prisma.quotation.update({
         where: { id },
         data: {
@@ -696,6 +728,11 @@ router.post('/:id/convert-to-order', async (req: Request, res: Response, next: N
 
     if (!quotation) {
       res.status(404).json({ success: false, error: 'Quotation not found' });
+      return;
+    }
+
+    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You cannot convert quotations not belonging to you' });
       return;
     }
 

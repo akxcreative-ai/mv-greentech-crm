@@ -78,6 +78,17 @@ router.get('/', async (req, res, next) => {
                 { contacts: { some: { mobile: { contains: search, mode: 'insensitive' } } } },
             ];
         }
+        if (req.user?.role === 'SALESPERSON') {
+            where.AND = [
+                ...(where.AND || []),
+                {
+                    OR: [
+                        { accountOwnerId: req.user.id },
+                        { accountOwnerId: null },
+                    ],
+                },
+            ];
+        }
         const [total, customers] = await Promise.all([
             prisma_1.prisma.customer.count({ where }),
             prisma_1.prisma.customer.findMany({
@@ -139,6 +150,10 @@ router.get('/:id', async (req, res, next) => {
             res.status(404).json({ success: false, error: 'Customer not found' });
             return;
         }
+        if (req.user?.role === 'SALESPERSON' && customer.accountOwnerId && customer.accountOwnerId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: This customer is managed by another salesperson' });
+            return;
+        }
         res.json({
             success: true,
             data: customer,
@@ -183,7 +198,7 @@ router.post('/', (0, validate_1.validate)(createCustomerSchema), async (req, res
             data: {
                 ...customerData,
                 customerCode: finalCode,
-                accountOwnerId: customerData.accountOwnerId || req.user?.id,
+                accountOwnerId: req.user?.role === 'SALESPERSON' ? req.user.id : (customerData.accountOwnerId || req.user?.id),
                 contacts: contacts && contacts.length > 0 ? {
                     create: contacts.map((c) => ({
                         name: c.name,
@@ -218,6 +233,15 @@ router.post('/', (0, validate_1.validate)(createCustomerSchema), async (req, res
 router.put('/:id', (0, validate_1.validate)(updateCustomerSchema), async (req, res, next) => {
     try {
         const { id } = req.params;
+        const existing = await prisma_1.prisma.customer.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ success: false, error: 'Customer not found' });
+            return;
+        }
+        if (req.user?.role === 'SALESPERSON' && existing.accountOwnerId && existing.accountOwnerId !== req.user.id) {
+            res.status(403).json({ success: false, error: 'Access forbidden: Cannot update customer belonging to another account owner' });
+            return;
+        }
         const customer = await prisma_1.prisma.customer.update({
             where: { id },
             data: req.body,
