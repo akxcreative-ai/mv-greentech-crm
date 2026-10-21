@@ -14,6 +14,7 @@ const itemStatusEnum = z.enum(['ACTIVE', 'DISCONTINUED', 'SUPERSEDED']);
 const createItemSchema = z.object({
   itemCode: z.string().min(1, 'Item code is required'),
   description: z.string().min(1, 'Description is required'),
+  imageUrl: z.string().optional().nullable(),
   unit: z.string().optional().default('PCS'),
   standardCost: z.number().or(z.string()).optional().nullable(),
   standardPrice: z.number().or(z.string()).optional().nullable(),
@@ -30,6 +31,7 @@ const createItemSchema = z.object({
 const updateItemSchema = z.object({
   itemCode: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
+  imageUrl: z.string().optional().nullable(),
   unit: z.string().optional().nullable(),
   standardCost: z.number().or(z.string()).optional().nullable(),
   standardPrice: z.number().or(z.string()).optional().nullable(),
@@ -146,6 +148,7 @@ router.post('/import', async (req: Request, res: Response, next: NextFunction): 
       itemsToCreate.push({
         itemCode: item.itemCode.trim(),
         description: item.description.trim(),
+        imageUrl: item.imageUrl ? String(item.imageUrl).trim() : null,
         unit: item.unit ? String(item.unit).trim() : 'PCS',
         standardCost: item.standardCost !== undefined && item.standardCost !== null ? new Prisma.Decimal(item.standardCost) : null,
         standardPrice: item.standardPrice !== undefined && item.standardPrice !== null ? new Prisma.Decimal(item.standardPrice) : null,
@@ -259,6 +262,7 @@ router.post(
       const {
         itemCode,
         description,
+        imageUrl,
         unit,
         standardCost,
         standardPrice,
@@ -285,6 +289,7 @@ router.post(
         data: {
           itemCode: itemCode.trim(),
           description: description.trim(),
+          imageUrl: imageUrl || null,
           unit: unit || 'PCS',
           standardCost: standardCost !== undefined && standardCost !== null ? new Prisma.Decimal(standardCost) : null,
           standardPrice: standardPrice !== undefined && standardPrice !== null ? new Prisma.Decimal(standardPrice) : null,

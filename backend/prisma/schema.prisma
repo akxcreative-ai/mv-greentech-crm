@@ -257,6 +257,7 @@ model Item {
   id               String     @id @default(uuid())
   itemCode         String     @unique
   description      String
+  imageUrl         String?    @db.Text
   unit             String?    @default("PCS")
   standardCost     Decimal?   @db.Decimal(15, 2)
   standardPrice    Decimal?   @db.Decimal(15, 2)

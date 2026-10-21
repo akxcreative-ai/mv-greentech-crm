@@ -12,6 +12,7 @@ const itemStatusEnum = zod_1.z.enum(['ACTIVE', 'DISCONTINUED', 'SUPERSEDED']);
 const createItemSchema = zod_1.z.object({
     itemCode: zod_1.z.string().min(1, 'Item code is required'),
     description: zod_1.z.string().min(1, 'Description is required'),
+    imageUrl: zod_1.z.string().optional().nullable(),
     unit: zod_1.z.string().optional().default('PCS'),
     standardCost: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
     standardPrice: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
@@ -27,6 +28,7 @@ const createItemSchema = zod_1.z.object({
 const updateItemSchema = zod_1.z.object({
     itemCode: zod_1.z.string().min(1).optional(),
     description: zod_1.z.string().min(1).optional(),
+    imageUrl: zod_1.z.string().optional().nullable(),
     unit: zod_1.z.string().optional().nullable(),
     standardCost: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
     standardPrice: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
@@ -127,6 +129,7 @@ router.post('/import', async (req, res, next) => {
             itemsToCreate.push({
                 itemCode: item.itemCode.trim(),
                 description: item.description.trim(),
+                imageUrl: item.imageUrl ? String(item.imageUrl).trim() : null,
                 unit: item.unit ? String(item.unit).trim() : 'PCS',
                 standardCost: item.standardCost !== undefined && item.standardCost !== null ? new client_1.Prisma.Decimal(item.standardCost) : null,
                 standardPrice: item.standardPrice !== undefined && item.standardPrice !== null ? new client_1.Prisma.Decimal(item.standardPrice) : null,
@@ -223,7 +226,7 @@ router.get('/:id', async (req, res, next) => {
 // POST / - Create item with duplicate check
 router.post('/', (0, validate_1.validate)(createItemSchema), async (req, res, next) => {
     try {
-        const { itemCode, description, unit, standardCost, standardPrice, currency, ppq, currentStock, leadTimeDays, supplierCode, supplierCurrency, supplierCost, status, } = req.body;
+        const { itemCode, description, imageUrl, unit, standardCost, standardPrice, currency, ppq, currentStock, leadTimeDays, supplierCode, supplierCurrency, supplierCost, status, } = req.body;
         const existing = await prisma_1.prisma.item.findUnique({
             where: { itemCode: itemCode.trim() },
         });
@@ -235,6 +238,7 @@ router.post('/', (0, validate_1.validate)(createItemSchema), async (req, res, ne
             data: {
                 itemCode: itemCode.trim(),
                 description: description.trim(),
+                imageUrl: imageUrl || null,
                 unit: unit || 'PCS',
                 standardCost: standardCost !== undefined && standardCost !== null ? new client_1.Prisma.Decimal(standardCost) : null,
                 standardPrice: standardPrice !== undefined && standardPrice !== null ? new client_1.Prisma.Decimal(standardPrice) : null,

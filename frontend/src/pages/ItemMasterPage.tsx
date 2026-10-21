@@ -15,6 +15,8 @@ import {
   FileText,
   X,
   AlertCircle,
+  Image as ImageIcon,
+  ZoomIn,
 } from 'lucide-react';
 import { itemsApi } from '../lib/api';
 import type { Item, Column } from '../lib/types';
@@ -28,8 +30,9 @@ import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
 
 const itemSchema = z.object({
-  itemCode: z.string().min(1, 'Item code is required'),
+  itemCode: z.string().min(1, 'Product code is required'),
   description: z.string().min(2, 'Description is required'),
+  imageUrl: z.string().optional().nullable(),
   unit: z.string().optional(),
   standardCost: z.coerce.number().optional(),
   standardPrice: z.coerce.number().optional(),
@@ -54,6 +57,8 @@ export const ItemMasterPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [selectedImageModal, setSelectedImageModal] = useState<string | null>(null);
+  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
 
   // Import Preview & Summary state
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -77,6 +82,8 @@ export const ItemMasterPage: React.FC = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema) as any,
@@ -85,14 +92,56 @@ export const ItemMasterPage: React.FC = () => {
       currency: 'INR',
       status: 'ACTIVE',
       currentStock: 0,
+      imageUrl: '',
     },
   });
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Please upload an image smaller than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 600;
+
+        if (width > height && width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          setValue('imageUrl', dataUrl, { shouldDirty: true });
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const openCreateModal = () => {
     setEditingItem(null);
     reset({
       itemCode: '',
       description: '',
+      imageUrl: '',
       unit: 'PCS',
       standardCost: 0,
       standardPrice: 0,
@@ -113,6 +162,7 @@ export const ItemMasterPage: React.FC = () => {
     reset({
       itemCode: item.itemCode,
       description: item.description,
+      imageUrl: item.imageUrl || '',
       unit: item.unit || 'PCS',
       standardCost: Number(item.standardCost) || 0,
       standardPrice: Number(item.standardPrice) || 0,
@@ -201,6 +251,7 @@ export const ItemMasterPage: React.FC = () => {
 
       const codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part']);
       const descIdx = getIndex(['product description', 'description', 'desc', 'name']);
+      const picIdx = getIndex(['picture', 'image', 'photo']);
       const supIdx = getIndex(['supplier', 'vendor']);
       const bomIdx = getIndex(['bom', 'ppq']);
       const costIdx = getIndex(['standard cost', 'cost']);
@@ -259,6 +310,7 @@ export const ItemMasterPage: React.FC = () => {
         parsed.push({
           itemCode: rawCode,
           description: (descIdx >= 0 && values[descIdx]) ? values[descIdx] : 'Item ' + rawCode,
+          imageUrl: (picIdx >= 0 && values[picIdx]) ? values[picIdx].trim() : undefined,
           supplierCode: (supIdx >= 0 && values[supIdx]) ? values[supIdx] : 'KJT',
           ppq: (bomIdx >= 0 && values[bomIdx]) ? values[bomIdx] : '',
           standardCost: costIdx >= 0 ? parseFloat(values[costIdx]) || 0 : 0,
@@ -339,10 +391,29 @@ export const ItemMasterPage: React.FC = () => {
     },
     {
       header: 'Picture',
-      accessorKey: 'picture',
-      render: () => (
-        <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-          <Package className="w-4 h-4" />
+      accessorKey: 'imageUrl',
+      render: (item) => (
+        <div className="flex items-center">
+          {item.imageUrl ? (
+            <div
+              className="relative group cursor-pointer"
+              onClick={() => setSelectedImageModal(item.imageUrl || null)}
+              title="Click to view full image"
+            >
+              <img
+                src={item.imageUrl}
+                alt={item.itemCode}
+                className="w-9 h-9 rounded-lg object-cover border border-emerald-200 shadow-xs hover:ring-2 hover:ring-emerald-500 transition-all bg-white"
+              />
+              <div className="absolute inset-0 bg-slate-900/20 rounded-lg opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <ZoomIn className="w-3.5 h-3.5 text-white drop-shadow-sm" />
+              </div>
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+              <Package className="w-4 h-4" />
+            </div>
+          )}
         </div>
       ),
     },
@@ -550,6 +621,98 @@ export const ItemMasterPage: React.FC = () => {
               {...register('supplierCode')}
             />
 
+            {/* Product Picture Upload / Link Option */}
+            <div className="md:col-span-2 p-3.5 rounded-xl border border-dashed border-emerald-300 bg-emerald-50/40 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <ImageIcon className="w-4 h-4 text-emerald-600" />
+                  Product Picture (Photo)
+                </label>
+                <div className="flex items-center gap-1 text-[11px] bg-white p-0.5 rounded-lg border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setImageInputMode('upload')}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
+                      imageInputMode === 'upload'
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Upload Photo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImageInputMode('url')}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
+                      imageInputMode === 'url'
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Image Link
+                  </button>
+                </div>
+              </div>
+
+              {watch('imageUrl') ? (
+                <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-emerald-200 shadow-xs">
+                  <img
+                    src={watch('imageUrl') || ''}
+                    alt="Product preview"
+                    className="w-16 h-16 rounded-lg object-cover border border-slate-200 shadow-xs bg-slate-50 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-slate-800 truncate">
+                      Product Picture Attached
+                    </p>
+                    <p className="text-[11px] text-emerald-600 font-medium">
+                      Ready to save and display in catalog
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setValue('imageUrl', '', { shouldDirty: true })}
+                    className="px-2.5 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-medium flex items-center gap-1 border border-rose-200 transition-colors"
+                    title="Remove picture"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Remove</span>
+                  </button>
+                </div>
+              ) : imageInputMode === 'upload' ? (
+                <label className="flex flex-col items-center justify-center py-5 px-3 border border-dashed border-emerald-300 rounded-xl bg-white hover:bg-emerald-50/50 cursor-pointer transition-colors group">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+                    <Upload className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <span className="text-xs font-bold text-slate-800">
+                    Click to browse product picture
+                  </span>
+                  <span className="text-[11px] text-slate-400 mt-0.5">
+                    PNG, JPG, WEBP (Auto-optimized for crisp display)
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </label>
+              ) : (
+                <div className="space-y-1">
+                  <input
+                    type="url"
+                    placeholder="Paste image URL (e.g. https://.../product.jpg)"
+                    value={watch('imageUrl') || ''}
+                    onChange={(e) => setValue('imageUrl', e.target.value, { shouldDirty: true })}
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                  />
+                  <p className="text-[10px] text-slate-400">
+                    Provide any direct web image URL from your product catalog or drive.
+                  </p>
+                </div>
+              )}
+            </div>
+
             <div className="md:col-span-2">
               <Input
                 label="Product Description"
@@ -681,6 +844,7 @@ export const ItemMasterPage: React.FC = () => {
                   <table className="w-full text-left text-[11px]">
                     <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
                       <tr>
+                        <th className="p-2">Picture</th>
                         <th className="p-2">Product code</th>
                         <th className="p-2">Product Description</th>
                         <th className="p-2">Supplier</th>
@@ -692,6 +856,15 @@ export const ItemMasterPage: React.FC = () => {
                     <tbody className="divide-y divide-slate-100 text-slate-700">
                       {previewItems.slice(0, 5).map((p, idx) => (
                         <tr key={idx} className="hover:bg-slate-50/60">
+                          <td className="p-2">
+                            {p.imageUrl ? (
+                              <img src={p.imageUrl} alt="" className="w-7 h-7 rounded-md object-cover border border-slate-200" />
+                            ) : (
+                              <div className="w-7 h-7 rounded-md bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+                                <Package className="w-3.5 h-3.5" />
+                              </div>
+                            )}
+                          </td>
                           <td className="p-2 font-mono font-semibold text-emerald-700">{p.itemCode}</td>
                           <td className="p-2 truncate max-w-[200px]">{p.description}</td>
                           <td className="p-2">{p.supplierCode || 'KJT'}</td>
@@ -773,6 +946,38 @@ export const ItemMasterPage: React.FC = () => {
                   Done
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* FULL PICTURE PREVIEW LIGHTBOX MODAL */}
+      {selectedImageModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+          onClick={() => setSelectedImageModal(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-lg w-full p-4 border border-slate-200 shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-emerald-600" />
+                <h3 className="text-sm font-bold text-slate-900">Product Picture Preview</h3>
+              </div>
+              <button
+                onClick={() => setSelectedImageModal(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="max-h-[70vh] flex items-center justify-center overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-2">
+              <img
+                src={selectedImageModal}
+                alt="Product Picture"
+                className="max-h-[65vh] w-auto max-w-full object-contain rounded-lg"
+              />
             </div>
           </div>
         </div>
