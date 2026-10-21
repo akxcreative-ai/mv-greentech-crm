@@ -151,10 +151,17 @@ export const ItemMasterPage: React.FC = () => {
   // Download official CSV template
   const downloadCsvTemplate = () => {
     const csvContent =
-      'Item Code,Description,Unit,Standard Cost,Standard Price,Current Stock,Lead Time (Days),Supplier Code,Status\r\n' +
-      'WLI-SNS-001,Water Level Magnetic Float Sensor (SS316),PCS,1200,2450,150,5,SUP-IND-01,ACTIVE\r\n' +
-      'WLI-DSP-002,Digital LED Tank Indicator Display 4-20mA,PCS,2500,4800,45,7,SUP-IND-02,ACTIVE\r\n' +
-      'WLI-VAL-003,Automatic Solenoid Inlet Valve 1-inch,PCS,850,1750,80,3,SUP-IND-03,ACTIVE\r\n';
+      ',,,,,,,,,,,,,\r\n' +
+      ',S.no,Product code,Product Description,Picture,Supplier,BOM,Standard Cost,Currency,Unit,Landed cost,Standard Price,Lead Time,Status\r\n' +
+      ',,,,,KJT,Supplier Name,,,,,,,Part no is (Active)\r\n' +
+      ',,,,,,Material code,,,,,,,(Obsolete)\r\n' +
+      ',,,,,,Material Description,,,,,,,(Superceded)\r\n' +
+      ',,,,,,Quantity per piece,,,,,,,\r\n' +
+      ',,,,,,Unit,,,,,,,\r\n' +
+      ',,,,,,Cost/ Unit,,,,,,,\r\n' +
+      ',1,WLI-SNS-001,Water Level Magnetic Float Sensor (SS316),,KJT,Supplier Name,1200,INR,PCS,1350,2450,5,Active\r\n' +
+      ',2,WLI-DSP-002,Digital LED Tank Indicator Display 4-20mA,,KJT,Material code,2500,INR,PCS,2700,4800,7,Active\r\n' +
+      ',3,WLI-VAL-003,Automatic Solenoid Inlet Valve 1-inch,,KJT,Material Description,850,INR,PCS,950,1750,3,Active\r\n';
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -179,23 +186,38 @@ export const ItemMasterPage: React.FC = () => {
         return;
       }
 
-      const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, '').toLowerCase());
-      const getIndex = (names: string[]) => headers.findIndex((h) => names.some((n) => h.includes(n)));
+      // Find the header row containing "Product code" or "Item Code"
+      let headerLineIdx = lines.findIndex((l) => {
+        const lower = l.toLowerCase();
+        return lower.includes('product code') || lower.includes('item code');
+      });
 
-      const codeIdx = getIndex(['item code', 'itemcode', 'code', 'part']);
-      const descIdx = getIndex(['description', 'desc', 'name']);
-      const unitIdx = getIndex(['unit', 'uom']);
-      const costIdx = getIndex(['cost', 'standard cost']);
-      const priceIdx = getIndex(['price', 'standard price', 'rate']);
-      const stockIdx = getIndex(['stock', 'quantity', 'qty']);
-      const leadIdx = getIndex(['lead time', 'lead']);
+      if (headerLineIdx === -1) {
+        headerLineIdx = 0;
+      }
+
+      const headers = lines[headerLineIdx].split(',').map((h) => h.trim().replace(/^"|"$/g, '').toLowerCase());
+      const getIndex = (names: string[]) => headers.findIndex((h) => names.some((n) => h === n || h.includes(n)));
+
+      const codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part']);
+      const descIdx = getIndex(['product description', 'description', 'desc', 'name']);
       const supIdx = getIndex(['supplier', 'vendor']);
+      const bomIdx = getIndex(['bom', 'ppq']);
+      const costIdx = getIndex(['standard cost', 'cost']);
+      const currIdx = getIndex(['currency']);
+      const unitIdx = getIndex(['unit', 'uom']);
+      const landedIdx = getIndex(['landed cost', 'landed']);
+      const priceIdx = getIndex(['standard price', 'price', 'rate']);
+      const leadIdx = getIndex(['lead time', 'lead']);
+      const statusIdx = getIndex(['status']);
 
       const existingCodes = new Set((itemsResponse?.data || []).map((i) => i.itemCode.toLowerCase().trim()));
       const seenInCsv = new Set<string>();
       const duplicatesFound: string[] = [];
+      const parsed: any[] = [];
 
-      const parsed = lines.slice(1).map((line, idx) => {
+      for (let r = headerLineIdx + 1; r < lines.length; r++) {
+        const line = lines[r];
         const values: string[] = [];
         let inQuote = false;
         let cur = '';
@@ -212,28 +234,43 @@ export const ItemMasterPage: React.FC = () => {
         }
         values.push(cur.trim().replace(/^"|"$/g, ''));
 
-        const itemCode = (codeIdx >= 0 ? values[codeIdx] : values[0]) || `ITEM-${idx + 1}`;
-        const normalized = itemCode.trim().toLowerCase();
+        const rawCode = (codeIdx >= 0 && values[codeIdx]) ? values[codeIdx].trim() : '';
 
+        // Skip blank rows or legend/template instruction rows
+        if (!rawCode || rawCode.toLowerCase().includes('part no is') || rawCode.toLowerCase().includes('supplier name') || rawCode.toLowerCase().includes('material code')) {
+          continue;
+        }
+
+        const normalized = rawCode.toLowerCase();
         if (existingCodes.has(normalized) || seenInCsv.has(normalized)) {
-          duplicatesFound.push(itemCode);
+          duplicatesFound.push(rawCode);
         } else {
           seenInCsv.add(normalized);
         }
 
-        return {
-          itemCode,
-          description: (descIdx >= 0 ? values[descIdx] : values[1]) || 'No description',
-          unit: (unitIdx >= 0 ? values[unitIdx] : 'PCS') || 'PCS',
+        const rawStatus = (statusIdx >= 0 && values[statusIdx] ? values[statusIdx] : 'Active').toLowerCase();
+        let finalStatus = 'ACTIVE';
+        if (rawStatus.includes('obsolete') || rawStatus.includes('discontinued')) {
+          finalStatus = 'DISCONTINUED';
+        } else if (rawStatus.includes('superceded') || rawStatus.includes('superseded')) {
+          finalStatus = 'SUPERSEDED';
+        }
+
+        parsed.push({
+          itemCode: rawCode,
+          description: (descIdx >= 0 && values[descIdx]) ? values[descIdx] : 'Item ' + rawCode,
+          supplierCode: (supIdx >= 0 && values[supIdx]) ? values[supIdx] : 'KJT',
+          ppq: (bomIdx >= 0 && values[bomIdx]) ? values[bomIdx] : '',
           standardCost: costIdx >= 0 ? parseFloat(values[costIdx]) || 0 : 0,
+          currency: (currIdx >= 0 && values[currIdx]) ? values[currIdx] : 'INR',
+          unit: (unitIdx >= 0 && values[unitIdx]) ? values[unitIdx] : 'PCS',
+          supplierCost: landedIdx >= 0 ? parseFloat(values[landedIdx]) || 0 : 0,
           standardPrice: priceIdx >= 0 ? parseFloat(values[priceIdx]) || 0 : 0,
-          currentStock: stockIdx >= 0 ? parseInt(values[stockIdx], 10) || 0 : 0,
           leadTimeDays: leadIdx >= 0 ? parseInt(values[leadIdx], 10) || 7 : 7,
-          supplierCode: supIdx >= 0 ? values[supIdx] : '',
-          currency: 'INR',
-          status: 'ACTIVE',
-        };
-      });
+          currentStock: 0,
+          status: finalStatus,
+        });
+      }
 
       setPreviewItems(parsed);
       setPreviewDuplicates(duplicatesFound);
@@ -272,44 +309,99 @@ export const ItemMasterPage: React.FC = () => {
 
   const columns: Column<Item>[] = [
     {
-      header: 'Item Code',
+      header: 'S.no',
+      accessorKey: 'sno',
+      render: (_item, idx) => (
+        <span className="text-xs text-slate-500 font-medium">
+          {(page - 1) * 10 + idx + 1}
+        </span>
+      ),
+    },
+    {
+      header: 'Product code',
       accessorKey: 'itemCode',
       render: (item) => (
-        <span className="font-mono text-xs font-semibold text-blue-400">
+        <span className="font-mono text-xs font-semibold text-emerald-700">
           {item.itemCode}
         </span>
       ),
     },
     {
-      header: 'Description',
+      header: 'Product Description',
       accessorKey: 'description',
       render: (item) => (
-        <div>
-          <p className="text-sm font-semibold text-white">{item.description}</p>
-          {item.ppq && <p className="text-[11px] text-white/40">PPQ: {item.ppq}</p>}
+        <div className="max-w-[220px]">
+          <p className="text-sm font-semibold text-slate-900 truncate" title={item.description}>
+            {item.description}
+          </p>
         </div>
+      ),
+    },
+    {
+      header: 'Picture',
+      accessorKey: 'picture',
+      render: () => (
+        <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+          <Package className="w-4 h-4" />
+        </div>
+      ),
+    },
+    {
+      header: 'Supplier',
+      accessorKey: 'supplierCode',
+      render: (item) => (
+        <span className="text-xs text-slate-700 font-medium">
+          {item.supplierCode || 'KJT'}
+        </span>
+      ),
+    },
+    {
+      header: 'BOM',
+      accessorKey: 'ppq',
+      render: (item) => (
+        <span className="text-xs text-slate-600">
+          {item.ppq || '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Standard Cost',
+      accessorKey: 'standardCost',
+      render: (item) => (
+        <span className="text-xs font-medium text-slate-700">
+          {item.standardCost ? `₹${Number(item.standardCost).toLocaleString('en-IN')}` : '—'}
+        </span>
+      ),
+    },
+    {
+      header: 'Currency',
+      accessorKey: 'currency',
+      render: (item) => (
+        <span className="text-xs font-mono text-slate-600">
+          {item.currency || 'INR'}
+        </span>
       ),
     },
     {
       header: 'Unit',
       accessorKey: 'unit',
-      render: (item) => <span className="text-xs text-white/70">{item.unit || 'PCS'}</span>,
+      render: (item) => <span className="text-xs text-slate-700 font-medium">{item.unit || 'PCS'}</span>,
+    },
+    {
+      header: 'Landed cost',
+      accessorKey: 'supplierCost',
+      render: (item) => (
+        <span className="text-xs font-medium text-slate-700">
+          {item.supplierCost ? `₹${Number(item.supplierCost).toLocaleString('en-IN')}` : '—'}
+        </span>
+      ),
     },
     {
       header: 'Standard Price',
       accessorKey: 'standardPrice',
       render: (item) => (
-        <span className="text-xs font-semibold text-emerald-400">
+        <span className="text-xs font-bold text-emerald-700">
           {item.standardPrice ? `₹${Number(item.standardPrice).toLocaleString('en-IN')}` : '—'}
-        </span>
-      ),
-    },
-    {
-      header: 'Current Stock',
-      accessorKey: 'currentStock',
-      render: (item) => (
-        <span className="text-xs font-medium text-white/90">
-          {item.currentStock ?? 0} {item.unit || 'PCS'}
         </span>
       ),
     },
@@ -317,7 +409,7 @@ export const ItemMasterPage: React.FC = () => {
       header: 'Lead Time',
       accessorKey: 'leadTimeDays',
       render: (item) => (
-        <span className="text-xs text-white/70">
+        <span className="text-xs text-slate-700">
           {item.leadTimeDays ? `${item.leadTimeDays} days` : '—'}
         </span>
       ),
@@ -334,7 +426,7 @@ export const ItemMasterPage: React.FC = () => {
         <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => openEditModal(item)}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-blue-400 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-emerald-700 transition-colors"
             title="Edit Item"
           >
             <Pencil className="w-4 h-4" />
@@ -345,7 +437,7 @@ export const ItemMasterPage: React.FC = () => {
                 deleteMutation.mutate(item.id);
               }
             }}
-            className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-rose-400 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-rose-600 transition-colors"
             title="Delete Item"
           >
             <Trash2 className="w-4 h-4" />
@@ -361,12 +453,12 @@ export const ItemMasterPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
               <Package className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">Item Master</h1>
-              <p className="text-xs text-white/60">
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Item Master</h1>
+              <p className="text-xs text-slate-500">
                 Products, bill-of-materials components, standard costs, and inventory thresholds
               </p>
             </div>
@@ -377,7 +469,7 @@ export const ItemMasterPage: React.FC = () => {
           <Button
             variant="secondary"
             size="sm"
-            leftIcon={<Download className="w-4 h-4 text-teal-400" />}
+            leftIcon={<Download className="w-4 h-4 text-emerald-600" />}
             onClick={downloadCsvTemplate}
             title="Download formatted CSV spreadsheet template"
           >
@@ -394,7 +486,7 @@ export const ItemMasterPage: React.FC = () => {
           <Button
             variant="secondary"
             size="sm"
-            leftIcon={<Upload className="w-4 h-4 text-blue-400" />}
+            leftIcon={<Upload className="w-4 h-4 text-emerald-600" />}
             onClick={() => fileInputRef.current?.click()}
           >
             Import CSV
@@ -414,7 +506,7 @@ export const ItemMasterPage: React.FC = () => {
       {/* Search Bar */}
       <GlassCard padding={false} className="p-4">
         <SearchBar
-          placeholder="Search by Item Code or Description..."
+          placeholder="Search by Product code or Product Description..."
           value={search}
           onSearch={(val) => {
             setSearch(val);
@@ -446,24 +538,22 @@ export const ItemMasterPage: React.FC = () => {
         <form onSubmit={handleSubmit((data) => saveMutation.mutate(data as ItemFormData))} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Item Code / Part #"
-              placeholder="e.g. WLI-SENS-01"
+              label="Product code"
+              placeholder="e.g. WLI-SNS-001"
               required
               error={errors.itemCode?.message}
               {...register('itemCode')}
             />
-            <Select label="Unit of Measure" {...register('unit')}>
-              <option value="PCS">PCS (Pieces)</option>
-              <option value="SET">SET</option>
-              <option value="MTR">MTR (Meters)</option>
-              <option value="KG">KG (Kilograms)</option>
-              <option value="NOS">NOS (Numbers)</option>
-            </Select>
+            <Input
+              label="Supplier"
+              placeholder="e.g. KJT"
+              {...register('supplierCode')}
+            />
 
             <div className="md:col-span-2">
               <Input
-                label="Description"
-                placeholder="Product title and material specifications"
+                label="Product Description"
+                placeholder="Product description and specifications"
                 required
                 error={errors.description?.message}
                 {...register('description')}
@@ -471,14 +561,40 @@ export const ItemMasterPage: React.FC = () => {
             </div>
 
             <Input
-              label="Standard Cost (₹)"
+              label="BOM"
+              placeholder="e.g. Sensor Probe, Float Switch"
+              {...register('ppq')}
+            />
+            <Select label="Unit" {...register('unit')}>
+              <option value="PCS">PCS</option>
+              <option value="SET">SET</option>
+              <option value="MTR">MTR</option>
+              <option value="KG">KG</option>
+              <option value="NOS">NOS</option>
+            </Select>
+
+            <Input
+              label="Standard Cost"
               type="number"
               step="0.01"
               placeholder="0.00"
               {...register('standardCost')}
             />
+            <Select label="Currency" {...register('currency')}>
+              <option value="INR">INR</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </Select>
+
             <Input
-              label="Standard Selling Price (₹)"
+              label="Landed cost"
+              type="number"
+              step="0.01"
+              placeholder="0.00"
+              {...register('supplierCost')}
+            />
+            <Input
+              label="Standard Price"
               type="number"
               step="0.01"
               placeholder="0.00"
@@ -486,31 +602,19 @@ export const ItemMasterPage: React.FC = () => {
             />
 
             <Input
-              label="Current Stock"
-              type="number"
-              placeholder="0"
-              {...register('currentStock')}
-            />
-            <Input
               label="Lead Time (Days)"
               type="number"
               placeholder="7"
               {...register('leadTimeDays')}
             />
-
-            <Input
-              label="Supplier Code"
-              placeholder="e.g. SUP-901"
-              {...register('supplierCode')}
-            />
-            <Select label="Catalog Status" {...register('status')}>
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="DISCONTINUED">DISCONTINUED</option>
-              <option value="SUPERSEDED">SUPERSEDED</option>
+            <Select label="Status" {...register('status')}>
+              <option value="ACTIVE">Active</option>
+              <option value="DISCONTINUED">Obsolete</option>
+              <option value="SUPERSEDED">Superceded</option>
             </Select>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
             <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
@@ -523,47 +627,47 @@ export const ItemMasterPage: React.FC = () => {
 
       {/* CSV IMPORT PREVIEW MODAL */}
       {showPreviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-          <div className="glass-card max-w-2xl w-full p-6 border border-white/15 relative">
-            <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-3xl w-full p-6 border border-slate-200 shadow-2xl relative">
+            <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-400" />
-                <h3 className="text-base font-bold text-white">Item Master CSV Import Preview</h3>
+                <FileText className="w-5 h-5 text-emerald-600" />
+                <h3 className="text-base font-bold text-slate-900">Item Master CSV Import Preview</h3>
               </div>
               <button
                 onClick={() => setShowPreviewModal(false)}
-                className="text-white/50 hover:text-white"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-3 gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
+              <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div>
-                  <span className="text-white/50 block">Total Rows Found</span>
-                  <span className="text-lg font-bold text-white">{previewItems.length}</span>
+                  <span className="text-slate-500 block">Total Rows Found</span>
+                  <span className="text-lg font-bold text-slate-900">{previewItems.length}</span>
                 </div>
                 <div>
-                  <span className="text-white/50 block">New Unique Items</span>
-                  <span className="text-lg font-bold text-emerald-400">
+                  <span className="text-slate-500 block">New Unique Items</span>
+                  <span className="text-lg font-bold text-emerald-600">
                     {previewItems.length - previewDuplicates.length}
                   </span>
                 </div>
                 <div>
-                  <span className="text-white/50 block">Duplicates Detected</span>
-                  <span className="text-lg font-bold text-amber-400">
+                  <span className="text-slate-500 block">Duplicates Detected</span>
+                  <span className="text-lg font-bold text-amber-600">
                     {previewDuplicates.length}
                   </span>
                 </div>
               </div>
 
               {previewDuplicates.length > 0 && (
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
                   <div>
                     <p className="font-semibold">Notice: Duplicate item codes will be skipped</p>
-                    <p className="text-[11px] text-amber-300/80">
+                    <p className="text-[11px] text-amber-700">
                       Codes: {previewDuplicates.slice(0, 5).join(', ')}
                       {previewDuplicates.length > 5 ? ` (+${previewDuplicates.length - 5} more)` : ''}
                     </p>
@@ -572,24 +676,32 @@ export const ItemMasterPage: React.FC = () => {
               )}
 
               <div>
-                <p className="font-semibold text-white mb-1.5">First 5 Sample Records Preview:</p>
-                <div className="border border-white/10 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                <p className="font-semibold text-slate-800 mb-1.5">First 5 Sample Records Preview:</p>
+                <div className="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
                   <table className="w-full text-left text-[11px]">
-                    <thead className="bg-white/5 border-b border-white/10 text-white/50">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
                       <tr>
-                        <th className="p-2">Item Code</th>
-                        <th className="p-2">Description</th>
-                        <th className="p-2">Price</th>
-                        <th className="p-2">Stock</th>
+                        <th className="p-2">Product code</th>
+                        <th className="p-2">Product Description</th>
+                        <th className="p-2">Supplier</th>
+                        <th className="p-2">Standard Price</th>
+                        <th className="p-2">Unit</th>
+                        <th className="p-2">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 text-white/80">
+                    <tbody className="divide-y divide-slate-100 text-slate-700">
                       {previewItems.slice(0, 5).map((p, idx) => (
-                        <tr key={idx}>
-                          <td className="p-2 font-mono text-teal-400">{p.itemCode}</td>
+                        <tr key={idx} className="hover:bg-slate-50/60">
+                          <td className="p-2 font-mono font-semibold text-emerald-700">{p.itemCode}</td>
                           <td className="p-2 truncate max-w-[200px]">{p.description}</td>
-                          <td className="p-2 font-mono">₹{p.standardPrice}</td>
-                          <td className="p-2">{p.currentStock} {p.unit}</td>
+                          <td className="p-2">{p.supplierCode || 'KJT'}</td>
+                          <td className="p-2 font-mono font-semibold">₹{p.standardPrice || 0}</td>
+                          <td className="p-2">{p.unit || 'PCS'}</td>
+                          <td className="p-2">
+                            <span className="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-800 font-medium">
+                              {p.status || 'Active'}
+                            </span>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -597,7 +709,7 @@ export const ItemMasterPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <Button variant="secondary" onClick={() => setShowPreviewModal(false)}>
                   Cancel
                 </Button>
@@ -605,7 +717,7 @@ export const ItemMasterPage: React.FC = () => {
                   variant="primary"
                   onClick={confirmImport}
                   isLoading={isImporting}
-                  className="bg-emerald-600 hover:bg-emerald-500"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
                   Confirm & Import ({previewItems.length - previewDuplicates.length} Items)
                 </Button>
@@ -617,35 +729,35 @@ export const ItemMasterPage: React.FC = () => {
 
       {/* CSV IMPORT SUMMARY REPORT MODAL */}
       {showSummaryModal && importSummary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-          <div className="glass-card max-w-lg w-full p-6 border border-white/15 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 border border-slate-200 shadow-2xl relative">
             <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="w-6 h-6 text-emerald-400" />
-              <h3 className="text-lg font-bold text-white">Import Execution Report</h3>
+              <CheckCircle className="w-6 h-6 text-emerald-600" />
+              <h3 className="text-lg font-bold text-slate-900">Import Execution Report</h3>
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-xl border border-white/10 text-center">
+              <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
                 <div>
-                  <span className="text-white/50 block">Processed</span>
-                  <span className="text-base font-bold text-white">{importSummary.total}</span>
+                  <span className="text-slate-500 block">Processed</span>
+                  <span className="text-base font-bold text-slate-900">{importSummary.total}</span>
                 </div>
                 <div>
-                  <span className="text-white/50 block">Imported</span>
-                  <span className="text-base font-bold text-emerald-400">{importSummary.imported}</span>
+                  <span className="text-slate-500 block">Imported</span>
+                  <span className="text-base font-bold text-emerald-600">{importSummary.imported}</span>
                 </div>
                 <div>
-                  <span className="text-white/50 block">Skipped / Rej.</span>
-                  <span className="text-base font-bold text-amber-400">{importSummary.skipped}</span>
+                  <span className="text-slate-500 block">Skipped / Rej.</span>
+                  <span className="text-base font-bold text-amber-600">{importSummary.skipped}</span>
                 </div>
               </div>
 
               {importSummary.errors && importSummary.errors.length > 0 && (
                 <div>
-                  <p className="font-semibold text-rose-300 mb-1 flex items-center gap-1.5">
+                  <p className="font-semibold text-rose-600 mb-1 flex items-center gap-1.5">
                     <AlertCircle className="w-4 h-4" /> Rejection & Warning Log:
                   </p>
-                  <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] text-rose-300">
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 max-h-40 overflow-y-auto space-y-1 font-mono text-[11px] text-rose-700">
                     {importSummary.errors.map((err, i) => (
                       <div key={i}>• {err}</div>
                     ))}
