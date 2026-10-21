@@ -10,7 +10,7 @@ export const AppLayout: React.FC = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-white flex flex-col relative">
+    <div className="min-h-screen bg-[#F8FAF9] text-slate-800 flex flex-col relative">
       <div className="gradient-bg" />
 
       {/* Desktop Sidebar */}

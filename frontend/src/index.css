@@ -1,47 +1,44 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-navy-900: #0B1220;
-  --color-navy-800: #111827;
-  --color-navy-700: #1E293B;
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-glass-hover: rgba(255, 255, 255, 0.1);
-  --color-glass-border: rgba(255, 255, 255, 0.1);
-  --color-primary: #2563EB;
-  --color-primary-light: #3B82F6;
-  --color-accent: #14B8A6;
+  --color-primary: #059669;
+  --color-primary-light: #10B981;
+  --color-accent: #047857;
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
-  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
-  background: #0B1220;
-  color: white;
+  background: #F8FAF9;
+  color: #0F172A;
   font-family: var(--font-family-sans);
   min-height: 100vh;
 }
 
+/* Clean White Cards with soft subtle shadow */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  color: #0F172A;
 }
 
 .glass-card-hover:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: #FFFFFF;
+  border-color: #10B981;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.1), 0 8px 10px -6px rgba(5, 150, 105, 0.04);
   transition: all 0.2s ease;
 }
 
+/* Clean Light Input */
 .glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
   border-radius: 0.5rem;
-  color: white;
+  color: #0F172A;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   width: 100%;
@@ -50,22 +47,25 @@ body {
 
 .glass-input:focus {
   outline: none;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
 
 .glass-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: #94A3B8;
 }
 
+/* Deep Green Corporate Sidebar */
 .glass-sidebar {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: #064E3B;
+  color: #FFFFFF;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 4px 0 24px -2px rgba(6, 78, 59, 0.15);
 }
 
+/* Light Fresh Gradient Background */
 .gradient-bg {
-  background: linear-gradient(135deg, #0B1220 0%, #0F172A 50%, #0B1220 100%);
+  background: linear-gradient(135deg, #F8FAF9 0%, #F0FDF4 50%, #F8FAF9 100%);
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -79,13 +79,14 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at 25% 40%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
-              radial-gradient(circle at 75% 60%, rgba(20, 184, 166, 0.04) 0%, transparent 50%);
+  background: radial-gradient(circle at 25% 40%, rgba(5, 150, 105, 0.04) 0%, transparent 50%),
+              radial-gradient(circle at 75% 60%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
 }
 
+/* Vibrant Emerald Primary Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-  color: white;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #FFFFFF !important;
   padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 500;
@@ -93,32 +94,159 @@ body {
   transition: all 0.2s;
   border: none;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
 }
 
+/* Clean White Secondary Buttons */
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  background: #FFFFFF;
+  color: #1E293B !important;
   padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 500;
   font-size: 0.875rem;
   transition: all 0.2s;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #CBD5E1;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  color: #0F172A !important;
 }
 
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+::-webkit-scrollbar-thumb { background: rgba(5, 150, 105, 0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(5, 150, 105, 0.35); }
+
+/* ============================================================
+   Clean Light ERP Color Inversions for Inner Content & Modals
+   ============================================================ */
+
+/* Primary Headings & Dark Text */
+main h1.text-white,
+main h2.text-white,
+main h3.text-white,
+main h4.text-white,
+main p.text-white,
+main span.text-white,
+main div.text-white,
+main td.text-white,
+main th.text-white,
+main label.text-white,
+.modal-light h1.text-white,
+.modal-light h2.text-white,
+.modal-light h3.text-white,
+.modal-light h4.text-white,
+.modal-light p.text-white,
+.modal-light span.text-white,
+.modal-light div.text-white,
+.modal-light td.text-white,
+.modal-light label.text-white {
+  color: #0F172A;
+}
+
+/* Secondary & Muted Tones */
+main .text-white\/90,
+main .text-white\/80,
+.modal-light .text-white\/90,
+.modal-light .text-white\/80 {
+  color: #1E293B;
+}
+
+main .text-white\/70,
+.modal-light .text-white\/70 {
+  color: #334155;
+}
+
+main .text-white\/60,
+.modal-light .text-white\/60 {
+  color: #475569;
+}
+
+main .text-white\/50,
+.modal-light .text-white\/50 {
+  color: #64748B;
+}
+
+main .text-white\/40,
+main .text-white\/35,
+.modal-light .text-white\/40,
+.modal-light .text-white\/35 {
+  color: #94A3B8;
+}
+
+main .text-white\/30,
+main .text-white\/20,
+.modal-light .text-white\/30,
+.modal-light .text-white\/20 {
+  color: #CBD5E1;
+}
+
+/* Light Card Borders & Dividers */
+main .border-white\/10,
+main .border-white\/5,
+main .border-white\/15,
+main .border-white\/20,
+main .divide-white\/5,
+main .divide-white\/10,
+.modal-light .border-white\/10,
+.modal-light .border-white\/5,
+.modal-light .border-white\/15 {
+  border-color: #E2E8F0;
+}
+
+/* Soft Inner Container Backgrounds */
+main .bg-white\/\[0\.02\],
+main .bg-white\/\[0\.03\],
+main .bg-white\/5,
+.modal-light .bg-white\/\[0\.02\],
+.modal-light .bg-white\/\[0\.03\],
+.modal-light .bg-white\/5 {
+  background-color: #F8FAFC;
+}
+
+main .bg-white\/\[0\.06\],
+main .bg-white\/10,
+.modal-light .bg-white\/\[0\.06\],
+.modal-light .bg-white\/10 {
+  background-color: #F1F5F9;
+}
+
+main .hover\:bg-white\/10:hover,
+main .hover\:bg-white\/\[0\.06\]:hover,
+.modal-light .hover\:bg-white\/10:hover {
+  background-color: #F1F5F9;
+}
+
+/* Protect buttons, badges, and colored tags */
+main button.btn-primary,
+main button.btn-primary *,
+main .btn-primary,
+main .btn-primary *,
+main button[class*="bg-emerald"],
+main button[class*="bg-emerald"] *,
+main button[class*="bg-green"],
+main button[class*="bg-green"] *,
+main button[class*="bg-blue"],
+main button[class*="bg-blue"] *,
+main button[class*="bg-rose"],
+main button[class*="bg-rose"] *,
+main button[class*="bg-red"],
+main button[class*="bg-red"] *,
+.modal-light button.btn-primary,
+.modal-light button.btn-primary *,
+.modal-light button[class*="bg-emerald"],
+.modal-light button[class*="bg-emerald"] * {
+  color: #FFFFFF !important;
+}

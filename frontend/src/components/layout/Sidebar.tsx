@@ -104,9 +104,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       )}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-emerald-700/40 shrink-0">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-teal-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-950/40">
             <Layers className="w-5 h-5 text-white" />
           </div>
           {!isCollapsed && (
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
               <span className="font-bold text-white text-sm tracking-wide">
                 MV GREENTECH
               </span>
-              <span className="text-[10px] text-teal-400 font-semibold tracking-widest uppercase">
+              <span className="text-[10px] text-emerald-300 font-semibold tracking-widest uppercase">
                 {user?.role?.replace(/_/g, ' ') || 'CRM Portal'}
               </span>
             </div>
@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
 
         <button
           onClick={onToggleCollapse}
-          className="p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+          className="p-1.5 rounded-lg text-emerald-100/60 hover:text-white hover:bg-emerald-800/40 transition-colors"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -144,8 +144,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
                   clsx(
                     'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative',
                     isActive
-                      ? 'bg-blue-600/20 text-blue-400 border-l-4 border-blue-500 font-semibold shadow-inner shadow-blue-500/10'
-                      : 'text-white/70 hover:text-white hover:bg-white/[0.06]'
+                      ? 'bg-emerald-500/25 text-white border-l-4 border-emerald-400 font-semibold shadow-inner shadow-emerald-900/20'
+                      : 'text-emerald-100/75 hover:text-white hover:bg-emerald-800/40'
                   )
                 }
               >
@@ -159,14 +159,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
 
       {/* User Info Footer */}
       {user && (
-        <div className="p-3 border-t border-white/10 shrink-0 bg-white/[0.02]">
+        <div className="p-3 border-t border-emerald-700/40 shrink-0 bg-emerald-950/30">
           <div
             className={clsx(
               'flex items-center gap-3 p-2 rounded-xl transition-colors',
               isCollapsed ? 'justify-center' : 'justify-start'
             )}
           >
-            <div className="w-9 h-9 rounded-full bg-blue-600/30 border border-blue-500/40 text-blue-300 flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-9 h-9 rounded-full bg-emerald-500/30 border border-emerald-400/40 text-emerald-200 flex items-center justify-center font-bold text-sm shrink-0">
               {user.firstName ? user.firstName.charAt(0).toUpperCase() : <Shield className="w-4 h-4" />}
             </div>
             {!isCollapsed && (

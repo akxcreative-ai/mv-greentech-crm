@@ -52,7 +52,7 @@ export const StatCard: React.FC<StatCardProps> = ({
     <div
       className={twMerge(
         clsx(
-          'glass-card p-5 border-l-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20',
+          'glass-card p-5 border-l-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-950/5',
           borderColors[color],
           className
         )
@@ -60,13 +60,13 @@ export const StatCard: React.FC<StatCardProps> = ({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-white/50 uppercase tracking-wider truncate">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider truncate">
             {label}
           </p>
           {isLoading ? (
-            <div className="h-8 w-24 bg-white/10 rounded animate-pulse mt-2"></div>
+            <div className="h-8 w-24 bg-slate-100 rounded animate-pulse mt-2"></div>
           ) : (
-            <h3 className="text-2xl font-bold text-white mt-1 tracking-tight truncate">
+            <h3 className="text-2xl font-bold text-slate-900 mt-1 tracking-tight truncate">
               {value}
             </h3>
           )}
@@ -79,24 +79,24 @@ export const StatCard: React.FC<StatCardProps> = ({
       {trend && !isLoading && (
         <div className="mt-3.5 flex items-center gap-1.5 text-xs">
           {trend.isPositive === true && (
-            <span className="flex items-center text-emerald-400 font-medium">
+            <span className="flex items-center text-emerald-600 font-semibold">
               <TrendingUp className="w-3.5 h-3.5 mr-0.5" />
               {typeof trend.value === 'number' ? `+${trend.value}%` : trend.value}
             </span>
           )}
           {trend.isPositive === false && (
-            <span className="flex items-center text-rose-400 font-medium">
+            <span className="flex items-center text-rose-600 font-semibold">
               <TrendingDown className="w-3.5 h-3.5 mr-0.5" />
               {typeof trend.value === 'number' ? `-${trend.value}%` : trend.value}
             </span>
           )}
           {trend.isPositive === undefined && (
-            <span className="flex items-center text-white/50 font-medium">
+            <span className="flex items-center text-slate-500 font-medium">
               <Minus className="w-3.5 h-3.5 mr-0.5" />
               {trend.value}
             </span>
           )}
-          {trend.label && <span className="text-white/40">{trend.label}</span>}
+          {trend.label && <span className="text-slate-400">{trend.label}</span>}
         </div>
       )}
     </div>

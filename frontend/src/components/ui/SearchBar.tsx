@@ -41,7 +41,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className={twMerge('relative flex items-center w-full max-w-md', className)}>
-      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 flex items-center z-10">
+      <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 flex items-center z-10">
         <Search className="w-4 h-4" />
       </div>
       <input
@@ -51,15 +51,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         placeholder={placeholder}
         style={{ paddingLeft: '2.75rem', paddingRight: internalValue ? '2.5rem' : '1rem' }}
         className={clsx(
-          'glass-input !pl-11 pr-9 text-sm text-white placeholder:text-white/35',
-          'focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+          'glass-input !pl-11 pr-9 text-sm text-slate-800 placeholder:text-slate-400',
+          'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
         )}
       />
       {internalValue && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-white/40 hover:text-white transition-colors cursor-pointer z-10"
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-400 hover:text-slate-700 transition-colors cursor-pointer z-10"
         >
           <X className="w-3.5 h-3.5" />
         </button>

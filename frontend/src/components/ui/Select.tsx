@@ -24,9 +24,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={selectId} className="block text-xs font-medium text-white/80">
+          <label htmlFor={selectId} className="block text-xs font-medium text-slate-700">
             {label}
-            {props.required && <span className="text-rose-400 ml-1">*</span>}
+            {props.required && <span className="text-rose-500 ml-1">*</span>}
           </label>
         )}
         <div className="relative flex items-center">
@@ -35,7 +35,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             className={twMerge(
               clsx(
-                'glass-input appearance-none pr-10 cursor-pointer bg-[#0B1220]/90 text-white',
+                'glass-input appearance-none pr-10 cursor-pointer bg-white text-slate-800',
                 error && 'border-rose-500 focus:border-rose-500',
                 className
               )
@@ -43,7 +43,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {...props}
           >
             {placeholder && (
-              <option value="" disabled className="bg-slate-900 text-white/40">
+              <option value="" disabled className="bg-white text-slate-400">
                 {placeholder}
               </option>
             )}
@@ -53,19 +53,19 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                     key={opt.value}
                     value={opt.value}
                     disabled={opt.disabled}
-                    className="bg-slate-900 text-white"
+                    className="bg-white text-slate-800"
                   >
                     {opt.label}
                   </option>
                 ))
               : children}
           </select>
-          <div className="absolute right-3 pointer-events-none text-white/40 flex items-center">
+          <div className="absolute right-3 pointer-events-none text-slate-400 flex items-center">
             <ChevronDown className="w-4 h-4" />
           </div>
         </div>
-        {error && <p className="text-xs text-rose-400">{error}</p>}
-        {!error && helperText && <p className="text-xs text-white/40">{helperText}</p>}
+        {error && <p className="text-xs text-rose-500">{error}</p>}
+        {!error && helperText && <p className="text-xs text-slate-500">{helperText}</p>}
       </div>
     );
   }

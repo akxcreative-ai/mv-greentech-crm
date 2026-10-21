@@ -33,14 +33,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const variantClasses = {
-      primary: 'btn-primary shadow-lg shadow-blue-500/20 text-white',
-      secondary: 'btn-secondary text-white/90',
+      primary: 'btn-primary shadow-md shadow-emerald-600/20 text-white',
+      secondary: 'btn-secondary text-slate-800',
       success:
-        'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 transition-all border border-emerald-400/30',
+        'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-500/20 transition-all border border-emerald-500',
       danger:
-        'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-500/20 transition-all border border-rose-400/30',
+        'bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-500/20 transition-all border border-rose-500',
       ghost:
-        'bg-transparent hover:bg-white/10 text-white/70 hover:text-white transition-colors border border-transparent',
+        'bg-transparent hover:bg-slate-100 text-slate-700 hover:text-slate-900 transition-colors border border-transparent',
     };
 
     return (

@@ -17,14 +17,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-xs font-medium text-white/80">
+          <label htmlFor={inputId} className="block text-xs font-medium text-slate-700">
             {label}
-            {props.required && <span className="text-rose-400 ml-1">*</span>}
+            {props.required && <span className="text-rose-500 ml-1">*</span>}
           </label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 flex items-center z-10">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 flex items-center z-10">
               {leftIcon}
             </div>
           )}
@@ -38,7 +38,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }}
             className={twMerge(
               clsx(
-                'glass-input placeholder:text-white/30',
+                'glass-input placeholder:text-slate-400',
                 leftIcon && '!pl-11',
                 rightIcon && '!pr-11',
                 error && 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20',
@@ -48,13 +48,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-white/50 z-10">
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-slate-400 z-10">
               {rightIcon}
             </div>
           )}
         </div>
-        {error && <p className="text-xs text-rose-400 font-normal">{error}</p>}
-        {!error && helperText && <p className="text-xs text-white/40">{helperText}</p>}
+        {error && <p className="text-xs text-rose-500 font-normal">{error}</p>}
+        {!error && helperText && <p className="text-xs text-slate-500">{helperText}</p>}
       </div>
     );
   }
