@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { settingsApi } from '../../lib/api';
 import {
   LayoutDashboard,
   Target,
@@ -32,6 +34,35 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse }) => {
   const { user } = useAuth();
+
+  const { data: settingsData } = useQuery({
+    queryKey: ['settings-all'],
+    queryFn: () => settingsApi.getAll(),
+    staleTime: 30000,
+  });
+
+  const [companyName, setCompanyName] = useState<string>(
+    () => localStorage.getItem('mv_company_name') || 'MV GREENTECH'
+  );
+
+  useEffect(() => {
+    const handleUpdated = () => {
+      const stored = localStorage.getItem('mv_company_name');
+      if (stored) setCompanyName(stored);
+    };
+    window.addEventListener('company_settings_updated', handleUpdated);
+    return () => window.removeEventListener('company_settings_updated', handleUpdated);
+  }, []);
+
+  useEffect(() => {
+    const profile =
+      (settingsData as any)?.settings?.company_profile ||
+      (settingsData as any)?.data?.find((s: any) => s.key === 'company_profile')?.value;
+    if (profile?.companyName) {
+      setCompanyName(profile.companyName);
+      localStorage.setItem('mv_company_name', profile.companyName);
+    }
+  }, [settingsData]);
 
   const getNavItems = () => {
     switch (user?.role) {
@@ -111,8 +142,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
           </div>
           {!isCollapsed && (
             <div className="flex flex-col truncate">
-              <span className="font-bold text-white text-sm tracking-wide">
-                MV GREENTECH
+              <span className="font-bold text-white text-sm tracking-wide truncate max-w-[135px]" title={companyName}>
+                {companyName}
               </span>
               <span className="text-[10px] text-emerald-300 font-semibold tracking-widest uppercase">
                 {user?.role?.replace(/_/g, ' ') || 'CRM Portal'}

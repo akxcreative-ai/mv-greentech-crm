@@ -171,17 +171,29 @@ router.get('/:id/pdf', async (req, res, next) => {
         const doc = new pdfkit_1.default({ margin: 40, size: 'A4' });
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="Quotation-${quotation.quotationNumber}.pdf"`);
+        // Fetch dynamic company profile settings
+        const companySetting = await prisma_1.prisma.setting.findUnique({
+            where: { key: 'company_profile' },
+        });
+        const companyData = companySetting?.value || {};
+        const companyName = companyData.companyName || 'MV GREENTECH PVT LTD';
+        const companyAddress = companyData.companyAddress || 'Plot No. 42, Green Industrial Park, Pune, Maharashtra 411019';
+        const companyGst = companyData.companyGst || '27AAECM1234F1Z5';
+        const companyCin = companyData.companyCin || '';
+        const bankName = companyData.bankName || 'HDFC Bank Ltd';
+        const bankAccount = companyData.bankAccount || '50200067891234';
+        const bankIfsc = companyData.bankIfsc || 'HDFC0001234';
         doc.pipe(res);
-        // Header: Company Details
+        // Header: Dynamic Company Details
         doc
             .fontSize(20)
             .fillColor('#0f4c3a')
-            .text('MV GREENTECH PVT LTD', { align: 'left' });
+            .text(companyName, { align: 'left' });
         doc
             .fontSize(9)
             .fillColor('#555555')
-            .text('Industrial Automation & Water Management Systems', { align: 'left' })
-            .text('Website: www.mvgreentech.com | Email: sales@mvgreentech.com')
+            .text(companyAddress, { align: 'left' })
+            .text(`GSTIN: ${companyGst}${companyCin ? ` | CIN: ${companyCin}` : ''}`)
             .moveDown(0.5);
         // Divider
         doc
@@ -309,6 +321,16 @@ router.get('/:id/pdf', async (req, res, next) => {
             .text(`1. Payment Terms: ${quotation.paymentTerms || 'Standard Payment Terms apply.'}`)
             .text(`2. Delivery Terms: ${quotation.deliveryTerms || 'Subject to dispatch confirmation.'}`)
             .text(`3. Validity: This quotation is valid until ${quotation.validityDate.toISOString().split('T')[0]}.`);
+        if (bankName && bankAccount) {
+            doc
+                .moveDown(0.3)
+                .fontSize(9)
+                .fillColor('#0f4c3a')
+                .text('Bank Payment Credentials for RTGS / NEFT / IMPS:')
+                .fontSize(8)
+                .fillColor('#4b5563')
+                .text(`Bank Name: ${bankName} | Account No: ${bankAccount} | IFSC Code: ${bankIfsc}`);
+        }
         if (quotation.notes) {
             doc.moveDown(0.5).text(`Notes: ${quotation.notes}`);
         }

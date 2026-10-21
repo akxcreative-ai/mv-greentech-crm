@@ -6,8 +6,8 @@ const prisma_1 = require("../lib/prisma");
 const auth_1 = require("../middleware/auth");
 const validate_1 = require("../middleware/validate");
 const router = (0, express_1.Router)();
-// Settings are restricted to ADMINISTRATOR
-router.use(auth_1.verifyToken, (0, auth_1.requireRole)('ADMINISTRATOR'));
+// Settings are accessible to all authenticated team members
+router.use(auth_1.verifyToken);
 const updateSettingSchema = zod_1.z.object({
     value: zod_1.z.any(),
 });
@@ -52,8 +52,8 @@ router.get('/:key', async (req, res, next) => {
         next(error);
     }
 });
-// PUT /:key - Upsert setting
-router.put('/:key', (0, validate_1.validate)(updateSettingSchema), async (req, res, next) => {
+// PUT /:key - Upsert setting (Administrator & Director only)
+router.put('/:key', (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR'), (0, validate_1.validate)(updateSettingSchema), async (req, res, next) => {
     try {
         const { key } = req.params;
         const { value } = req.body;

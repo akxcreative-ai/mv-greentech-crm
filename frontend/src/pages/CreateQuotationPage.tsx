@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,7 +9,7 @@ import {
   Save,
   Send,
 } from 'lucide-react';
-import { quotationsApi, customersApi, leadsApi, itemsApi } from '../lib/api';
+import { quotationsApi, customersApi, leadsApi, itemsApi, settingsApi } from '../lib/api';
 import type { QuotationItem, QuotationStatus } from '../lib/types';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
@@ -87,6 +87,29 @@ export const CreateQuotationPage: React.FC = () => {
     queryKey: ['items-all'],
     queryFn: () => itemsApi.list({ limit: 200 }),
   });
+
+  const { data: settingsResponse } = useQuery({
+    queryKey: ['settings-all'],
+    queryFn: () => settingsApi.getAll(),
+  });
+
+  useEffect(() => {
+    if (settingsResponse) {
+      const companyProfile =
+        (settingsResponse as any)?.settings?.company_profile ||
+        (settingsResponse as any)?.data?.find((s: any) => s.key === 'company_profile')?.value;
+
+      if (companyProfile) {
+        if (companyProfile.defaultValidity) {
+          const days = parseInt(companyProfile.defaultValidity, 10) || 30;
+          setValidityDate(new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+        }
+        if (companyProfile.bankName && companyProfile.bankAccount) {
+          setPaymentTerms(`100% advance or RTGS/NEFT to ${companyProfile.bankName} (A/C: ${companyProfile.bankAccount})`);
+        }
+      }
+    }
+  }, [settingsResponse]);
 
   // Handle lead selection & auto-fill customer info
   const handleLeadSelect = (selectedLeadId: string) => {

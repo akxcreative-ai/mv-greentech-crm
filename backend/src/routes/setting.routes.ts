@@ -6,8 +6,8 @@ import { validate } from '../middleware/validate';
 
 const router = Router();
 
-// Settings are restricted to ADMINISTRATOR
-router.use(verifyToken, requireRole('ADMINISTRATOR'));
+// Settings are accessible to all authenticated team members
+router.use(verifyToken);
 
 const updateSettingSchema = z.object({
   value: z.any(),
@@ -59,9 +59,10 @@ router.get('/:key', async (req: Request, res: Response, next: NextFunction): Pro
   }
 });
 
-// PUT /:key - Upsert setting
+// PUT /:key - Upsert setting (Administrator & Director only)
 router.put(
   '/:key',
+  requireRole('ADMINISTRATOR', 'DIRECTOR'),
   validate(updateSettingSchema),
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
