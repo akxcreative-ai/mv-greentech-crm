@@ -36,19 +36,26 @@ export interface DataTableProps<T> {
 }
 
 function getPageNumbers(currentPage: number, totalPages: number): (number | 'ellipsis')[] {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const current = Number(currentPage) || 1;
+  const total = Number(totalPages) || 1;
+
+  if (total <= 1) {
+    return [1];
   }
 
-  if (currentPage <= 4) {
-    return [1, 2, 3, 4, 5, 'ellipsis', totalPages];
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
   }
 
-  if (currentPage >= totalPages - 3) {
-    return [1, 'ellipsis', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, 'ellipsis', total];
   }
 
-  return [1, 'ellipsis', currentPage - 1, currentPage, currentPage + 1, 'ellipsis', totalPages];
+  if (current >= total - 3) {
+    return [1, 'ellipsis', total - 4, total - 3, total - 2, total - 1, total];
+  }
+
+  return [1, 'ellipsis', current - 1, current, current + 1, 'ellipsis', total];
 }
 
 export function DataTable<T extends { id?: string | number }>({
@@ -70,8 +77,10 @@ export function DataTable<T extends { id?: string | number }>({
 
   const handlePageChange = (targetPage: number) => {
     const pageNum = Number(targetPage);
+    const totalPages = Number(pagination?.totalPages) || 1;
+    const currentPage = Number(pagination?.page) || 1;
     if (!pagination || isNaN(pageNum)) return;
-    if (pageNum < 1 || pageNum > Number(pagination.totalPages) || pageNum === Number(pagination.page)) return;
+    if (pageNum < 1 || pageNum > totalPages || pageNum === currentPage) return;
 
     // Auto-scroll table container back to the left so user immediately sees row numbers & product codes
     if (tableContainerRef.current) {
@@ -230,7 +239,7 @@ export function DataTable<T extends { id?: string | number }>({
             )}
           </div>
 
-          {pagination.totalPages > 1 && (
+          {Number(pagination.totalPages) >= 1 && (
             <div className="flex items-center gap-1 flex-wrap justify-center">
               {/* First Page */}
               <button
@@ -284,9 +293,9 @@ export function DataTable<T extends { id?: string | number }>({
                         handlePageChange(pageNum);
                       }}
                       className={clsx(
-                        'min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center justify-center',
+                        'min-w-[34px] h-8 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center',
                         isCurrent
-                          ? 'bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-600'
+                          ? '!bg-emerald-600 !text-white shadow-md ring-2 ring-emerald-600'
                           : 'bg-white border border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 shadow-2xs'
                       )}
                     >
