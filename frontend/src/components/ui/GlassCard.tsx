@@ -25,7 +25,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
     <div
       className={twMerge(
         clsx(
-          'glass-card overflow-hidden transition-all duration-200',
+          'glass-card transition-all duration-200',
+          !className?.includes('overflow-') && 'overflow-hidden',
           hover && 'glass-card-hover',
           padding && 'p-6',
           className
