@@ -248,25 +248,55 @@ export const ItemMasterPage: React.FC = () => {
       const text = await file.text();
       const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
       if (lines.length < 2) {
-        alert('Selected CSV is empty or missing data rows.');
+        alert('Selected CSV file is empty or missing data rows.');
         return;
       }
 
-      // Find the header row containing "Product code" or "Item Code"
+      // Detect separator: comma or semicolon or tab
+      const firstNonEmpty = lines[0];
+      const sep = firstNonEmpty.includes(';') ? ';' : firstNonEmpty.includes('\t') ? '\t' : ',';
+
+      // Find the header row containing "Product code" or "Item Code" or "Product" or "Code"
       let headerLineIdx = lines.findIndex((l) => {
         const lower = l.toLowerCase();
-        return lower.includes('product code') || lower.includes('item code');
+        return (
+          lower.includes('product code') ||
+          lower.includes('item code') ||
+          lower.includes('itemcode') ||
+          lower.includes('product description') ||
+          lower.includes('standard price')
+        );
       });
 
       if (headerLineIdx === -1) {
         headerLineIdx = 0;
       }
 
-      const headers = lines[headerLineIdx].split(',').map((h) => h.trim().replace(/^"|"$/g, '').toLowerCase());
-      const getIndex = (names: string[]) => headers.findIndex((h) => names.some((n) => h === n || h.includes(n)));
+      const splitRow = (rowStr: string): string[] => {
+        const values: string[] = [];
+        let inQuote = false;
+        let cur = '';
+        for (let i = 0; i < rowStr.length; i++) {
+          const c = rowStr[i];
+          if (c === '"') {
+            inQuote = !inQuote;
+          } else if (c === sep && !inQuote) {
+            values.push(cur.trim().replace(/^"|"$/g, ''));
+            cur = '';
+          } else {
+            cur += c;
+          }
+        }
+        values.push(cur.trim().replace(/^"|"$/g, ''));
+        return values;
+      };
 
-      const codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part']);
-      const descIdx = getIndex(['product description', 'description', 'desc', 'name']);
+      const headers = splitRow(lines[headerLineIdx]).map((h) => h.toLowerCase().trim());
+      const getIndex = (names: string[]) =>
+        headers.findIndex((h) => names.some((n) => h === n || h.includes(n)));
+
+      let codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part no', 'part', 'model']);
+      let descIdx = getIndex(['product description', 'description', 'desc', 'product name', 'item name', 'name']);
       const catIdx = getIndex(['category', 'product category', 'type']);
       const picIdx = getIndex(['picture', 'image', 'photo']);
       const supIdx = getIndex(['supplier', 'vendor']);
@@ -279,6 +309,19 @@ export const ItemMasterPage: React.FC = () => {
       const leadIdx = getIndex(['lead time', 'lead']);
       const statusIdx = getIndex(['status']);
 
+      // If code column not found by name, fallback intelligently
+      if (codeIdx === -1) {
+        // If column 1 has S.no / Sno, then column 2 is usually Product Code
+        if (headers.length > 2 && (headers[0].includes('s.no') || headers[1].includes('s.no') || headers[0] === '')) {
+          codeIdx = headers[0] === '' ? 2 : 1;
+        } else {
+          codeIdx = 0;
+        }
+      }
+      if (descIdx === -1 && headers.length > codeIdx + 1) {
+        descIdx = codeIdx + 1;
+      }
+
       const existingCodes = new Set((itemsResponse?.data || []).map((i) => i.itemCode.toLowerCase().trim()));
       const seenInCsv = new Set<string>();
       const duplicatesFound: string[] = [];
@@ -286,27 +329,24 @@ export const ItemMasterPage: React.FC = () => {
 
       for (let r = headerLineIdx + 1; r < lines.length; r++) {
         const line = lines[r];
-        const values: string[] = [];
-        let inQuote = false;
-        let cur = '';
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') {
-            inQuote = !inQuote;
-          } else if (c === ',' && !inQuote) {
-            values.push(cur.trim().replace(/^"|"$/g, ''));
-            cur = '';
-          } else {
-            cur += c;
-          }
-        }
-        values.push(cur.trim().replace(/^"|"$/g, ''));
+        const values = splitRow(line);
 
-        const rawCode = (codeIdx >= 0 && values[codeIdx]) ? values[codeIdx].trim() : '';
+        let rawCode = (codeIdx >= 0 && values[codeIdx]) ? values[codeIdx].trim() : '';
+        const rawDesc = (descIdx >= 0 && values[descIdx]) ? values[descIdx].trim() : '';
 
         // Skip blank rows or legend/template instruction rows
-        if (!rawCode || rawCode.toLowerCase().includes('part no is') || rawCode.toLowerCase().includes('supplier name') || rawCode.toLowerCase().includes('material code')) {
+        if (
+          (!rawCode && !rawDesc) ||
+          rawCode.toLowerCase().includes('part no is') ||
+          rawCode.toLowerCase().includes('supplier name') ||
+          rawCode.toLowerCase().includes('material code') ||
+          rawDesc.toLowerCase().includes('material description')
+        ) {
           continue;
+        }
+
+        if (!rawCode && rawDesc) {
+          rawCode = `ITEM-${r}`;
         }
 
         const normalized = rawCode.toLowerCase();
@@ -326,7 +366,7 @@ export const ItemMasterPage: React.FC = () => {
 
         parsed.push({
           itemCode: rawCode,
-          description: (descIdx >= 0 && values[descIdx]) ? values[descIdx] : 'Item ' + rawCode,
+          description: rawDesc || 'Item ' + rawCode,
           category: (catIdx >= 0 && values[catIdx]) ? values[catIdx].trim() : undefined,
           imageUrl: (picIdx >= 0 && values[picIdx]) ? values[picIdx].trim() : undefined,
           supplierCode: (supIdx >= 0 && values[supIdx]) ? values[supIdx] : 'KJT',
@@ -342,6 +382,12 @@ export const ItemMasterPage: React.FC = () => {
         });
       }
 
+      if (parsed.length === 0) {
+        alert(
+          'CSV file me koi valid product data row nahi mili. Kripya file me kam se kam ek product ka Code ya Description likhein aur dobara upload karein.'
+        );
+      }
+
       setPreviewItems(parsed);
       setPreviewDuplicates(duplicatesFound);
       setShowPreviewModal(true);
@@ -353,9 +399,15 @@ export const ItemMasterPage: React.FC = () => {
   };
 
   const confirmImport = async () => {
+    const validItems = previewItems.filter((i) => !previewDuplicates.includes(i.itemCode));
+    if (validItems.length === 0) {
+      alert('Import karne ke liye koi naya unique item nahi mila. Duplicate ya empty rows skip ho chuki hain.');
+      return;
+    }
+
     setIsImporting(true);
     try {
-      const res = await itemsApi.importItems(previewItems);
+      const res = await itemsApi.importItems(validItems);
       queryClient.invalidateQueries({ queryKey: ['items'] });
       setShowPreviewModal(false);
 
@@ -364,7 +416,7 @@ export const ItemMasterPage: React.FC = () => {
       } else {
         setImportSummary({
           total: previewItems.length,
-          imported: previewItems.length - previewDuplicates.length,
+          imported: validItems.length,
           skipped: previewDuplicates.length,
           errors: previewDuplicates.map((d) => `Duplicate item code skipped: ${d}`),
         });
@@ -973,9 +1025,12 @@ export const ItemMasterPage: React.FC = () => {
                   variant="primary"
                   onClick={confirmImport}
                   isLoading={isImporting}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  disabled={previewItems.length - previewDuplicates.length <= 0}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Confirm & Import ({previewItems.length - previewDuplicates.length} Items)
+                  {previewItems.length - previewDuplicates.length > 0
+                    ? `Confirm & Import (${previewItems.length - previewDuplicates.length} Items)`
+                    : 'No Items to Import (0 Items)'}
                 </Button>
               </div>
             </div>
