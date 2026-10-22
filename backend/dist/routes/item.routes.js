@@ -327,4 +327,34 @@ router.put('/:id', (0, validate_1.validate)(updateItemSchema), async (req, res, 
         next(error);
     }
 });
+// DELETE /:id - Delete item
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const existing = await prisma_1.prisma.item.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ success: false, error: 'Item not found' });
+            return;
+        }
+        // Safely decouple foreign key references before deleting
+        await prisma_1.prisma.quotationItem.updateMany({
+            where: { itemId: id },
+            data: { itemId: null },
+        });
+        await prisma_1.prisma.orderItem.updateMany({
+            where: { itemId: id },
+            data: { itemId: null },
+        });
+        await prisma_1.prisma.item.delete({
+            where: { id },
+        });
+        res.json({
+            success: true,
+            message: `Item "${existing.itemCode}" deleted successfully`,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
 exports.default = router;

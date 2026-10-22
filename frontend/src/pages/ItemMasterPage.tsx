@@ -209,6 +209,9 @@ export const ItemMasterPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['items'] });
     },
+    onError: (err: any) => {
+      alert(err.response?.data?.error || err.message || 'Failed to delete item.');
+    },
   });
 
   // Download official CSV template
