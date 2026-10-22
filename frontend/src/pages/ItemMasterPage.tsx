@@ -56,6 +56,7 @@ export const ItemMasterPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,14 +79,15 @@ export const ItemMasterPage: React.FC = () => {
 
   // Fetch items
   const { data: itemsResponse, isLoading } = useQuery({
-    queryKey: ['items', { page, search, category: selectedCategory }],
+    queryKey: ['items', { page, limit, search, category: selectedCategory }],
     queryFn: () =>
       itemsApi.list({
         page,
-        limit: 10,
+        limit,
         search: search || undefined,
         category: selectedCategory || undefined,
       }),
+    placeholderData: (previousData) => previousData,
   });
 
   const {
@@ -435,7 +437,7 @@ export const ItemMasterPage: React.FC = () => {
       accessorKey: 'sno',
       render: (_item, idx) => (
         <span className="text-xs text-slate-500 font-medium">
-          {(page - 1) * 10 + idx + 1}
+          {(page - 1) * limit + idx + 1}
         </span>
       ),
     },
@@ -707,7 +709,14 @@ export const ItemMasterPage: React.FC = () => {
           data={itemsResponse?.data || []}
           isLoading={isLoading}
           pagination={itemsResponse?.pagination}
-          onPageChange={setPage}
+          onPageChange={(newPage) => {
+            setPage(newPage);
+          }}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 25, 50, 100]}
           emptyMessage="No items found."
         />
       </GlassCard>
