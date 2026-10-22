@@ -451,7 +451,7 @@ export const CreateQuotationPage: React.FC = () => {
                       <option value="">Custom Item</option>
                       {masterItemsResponse?.data?.map((mi) => (
                         <option key={mi.id} value={mi.id}>
-                          {mi.itemCode}
+                          {mi.itemCode}{mi.category ? ` (${mi.category})` : ''} - {mi.description.slice(0, 35)}
                         </option>
                       ))}
                     </select>

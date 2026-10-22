@@ -14,6 +14,7 @@ const itemStatusEnum = z.enum(['ACTIVE', 'DISCONTINUED', 'SUPERSEDED']);
 const createItemSchema = z.object({
   itemCode: z.string().min(1, 'Item code is required'),
   description: z.string().min(1, 'Description is required'),
+  category: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   unit: z.string().optional().default('PCS'),
   standardCost: z.number().or(z.string()).optional().nullable(),
@@ -31,6 +32,7 @@ const createItemSchema = z.object({
 const updateItemSchema = z.object({
   itemCode: z.string().min(1).optional(),
   description: z.string().min(1).optional(),
+  category: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   unit: z.string().optional().nullable(),
   standardCost: z.number().or(z.string()).optional().nullable(),
@@ -148,6 +150,7 @@ router.post('/import', async (req: Request, res: Response, next: NextFunction): 
       itemsToCreate.push({
         itemCode: item.itemCode.trim(),
         description: item.description.trim(),
+        category: item.category ? String(item.category).trim() : null,
         imageUrl: item.imageUrl ? String(item.imageUrl).trim() : null,
         unit: item.unit ? String(item.unit).trim() : 'PCS',
         standardCost: item.standardCost !== undefined && item.standardCost !== null ? new Prisma.Decimal(item.standardCost) : null,
@@ -189,6 +192,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const skip = (page - 1) * limit;
 
     const search = req.query.search as string | undefined;
+    const category = req.query.category as string | undefined;
     const status = req.query.status as ItemStatus | undefined;
 
     const where: any = {};
@@ -197,12 +201,33 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
       where.status = status;
     }
 
+    const conditions: any[] = [];
+
+    if (category) {
+      conditions.push({
+        OR: [
+          { category: { contains: category, mode: 'insensitive' } },
+          { description: { contains: category, mode: 'insensitive' } },
+          { itemCode: { contains: category, mode: 'insensitive' } },
+        ],
+      });
+    }
+
     if (search) {
-      where.OR = [
-        { itemCode: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { supplierCode: { contains: search, mode: 'insensitive' } },
-      ];
+      conditions.push({
+        OR: [
+          { itemCode: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { supplierCode: { contains: search, mode: 'insensitive' } },
+          { category: { contains: search, mode: 'insensitive' } },
+        ],
+      });
+    }
+
+    if (conditions.length === 1) {
+      where.OR = conditions[0].OR;
+    } else if (conditions.length > 1) {
+      where.AND = conditions;
     }
 
     const [total, items] = await Promise.all([
@@ -262,6 +287,7 @@ router.post(
       const {
         itemCode,
         description,
+        category,
         imageUrl,
         unit,
         standardCost,
@@ -289,6 +315,7 @@ router.post(
         data: {
           itemCode: itemCode.trim(),
           description: description.trim(),
+          category: category || null,
           imageUrl: imageUrl || null,
           unit: unit || 'PCS',
           standardCost: standardCost !== undefined && standardCost !== null ? new Prisma.Decimal(standardCost) : null,

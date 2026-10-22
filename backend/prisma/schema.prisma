@@ -257,6 +257,7 @@ model Item {
   id               String     @id @default(uuid())
   itemCode         String     @unique
   description      String
+  category         String?
   imageUrl         String?    @db.Text
   unit             String?    @default("PCS")
   standardCost     Decimal?   @db.Decimal(15, 2)
@@ -277,6 +278,7 @@ model Item {
 
   @@index([itemCode])
   @@index([description])
+  @@index([category])
   @@index([status])
 }
 

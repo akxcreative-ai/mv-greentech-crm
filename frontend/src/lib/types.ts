@@ -113,6 +113,7 @@ export interface Item {
   id: string;
   itemCode: string;
   description: string;
+  category?: string | null;
   imageUrl?: string | null;
   unit?: string | null;
   standardCost?: number | string | null;

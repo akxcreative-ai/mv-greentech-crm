@@ -28,10 +28,13 @@ import { SearchBar } from '../components/ui/SearchBar';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
+import { OurProductsMenu } from '../components/items/OurProductsMenu';
+import { PRODUCT_CATEGORIES } from '../lib/productCategories';
 
 const itemSchema = z.object({
   itemCode: z.string().min(1, 'Product code is required'),
   description: z.string().min(2, 'Description is required'),
+  category: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   unit: z.string().optional(),
   standardCost: z.coerce.number().optional(),
@@ -54,6 +57,7 @@ export const ItemMasterPage: React.FC = () => {
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -74,8 +78,14 @@ export const ItemMasterPage: React.FC = () => {
 
   // Fetch items
   const { data: itemsResponse, isLoading } = useQuery({
-    queryKey: ['items', { page, search }],
-    queryFn: () => itemsApi.list({ page, limit: 10, search: search || undefined }),
+    queryKey: ['items', { page, search, category: selectedCategory }],
+    queryFn: () =>
+      itemsApi.list({
+        page,
+        limit: 10,
+        search: search || undefined,
+        category: selectedCategory || undefined,
+      }),
   });
 
   const {
@@ -88,6 +98,7 @@ export const ItemMasterPage: React.FC = () => {
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema) as any,
     defaultValues: {
+      category: '',
       unit: 'PCS',
       currency: 'INR',
       status: 'ACTIVE',
@@ -141,6 +152,7 @@ export const ItemMasterPage: React.FC = () => {
     reset({
       itemCode: '',
       description: '',
+      category: selectedCategory || '',
       imageUrl: '',
       unit: 'PCS',
       standardCost: 0,
@@ -162,6 +174,7 @@ export const ItemMasterPage: React.FC = () => {
     reset({
       itemCode: item.itemCode,
       description: item.description,
+      category: item.category || '',
       imageUrl: item.imageUrl || '',
       unit: item.unit || 'PCS',
       standardCost: Number(item.standardCost) || 0,
@@ -251,6 +264,7 @@ export const ItemMasterPage: React.FC = () => {
 
       const codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part']);
       const descIdx = getIndex(['product description', 'description', 'desc', 'name']);
+      const catIdx = getIndex(['category', 'product category', 'type']);
       const picIdx = getIndex(['picture', 'image', 'photo']);
       const supIdx = getIndex(['supplier', 'vendor']);
       const bomIdx = getIndex(['bom', 'ppq']);
@@ -310,6 +324,7 @@ export const ItemMasterPage: React.FC = () => {
         parsed.push({
           itemCode: rawCode,
           description: (descIdx >= 0 && values[descIdx]) ? values[descIdx] : 'Item ' + rawCode,
+          category: (catIdx >= 0 && values[catIdx]) ? values[catIdx].trim() : undefined,
           imageUrl: (picIdx >= 0 && values[picIdx]) ? values[picIdx].trim() : undefined,
           supplierCode: (supIdx >= 0 && values[supIdx]) ? values[supIdx] : 'KJT',
           ppq: (bomIdx >= 0 && values[bomIdx]) ? values[bomIdx] : '',
@@ -574,16 +589,60 @@ export const ItemMasterPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <GlassCard padding={false} className="p-4">
-        <SearchBar
-          placeholder="Search by Product code or Product Description..."
-          value={search}
-          onSearch={(val) => {
-            setSearch(val);
-            setPage(1);
-          }}
-        />
+      {/* Search Bar & Our Products Category Dropdown */}
+      <GlassCard padding={false} className="p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex-1">
+            <SearchBar
+              placeholder="Search by Product code, Description, or Category..."
+              value={search}
+              onSearch={(val) => {
+                setSearch(val);
+                setPage(1);
+              }}
+            />
+          </div>
+
+          <OurProductsMenu
+            selectedCategory={selectedCategory}
+            onSelectCategory={(cat) => {
+              setSelectedCategory(cat);
+              setPage(1);
+            }}
+          />
+        </div>
+
+        {/* Active Category Filter Tag */}
+        {selectedCategory && (
+          <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+            <span className="text-slate-500 font-medium">Filtered by:</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>{selectedCategory}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setPage(1);
+                }}
+                className="p-0.5 rounded-full hover:bg-emerald-200 text-emerald-700 transition-colors ml-1"
+                title="Clear category filter"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCategory(null);
+                setPage(1);
+              }}
+              className="text-[11px] text-slate-400 hover:text-slate-600 underline ml-2 cursor-pointer"
+            >
+              Clear & View All Products
+            </button>
+          </div>
+        )}
       </GlassCard>
 
       {/* Table */}
@@ -711,6 +770,27 @@ export const ItemMasterPage: React.FC = () => {
                   </p>
                 </div>
               )}
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Category / Product Line (Our Products)
+              </label>
+              <select
+                {...register('category')}
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+              >
+                <option value="">-- Select Category / Subcategory (Optional) --</option>
+                {PRODUCT_CATEGORIES.map((cat) => (
+                  <optgroup key={cat.id} label={cat.name}>
+                    {cat.subcategories.map((sub) => (
+                      <option key={sub.id} value={sub.name}>
+                        {sub.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
 
             <div className="md:col-span-2">

@@ -12,6 +12,7 @@ const itemStatusEnum = zod_1.z.enum(['ACTIVE', 'DISCONTINUED', 'SUPERSEDED']);
 const createItemSchema = zod_1.z.object({
     itemCode: zod_1.z.string().min(1, 'Item code is required'),
     description: zod_1.z.string().min(1, 'Description is required'),
+    category: zod_1.z.string().optional().nullable(),
     imageUrl: zod_1.z.string().optional().nullable(),
     unit: zod_1.z.string().optional().default('PCS'),
     standardCost: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
@@ -28,6 +29,7 @@ const createItemSchema = zod_1.z.object({
 const updateItemSchema = zod_1.z.object({
     itemCode: zod_1.z.string().min(1).optional(),
     description: zod_1.z.string().min(1).optional(),
+    category: zod_1.z.string().optional().nullable(),
     imageUrl: zod_1.z.string().optional().nullable(),
     unit: zod_1.z.string().optional().nullable(),
     standardCost: zod_1.z.number().or(zod_1.z.string()).optional().nullable(),
@@ -129,6 +131,7 @@ router.post('/import', async (req, res, next) => {
             itemsToCreate.push({
                 itemCode: item.itemCode.trim(),
                 description: item.description.trim(),
+                category: item.category ? String(item.category).trim() : null,
                 imageUrl: item.imageUrl ? String(item.imageUrl).trim() : null,
                 unit: item.unit ? String(item.unit).trim() : 'PCS',
                 standardCost: item.standardCost !== undefined && item.standardCost !== null ? new client_1.Prisma.Decimal(item.standardCost) : null,
@@ -167,17 +170,37 @@ router.get('/', async (req, res, next) => {
         const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 20));
         const skip = (page - 1) * limit;
         const search = req.query.search;
+        const category = req.query.category;
         const status = req.query.status;
         const where = {};
         if (status && Object.values(client_1.ItemStatus).includes(status)) {
             where.status = status;
         }
+        const conditions = [];
+        if (category) {
+            conditions.push({
+                OR: [
+                    { category: { contains: category, mode: 'insensitive' } },
+                    { description: { contains: category, mode: 'insensitive' } },
+                    { itemCode: { contains: category, mode: 'insensitive' } },
+                ],
+            });
+        }
         if (search) {
-            where.OR = [
-                { itemCode: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
-                { supplierCode: { contains: search, mode: 'insensitive' } },
-            ];
+            conditions.push({
+                OR: [
+                    { itemCode: { contains: search, mode: 'insensitive' } },
+                    { description: { contains: search, mode: 'insensitive' } },
+                    { supplierCode: { contains: search, mode: 'insensitive' } },
+                    { category: { contains: search, mode: 'insensitive' } },
+                ],
+            });
+        }
+        if (conditions.length === 1) {
+            where.OR = conditions[0].OR;
+        }
+        else if (conditions.length > 1) {
+            where.AND = conditions;
         }
         const [total, items] = await Promise.all([
             prisma_1.prisma.item.count({ where }),
@@ -226,7 +249,7 @@ router.get('/:id', async (req, res, next) => {
 // POST / - Create item with duplicate check
 router.post('/', (0, validate_1.validate)(createItemSchema), async (req, res, next) => {
     try {
-        const { itemCode, description, imageUrl, unit, standardCost, standardPrice, currency, ppq, currentStock, leadTimeDays, supplierCode, supplierCurrency, supplierCost, status, } = req.body;
+        const { itemCode, description, category, imageUrl, unit, standardCost, standardPrice, currency, ppq, currentStock, leadTimeDays, supplierCode, supplierCurrency, supplierCost, status, } = req.body;
         const existing = await prisma_1.prisma.item.findUnique({
             where: { itemCode: itemCode.trim() },
         });
@@ -238,6 +261,7 @@ router.post('/', (0, validate_1.validate)(createItemSchema), async (req, res, ne
             data: {
                 itemCode: itemCode.trim(),
                 description: description.trim(),
+                category: category || null,
                 imageUrl: imageUrl || null,
                 unit: unit || 'PCS',
                 standardCost: standardCost !== undefined && standardCost !== null ? new client_1.Prisma.Decimal(standardCost) : null,
