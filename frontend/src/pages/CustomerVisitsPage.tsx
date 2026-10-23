@@ -14,6 +14,7 @@ export const CustomerVisitsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [dateFilter, setDateFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,8 +29,9 @@ export const CustomerVisitsPage: React.FC = () => {
 
   // Fetch visits
   const { data: visitsResponse, isLoading } = useQuery({
-    queryKey: ['visits', { page, dateFilter }],
-    queryFn: () => visitsApi.list({ page, limit: 10, date: dateFilter || undefined }),
+    queryKey: ['visits', { page, limit, dateFilter }],
+    queryFn: () => visitsApi.list({ page, limit, date: dateFilter || undefined }),
+    placeholderData: (previousData) => previousData,
   });
 
   // Fetch customers
@@ -178,6 +180,12 @@ export const CustomerVisitsPage: React.FC = () => {
           isLoading={isLoading}
           pagination={visitsResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Customer Visits Log"
           emptyMessage="No customer visits logged."
         />
       </GlassCard>

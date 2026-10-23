@@ -55,7 +55,7 @@ const updateCustomerSchema = z.object({
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
-    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit as string, 10) || 20));
+    const limit = Math.max(1, Math.min(500, parseInt(req.query.limit as string, 10) || 20));
     const skip = (page - 1) * limit;
 
     const search = req.query.search as string | undefined;

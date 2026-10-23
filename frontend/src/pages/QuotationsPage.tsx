@@ -20,18 +20,20 @@ export const QuotationsPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
   const { data: quotationsResponse, isLoading } = useQuery({
-    queryKey: ['quotations', { page, search, status: statusFilter }],
+    queryKey: ['quotations', { page, limit, search, status: statusFilter }],
     queryFn: () =>
       quotationsApi.list({
         page,
-        limit: 10,
+        limit,
         search: search || undefined,
         status: statusFilter || undefined,
       }),
+    placeholderData: (previousData) => previousData,
   });
 
   const handleDownloadPdf = async (id: string, quotationNumber: string) => {
@@ -203,6 +205,12 @@ export const QuotationsPage: React.FC = () => {
           isLoading={isLoading}
           pagination={quotationsResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Quotations Register"
           onRowClick={(q) => navigate(`/quotations/${q.id}`)}
           emptyMessage="No quotations generated yet."
         />

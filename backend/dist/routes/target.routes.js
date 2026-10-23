@@ -93,7 +93,7 @@ router.get('/achievement', async (req, res, next) => {
 router.get('/', async (req, res, next) => {
     try {
         const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-        const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 20));
+        const limit = Math.max(1, Math.min(500, parseInt(req.query.limit, 10) || 20));
         const skip = (page - 1) * limit;
         const year = req.query.year ? parseInt(req.query.year, 10) : undefined;
         const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : req.query.userId;

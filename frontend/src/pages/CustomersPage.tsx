@@ -40,13 +40,15 @@ export const CustomersPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
   const { data: customersResponse, isLoading } = useQuery({
-    queryKey: ['customers', { page, search }],
-    queryFn: () => customersApi.list({ page, limit: 10, search: search || undefined }),
+    queryKey: ['customers', { page, limit, search }],
+    queryFn: () => customersApi.list({ page, limit, search: search || undefined }),
+    placeholderData: (previousData) => previousData,
   });
 
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
@@ -254,6 +256,12 @@ export const CustomersPage: React.FC = () => {
           isLoading={isLoading}
           pagination={customersResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Customer Directory"
           onRowClick={(cust) => navigate(`/customers/${cust.id}`)}
           emptyMessage="No customers found."
         />

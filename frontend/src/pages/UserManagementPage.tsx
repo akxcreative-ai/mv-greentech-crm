@@ -30,6 +30,7 @@ export const UserManagementPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -37,8 +38,9 @@ export const UserManagementPage: React.FC = () => {
   const [formError, setFormError] = useState<string | null>(null);
 
   const { data: usersResponse, isLoading } = useQuery({
-    queryKey: ['users', { page, search }],
-    queryFn: () => usersApi.list({ page, limit: 10, search: search || undefined }),
+    queryKey: ['users', { page, limit, search }],
+    queryFn: () => usersApi.list({ page, limit, search: search || undefined }),
+    placeholderData: (previousData) => previousData,
   });
 
   const {
@@ -254,6 +256,12 @@ export const UserManagementPage: React.FC = () => {
           isLoading={isLoading}
           pagination={usersResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="User Management"
           emptyMessage="No users found."
         />
       </GlassCard>

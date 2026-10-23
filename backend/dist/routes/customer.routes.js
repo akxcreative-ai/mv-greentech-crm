@@ -51,7 +51,7 @@ const updateCustomerSchema = zod_1.z.object({
 router.get('/', async (req, res, next) => {
     try {
         const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-        const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 20));
+        const limit = Math.max(1, Math.min(500, parseInt(req.query.limit, 10) || 20));
         const skip = (page - 1) * limit;
         const search = req.query.search;
         const city = req.query.city;

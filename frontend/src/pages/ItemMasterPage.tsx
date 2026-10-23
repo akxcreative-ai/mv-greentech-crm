@@ -716,7 +716,8 @@ export const ItemMasterPage: React.FC = () => {
             setLimit(newLimit);
             setPage(1);
           }}
-          pageSizeOptions={[10, 25, 50, 100]}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Item Master Catalog"
           emptyMessage="No items found."
         />
       </GlassCard>

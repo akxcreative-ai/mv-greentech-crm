@@ -15,20 +15,22 @@ export const OrdersPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [targetOrder, setTargetOrder] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState<OrderStatus>('CONFIRMED');
 
   const { data: ordersResponse, isLoading } = useQuery({
-    queryKey: ['orders', { page, search, status: statusFilter }],
+    queryKey: ['orders', { page, limit, search, status: statusFilter }],
     queryFn: () =>
       ordersApi.list({
         page,
-        limit: 10,
+        limit,
         search: search || undefined,
         status: statusFilter || undefined,
       }),
+    placeholderData: (previousData) => previousData,
   });
 
   const updateStatusMutation = useMutation({
@@ -166,6 +168,12 @@ export const OrdersPage: React.FC = () => {
           isLoading={isLoading}
           pagination={ordersResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Sales Orders"
           emptyMessage="No orders found."
         />
       </GlassCard>

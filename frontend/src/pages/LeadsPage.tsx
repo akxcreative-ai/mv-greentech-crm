@@ -62,6 +62,7 @@ export const LeadsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [ownerFilter, setOwnerFilter] = useState<string>('');
@@ -71,16 +72,17 @@ export const LeadsPage: React.FC = () => {
 
   // Fetch leads
   const { data: leadsResponse, isLoading } = useQuery({
-    queryKey: ['leads', { page, search, status: statusFilter, owner: ownerFilter, city: cityFilter }],
+    queryKey: ['leads', { page, limit, search, status: statusFilter, owner: ownerFilter, city: cityFilter }],
     queryFn: () =>
       leadsApi.list({
         page,
-        limit: 10,
+        limit,
         search: search || undefined,
         status: statusFilter || undefined,
         accountOwnerId: ownerFilter || undefined,
         city: cityFilter || undefined,
       }),
+    placeholderData: (previousData) => previousData,
   });
 
   // Fetch users for owner select
@@ -460,6 +462,12 @@ export const LeadsPage: React.FC = () => {
           isLoading={isLoading}
           pagination={leadsResponse?.pagination}
           onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          pageSizeOptions={[10, 20, 25, 50, 100, 200, 500]}
+          exportTitle="Lead Pipeline"
           onRowClick={(lead) => navigate(`/leads/${lead.id}`)}
           emptyMessage="No leads found matching your criteria."
         />
