@@ -408,8 +408,10 @@ export const LeadsPage: React.FC = () => {
             placeholder="Search by customer, lead#, contact..."
             value={search}
             onSearch={(val) => {
-              setSearch(val);
-              setPage(1);
+              if (val !== search) {
+                setSearch(val);
+                setPage(1);
+              }
             }}
           />
 

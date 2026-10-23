@@ -654,8 +654,10 @@ export const ItemMasterPage: React.FC = () => {
               placeholder="Search by Product code, Description, or Category..."
               value={search}
               onSearch={(val) => {
-                setSearch(val);
-                setPage(1);
+                if (val !== search) {
+                  setSearch(val);
+                  setPage(1);
+                }
               }}
             />
           </div>

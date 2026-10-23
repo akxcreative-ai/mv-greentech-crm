@@ -137,8 +137,10 @@ export const OrdersPage: React.FC = () => {
               placeholder="Search by Order#, Customer Name..."
               value={search}
               onSearch={(val) => {
-                setSearch(val);
-                setPage(1);
+                if (val !== search) {
+                  setSearch(val);
+                  setPage(1);
+                }
               }}
             />
           </div>

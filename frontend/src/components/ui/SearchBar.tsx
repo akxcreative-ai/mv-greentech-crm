@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -19,24 +19,46 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   className,
 }) => {
   const [internalValue, setInternalValue] = useState<string>(controlledValue || '');
+  const lastEmittedValueRef = useRef<string>(controlledValue || '');
+  const isFirstRender = useRef(true);
+  const onSearchRef = useRef(onSearch);
 
+  // Keep onSearchRef up to date without triggering effects
   useEffect(() => {
-    if (controlledValue !== undefined) {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
+  // Sync internalValue when controlledValue changes from outside
+  useEffect(() => {
+    if (controlledValue !== undefined && controlledValue !== lastEmittedValueRef.current) {
       setInternalValue(controlledValue);
+      lastEmittedValueRef.current = controlledValue;
     }
   }, [controlledValue]);
 
+  // Debounced search ONLY when internalValue actually changes
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (internalValue === lastEmittedValueRef.current) {
+      return;
+    }
+
     const handler = setTimeout(() => {
-      onSearch(internalValue);
+      lastEmittedValueRef.current = internalValue;
+      onSearchRef.current(internalValue);
     }, debounceMs);
 
     return () => clearTimeout(handler);
-  }, [internalValue, debounceMs, onSearch]);
+  }, [internalValue, debounceMs]);
 
   const handleClear = () => {
     setInternalValue('');
-    onSearch('');
+    lastEmittedValueRef.current = '';
+    onSearchRef.current('');
   };
 
   return (

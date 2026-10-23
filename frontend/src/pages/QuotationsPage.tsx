@@ -172,8 +172,10 @@ export const QuotationsPage: React.FC = () => {
               placeholder="Search by Quotation#, Customer, or Lead..."
               value={search}
               onSearch={(val) => {
-                setSearch(val);
-                setPage(1);
+                if (val !== search) {
+                  setSearch(val);
+                  setPage(1);
+                }
               }}
             />
           </div>

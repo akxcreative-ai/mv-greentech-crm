@@ -242,8 +242,10 @@ export const CustomersPage: React.FC = () => {
           placeholder="Search by company name, industry, city, or GST..."
           value={search}
           onSearch={(val) => {
-            setSearch(val);
-            setPage(1);
+            if (val !== search) {
+              setSearch(val);
+              setPage(1);
+            }
           }}
         />
       </GlassCard>

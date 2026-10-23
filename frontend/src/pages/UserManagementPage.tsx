@@ -242,8 +242,10 @@ export const UserManagementPage: React.FC = () => {
           placeholder="Search by user name or email..."
           value={search}
           onSearch={(val) => {
-            setSearch(val);
-            setPage(1);
+            if (val !== search) {
+              setSearch(val);
+              setPage(1);
+            }
           }}
         />
       </GlassCard>
