@@ -43,32 +43,11 @@ export interface DataTableProps<T> {
   emptyMessage?: string;
   onRowClick?: (row: T) => void;
   className?: string;
-  /** Title used in PDF export header */
   exportTitle?: string;
 }
 
 // ---------------------------------------------------------------------------
-// Page-number-pills logic: compact display for many pages
-// ---------------------------------------------------------------------------
-function getPageNumbers(
-  currentPage: number,
-  totalPages: number
-): (number | 'ellipsis')[] {
-  const current = Math.max(1, Math.floor(Number(currentPage) || 1));
-  const total = Math.max(1, Math.floor(Number(totalPages) || 1));
-
-  if (total <= 1) return [1];
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-
-  if (current <= 4) return [1, 2, 3, 4, 5, 'ellipsis', total];
-  if (current >= total - 3)
-    return [1, 'ellipsis', total - 4, total - 3, total - 2, total - 1, total];
-
-  return [1, 'ellipsis', current - 1, current, current + 1, 'ellipsis', total];
-}
-
-// ---------------------------------------------------------------------------
-// PDF Export helper — uses browser print to produce a clean PDF
+// PDF Export helper
 // ---------------------------------------------------------------------------
 function exportTableToPDF<T>(
   columns: Column<T>[],
@@ -77,7 +56,6 @@ function exportTableToPDF<T>(
   pageSize: string,
   orientation: string
 ) {
-  // Build HTML table from visible data
   const actionCols = new Set<number>();
   columns.forEach((col, i) => {
     const key = String(col.accessorKey || col.header).toLowerCase();
@@ -88,7 +66,7 @@ function exportTableToPDF<T>(
 
   let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
 <style>
-  @page { size: ${pageSize} ${orientation}; margin: 15mm; }
+  @page { size: ${pageSize} ${orientation}; margin: 12mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 11px; }
   .header { text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #059669; }
@@ -110,7 +88,7 @@ function exportTableToPDF<T>(
   });
   html += `</tr></thead><tbody>`;
 
-  data.forEach((row, rIdx) => {
+  data.forEach((row) => {
     html += '<tr>';
     visibleCols.forEach((col) => {
       let val = '';
@@ -145,7 +123,6 @@ function PDFExportModal({
   onClose,
   columns,
   data,
-  allData,
   title,
   pagination,
 }: {
@@ -153,17 +130,13 @@ function PDFExportModal({
   onClose: () => void;
   columns: Column<any>[];
   data: any[];
-  allData?: any[];
   title: string;
   pagination?: PaginationInfo;
 }) {
   const [pageSize, setPageSize] = React.useState('A4');
   const [orientation, setOrientation] = React.useState('portrait');
-  const [dataRange, setDataRange] = React.useState<'current' | 'all'>('current');
 
   if (!isOpen) return null;
-
-  const exportData = dataRange === 'all' && allData ? allData : data;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
@@ -176,39 +149,6 @@ function PDFExportModal({
           Export to PDF
         </h3>
 
-        {/* Data Range */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-            Data Range
-          </label>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setDataRange('current')}
-              className={clsx(
-                'flex-1 px-3 py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer',
-                dataRange === 'current'
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-              )}
-            >
-              Current Page ({data.length} rows)
-            </button>
-            <button
-              type="button"
-              onClick={() => setDataRange('all')}
-              className={clsx(
-                'flex-1 px-3 py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer',
-                dataRange === 'all'
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-              )}
-            >
-              All Records ({pagination?.total || data.length})
-            </button>
-          </div>
-        </div>
-
         {/* Page Size */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -220,12 +160,12 @@ function PDFExportModal({
                 key={s}
                 type="button"
                 onClick={() => setPageSize(s)}
-                className={clsx(
-                  'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer',
-                  pageSize === s
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                )}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs"
+                style={{
+                  backgroundColor: pageSize === s ? '#059669' : '#ffffff',
+                  color: pageSize === s ? '#ffffff' : '#334155',
+                  border: '1px solid ' + (pageSize === s ? '#059669' : '#cbd5e1'),
+                }}
               >
                 {s}
               </button>
@@ -244,12 +184,12 @@ function PDFExportModal({
                 key={o}
                 type="button"
                 onClick={() => setOrientation(o)}
-                className={clsx(
-                  'flex-1 px-3 py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer capitalize',
-                  orientation === o
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
-                )}
+                className="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer capitalize shadow-xs"
+                style={{
+                  backgroundColor: orientation === o ? '#059669' : '#ffffff',
+                  color: orientation === o ? '#ffffff' : '#334155',
+                  border: '1px solid ' + (orientation === o ? '#059669' : '#cbd5e1'),
+                }}
               >
                 {o}
               </button>
@@ -262,19 +202,20 @@ function PDFExportModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 border border-slate-300 hover:bg-slate-50 cursor-pointer transition-colors"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={() => {
-              exportTableToPDF(columns, exportData, title, pageSize, orientation);
+              exportTableToPDF(columns, data, title, pageSize, orientation);
               onClose();
             }}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 cursor-pointer transition-colors shadow-md"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white cursor-pointer transition-colors shadow-md"
+            style={{ backgroundColor: '#059669', color: '#ffffff' }}
           >
-            Generate PDF
+            Print / Save PDF
           </button>
         </div>
       </div>
@@ -283,7 +224,7 @@ function PDFExportModal({
 }
 
 // ===========================================================================
-// MAIN DataTable Component
+// MAIN DataTable Component — Printer-Style Custom Page & Row Finder
 // ===========================================================================
 export function DataTable<T extends { id?: string | number }>({
   columns,
@@ -304,9 +245,13 @@ export function DataTable<T extends { id?: string | number }>({
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [showPDFModal, setShowPDFModal] = React.useState(false);
 
+  // Custom Page & Row input states ("jaise printer ka hota hai")
+  const [pageInput, setPageInput] = React.useState('');
+  const [rowInput, setRowInput] = React.useState('');
+
   // Safe number extraction
   const currentPage = Math.max(1, Math.floor(Number(pagination?.page) || 1));
-  const totalPages = Math.max(0, Math.floor(Number(pagination?.totalPages) || 0));
+  const totalPages = Math.max(1, Math.floor(Number(pagination?.totalPages) || 1));
   const pageLimit = Math.max(1, Number(pagination?.limit) || 10);
   const totalRecords = Math.max(0, Number(pagination?.total) || 0);
 
@@ -316,16 +261,34 @@ export function DataTable<T extends { id?: string | number }>({
       if (!pagination || isNaN(pageNum)) return;
       if (pageNum < 1 || pageNum > totalPages || pageNum === currentPage) return;
 
-      // Auto-scroll table to left so user sees Product Codes / first columns
+      // Auto-scroll table to left column (S.no, Product code)
       if (tableContainerRef.current) {
         tableContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
       }
-      // Scroll window to top of table for better UX
       tableContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       onPageChange?.(pageNum);
     },
     [pagination, totalPages, currentPage, onPageChange]
   );
+
+  const handlePageJump = (e: React.FormEvent) => {
+    e.preventDefault();
+    const p = parseInt(pageInput, 10);
+    if (!isNaN(p) && p >= 1 && p <= totalPages) {
+      handlePageChange(p);
+      setPageInput('');
+    }
+  };
+
+  const handleRowJump = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = parseInt(rowInput, 10);
+    if (!isNaN(r) && r >= 1 && r <= totalRecords) {
+      const targetPage = Math.ceil(r / pageLimit);
+      handlePageChange(targetPage);
+      setRowInput('');
+    }
+  };
 
   // Showing X to Y of Z
   const showingFrom = totalRecords === 0 ? 0 : (currentPage - 1) * pageLimit + 1;
@@ -455,45 +418,20 @@ export function DataTable<T extends { id?: string | number }>({
         </table>
       </div>
 
-      {/* ====== PAGINATION FOOTER ====== */}
-      {/* Always show when pagination exists, even for 1 page (so rows-per-page is accessible) */}
+      {/* ====== PRINTER-STYLE CLEAN PAGINATION & CUSTOM PAGE/ROW FINDER ====== */}
       {pagination && (
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-3 px-4 py-3 text-xs text-slate-600 border border-t-0 border-slate-200 bg-gradient-to-r from-slate-50 to-white rounded-b-xl">
-          {/* Left: Showing info + Rows per page + PDF */}
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-3 px-4 py-3.5 text-xs text-slate-700 border border-t-0 border-slate-200 bg-white rounded-b-xl shadow-xs">
+          {/* Left: Showing info + Rows per page + Custom Row Finder */}
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Showing X to Y of Z */}
-            <div className="flex items-center gap-1">
-              <span>Showing</span>
-              <span className="font-bold text-slate-900">{showingFrom}</span>
-              <span>to</span>
-              <span className="font-bold text-slate-900">{showingTo}</span>
-              <span>of</span>
-              <span className="font-extrabold text-emerald-700">{totalRecords}</span>
-              <span>entries</span>
+            <div className="text-sm font-semibold text-slate-700">
+              Showing <span className="font-extrabold text-slate-900">{showingFrom}</span> to{' '}
+              <span className="font-extrabold text-slate-900">{showingTo}</span> of{' '}
+              <span className="font-extrabold text-emerald-700">{totalRecords}</span> entries
             </div>
 
-            {/* Separator */}
-            <div className="hidden sm:block w-px h-4 bg-slate-300" />
-
-            {/* Page X of Y */}
-            {totalPages > 0 && (
-              <div className="hidden sm:flex items-center gap-1 text-slate-500">
-                <span>Page</span>
-                <span className="font-bold text-emerald-700">{currentPage}</span>
-                <span>of</span>
-                <span className="font-bold text-slate-900">{totalPages}</span>
-              </div>
-            )}
-
-            {/* Separator */}
             {onLimitChange && (
-              <div className="hidden sm:block w-px h-4 bg-slate-300" />
-            )}
-
-            {/* Rows per page dropdown */}
-            {onLimitChange && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-500 font-medium">Rows:</span>
+              <div className="flex items-center gap-1.5 pl-3 border-l border-slate-200">
+                <span className="text-slate-600 font-bold">Rows:</span>
                 <select
                   value={pageLimit}
                   onChange={(e) => {
@@ -502,123 +440,131 @@ export function DataTable<T extends { id?: string | number }>({
                     }
                     onLimitChange(Number(e.target.value));
                   }}
-                  className="px-2 py-1 bg-white border border-slate-300 rounded-md text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer text-xs min-w-[52px]"
+                  className="px-2.5 py-1.5 bg-white border border-emerald-600 rounded-lg text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer text-xs"
                 >
-                  {(pageSizeOptions || [10, 20, 25, 50, 100, 200, 500]).map(
-                    (size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    )
-                  )}
+                  {(pageSizeOptions || [10, 20, 25, 50, 100, 200, 500]).map((size) => (
+                    <option key={size} value={size}>
+                      {size} per page
+                    </option>
+                  ))}
                 </select>
               </div>
             )}
 
-            {/* Separator */}
-            {exportTitle && (
-              <div className="hidden sm:block w-px h-4 bg-slate-300" />
-            )}
+            {/* Custom Row Finder ("coustome page se row find karnae wala") */}
+            <form onSubmit={handleRowJump} className="flex items-center gap-1.5 pl-3 border-l border-slate-200">
+              <span className="text-slate-600 font-bold">Find Row #:</span>
+              <input
+                type="number"
+                min={1}
+                max={Math.max(1, totalRecords)}
+                value={rowInput}
+                onChange={(e) => setRowInput(e.target.value)}
+                placeholder="e.g. 50"
+                className="w-16 px-2 py-1 bg-white border border-slate-300 rounded text-center text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <button
+                type="submit"
+                className="px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer shadow-xs"
+                style={{ backgroundColor: '#059669', color: '#ffffff' }}
+                title="Jump to row"
+              >
+                Find
+              </button>
+            </form>
+          </div>
+
+          {/* Right: Solid Green Buttons with White Letters + Printer-style Page Jumper */}
+          <div className="flex items-center gap-2 flex-wrap justify-center">
+            {/* First Button */}
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(1); }}
+              disabled={currentPage <= 1}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              style={{ backgroundColor: '#059669', color: '#ffffff' }}
+              title="First Page"
+            >
+              <ChevronsLeft className="w-4 h-4 text-white" />
+              <span>First</span>
+            </button>
+
+            {/* Prev Button */}
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(currentPage - 1); }}
+              disabled={currentPage <= 1}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              style={{ backgroundColor: '#059669', color: '#ffffff' }}
+              title="Previous Page"
+            >
+              <ChevronLeft className="w-4 h-4 text-white" />
+              <span>Prev</span>
+            </button>
+
+            {/* Printer-like Custom Page Jump: Page [ 1 ] of 12 [ Go ] */}
+            <form onSubmit={handlePageJump} className="flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-300">
+              <span className="text-xs font-bold text-emerald-900">Page</span>
+              <input
+                type="number"
+                min={1}
+                max={Math.max(1, totalPages)}
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                placeholder={String(currentPage)}
+                className="w-14 px-2 py-1 bg-white border-2 border-emerald-600 rounded text-center text-xs font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <span className="text-xs font-bold text-emerald-900">of {totalPages || 1}</span>
+              <button
+                type="submit"
+                className="px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer shadow-xs"
+                style={{ backgroundColor: '#059669', color: '#ffffff' }}
+                title="Go to page"
+              >
+                Go
+              </button>
+            </form>
+
+            {/* Next Button */}
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(currentPage + 1); }}
+              disabled={currentPage >= totalPages}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              style={{ backgroundColor: '#059669', color: '#ffffff' }}
+              title="Next Page"
+            >
+              <span>Next</span>
+              <ChevronRight className="w-4 h-4 text-white" />
+            </button>
+
+            {/* Last Button */}
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(totalPages); }}
+              disabled={currentPage >= totalPages}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              style={{ backgroundColor: '#059669', color: '#ffffff' }}
+              title="Last Page"
+            >
+              <span>Last</span>
+              <ChevronsRight className="w-4 h-4 text-white" />
+            </button>
 
             {/* PDF Export button */}
             {exportTitle && (
               <button
                 type="button"
                 onClick={() => setShowPDFModal(true)}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 font-medium transition-colors cursor-pointer"
+                className="ml-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-xs"
+                style={{ backgroundColor: '#059669', color: '#ffffff' }}
                 title="Export to PDF"
               >
-                <FileDown className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">PDF</span>
+                <FileDown className="w-4 h-4 text-white" />
+                <span>PDF</span>
               </button>
             )}
           </div>
-
-          {/* Right: Navigation Controls */}
-          {totalPages > 1 && (
-            <div className="flex items-center gap-1.5 flex-wrap justify-center flex-shrink-0">
-              {/* First */}
-              <button
-                type="button"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(1); }}
-                disabled={currentPage <= 1}
-                className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                title="First page"
-              >
-                <ChevronsLeft className="w-4 h-4" />
-              </button>
-
-              {/* Previous */}
-              <button
-                type="button"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(currentPage - 1); }}
-                disabled={currentPage <= 1}
-                className="flex items-center gap-0.5 px-2 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-semibold disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                title="Previous page"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs">Prev</span>
-              </button>
-
-              {/* Page Number Buttons */}
-              <div className="flex items-center gap-1 mx-0.5">
-                {getPageNumbers(currentPage, totalPages).map((pageNum, idx) => {
-                  if (pageNum === 'ellipsis') {
-                    return (
-                      <span
-                        key={`ellipsis-${idx}`}
-                        className="w-8 h-8 flex items-center justify-center text-slate-400 select-none font-bold text-sm"
-                      >
-                        …
-                      </span>
-                    );
-                  }
-                  const isActive = pageNum === currentPage;
-                  return (
-                    <button
-                      key={`page-${pageNum}`}
-                      type="button"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(pageNum); }}
-                      disabled={isActive}
-                      className={clsx(
-                        'min-w-[36px] h-9 px-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center flex-shrink-0',
-                        isActive
-                          ? 'bg-emerald-600 text-white shadow-lg ring-2 ring-emerald-500 ring-offset-1 cursor-default'
-                          : 'bg-white border border-slate-300 text-slate-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-400 cursor-pointer shadow-sm'
-                      )}
-                      style={isActive ? { backgroundColor: '#059669', color: '#ffffff' } : undefined}
-                      title={`Page ${pageNum}`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Next */}
-              <button
-                type="button"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(currentPage + 1); }}
-                disabled={currentPage >= totalPages}
-                className="flex items-center gap-0.5 px-2 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 font-semibold disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                title="Next page"
-              >
-                <span className="hidden sm:inline text-xs">Next</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-
-              {/* Last */}
-              <button
-                type="button"
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePageChange(totalPages); }}
-                disabled={currentPage >= totalPages}
-                className="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                title="Last page"
-              >
-                <ChevronsRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
         </div>
       )}
 
