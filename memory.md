@@ -47,5 +47,7 @@
 ## 2. Live Production Data Context
 
 - **117 Inductive Sensor Items Live:** The primary catalog was seeded directly into the Neon PostgreSQL production database using `backend/scripts/import-user-csv.ts`.
+- **Expanded 568 Sensor Catalog Live:** Official full catalog of 568 inductive sensors (`SR-IN-00001` through `SR-IN-00568`) imported across 10 series (Conventional, Extra Distance, Analog, Full Inox, High Temp, Low Form, Weld-Immune, Rectangular Housing, Annular, Eddy Current).
 - **CSV Template Storage:** The source data is archived in `frontend/public/inductive-sensors.csv` for backup and client download.
+- **Table Headings Aligned:** Item Master table updated to include `Category / Series`, `S.no`, `Product code`, `Product Description`, `Supplier`, `Unit`, etc. Matching flexible CSV import.
 - **Default Currency:** Domestic items use `INR (₹)`, international catalog sensors use `USD ($)`.

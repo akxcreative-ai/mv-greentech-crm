@@ -13,7 +13,7 @@
 |---|:---:|---|
 | **Authentication & RBAC** | ✅ Done | Director, Sales Head, Salesperson, Administrator roles with JWT protection. |
 | **Clean Green & White ERP Theme** | ✅ Done | Emerald `#059669` palette, frosted glass cards, light tables. |
-| **Item Master (Catalog)** | ✅ Done | 117 Inductive sensors live in DB with images, zoom modal, full 14 columns. |
+| **Item Master (Catalog)** | ✅ Done | 568 Inductive sensors live in DB across 10 series with full specs, series categorization, and pagination. |
 | **Our Products Category Filter** | ✅ Done | Modal dialog covering all 17 MV GREENTECH sensor & meter product lines. |
 | **Flexible CSV / Excel Import** | ✅ Done | Auto-detects delimiters (`,`, `;`, `\t`), validates headers, prevents duplicate keys. |
 | **Safe Item Deletion** | ✅ Done | `DELETE /v1/items/:id` endpoint with safe relation unlinking. |

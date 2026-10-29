@@ -1,119 +1,569 @@
-,,,,,,,,,,,,,
-,S.No,Product Code,Product Description,Picture,Supplier,BOM,Standard Cost,Currency,Unit,Landed cost,Standard Price,Lead Time,Status
-,1,MVG-IN-CON-M08-J8-01,Inductive Sensors-M8-2/4/6 mm-NPN/PNP NO/NC,,KJT,Material Code,,USD,10,,,3 Days,Active
-,2,MVG-IN-CON-M08-J8-02,Inductive Sensors-M8-2/4/6 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,3,MVG-IN-CON-M08-J8M-01,Inductive Sensors-M8-1/2/3 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,4,MVG-IN-CON-M08-J8D-01,Inductive Sensors-M8-1/2/3 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,5,MVG-IN-CON-M12-J12-01,Inductive Sensors-M12-4 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,6,MVG-IN-CON-M12-J12-02,Inductive Sensors-M12-4 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,7,MVG-IN-CON-M12-J12M-01,Inductive Sensors-M12-2 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,8,MVG-IN-CON-M12-J12M-02,Inductive Sensors-M12-1/2/3 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,9,MVG-IN-CON-M18-J18-01,Inductive Sensors-M18-8 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,10,MVG-IN-CON-M18-J18-02,Inductive Sensors-M18-8 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,11,MVG-IN-CON-M18-J18-03,Inductive Sensors-M18-5/8/12 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,12,MVG-IN-CON-M18-J18M-01,Inductive Sensors-M18-5 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,13,MVG-IN-CON-M30-J30-01,Inductive Sensors-M30-15 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,14,MVG-IN-CON-M30-J30-02,Inductive Sensors-M30-15 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,15,MVG-IN-CON-M30-J30M-01,Inductive Sensors-M30-10 mm-NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,16,MVG-IN-EXD-J6.5MT-01,Inductive Sensors-J6.5MT-2/3 mm NPN/PNP NO/NC,,KJT,,,USD,5,,,3 Days,Active
-,17,MVG-IN-EXD-J6.5MT-02,Inductive Sensors-J6.5MT-4/6 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,18,MVG-IN-EXD-J8MT-01,Inductive Sensors-J8MT-2/3 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,19,MVG-IN-EXD-J12MT-01,Inductive Sensors-J12MT-4/6 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,20,MVG-IN-EXD-J12T-01,Inductive Sensors-J12T-8/12 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,21,MVG-IN-EXD-J18T-01,Inductive Sensors-J18T-16/20 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,22,MVG-IN-EXD-J18MT-01,Inductive Sensors-J18MT-8/12 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,23,MVG-IN-EXD-J30T-01,Inductive Sensors-J30T-25/40 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,24,MVG-IN-EXD-J30T-02,Inductive Sensors-J30T-25/40 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,25,MVG-IN-EXD-J30T-03,Inductive Sensors-J30T-15/22 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,26,MVG-IN-EXD-J30T-04,Inductive Sensors-J30T-20/25 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,27,MVG-IN-ANL-WJ12C-01,Inductive Sensors-WJ12C-0.1-3 mm PNP ANALOG,,KJT,,,USD,2,,,3 Days,Active
-,28,MVG-IN-ANL-WJ12C-02,Inductive Sensors-WJ12C-0.1-4 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,29,MVG-IN-ANL-WJ12C-03,Inductive Sensors-WJ12C-1-4 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,30,MVG-IN-ANL-WJ18C-01,Inductive Sensors-WJ18C-0.1-5 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,31,MVG-IN-ANL-WJ18C-02,Inductive Sensors-WJ18C-0.1-8 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,32,MVG-IN-ANL-WJ18C-03,Inductive Sensors-WJ18C-1-4 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,33,MVG-IN-ANL-WJ18C-04,Inductive Sensors-WJ18C-1-7 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,34,MVG-IN-ANL-WJ30C-01,Inductive Sensors-WJ30C-0.1-13 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,35,MVG-IN-ANL-WJ30C-02,Inductive Sensors-WJ30C-7-14 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,36,MVG-IN-ANL-WJ30C-03,Inductive Sensors-WJ30C-5-10 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,37,MVG-IN-ANL-WJ30C-04,Inductive Sensors-WJ30C-5-10 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,38,MVG-IN-ANL-WJ40C-01,Inductive Sensors-WJ40C-5-10 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,39,MVG-IN-ANL-WJ40C-02,Inductive Sensors-WJ40C-5-15 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,40,MVG-IN-ANL-WJ40C-03,Inductive Sensors-WJ40C-5-20 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,41,MVG-IN-ANL-WJ40C-04,Inductive Sensors-WJ40C-10-30 mm PNP ANALOG,,KJT,,,USD,,,,3 Days,Active
-,42,MVG-IN-ANL-M30*61.5-01,Inductive Sensors-M30*61.5-1-10 mm Output NM,,KJT,,,USD,,,,3 Days,Active
-,43,MVG-IN-ANL-M30*69.5-01,Inductive Sensors-M30*69.5-1.6-15 mm Output NM,,KJT,,,USD,,,,3 Days,Active
-,44,MVG-IN-FIS-J8MQS-01,Inductive Sensors-J8MQS-1/2 mm NPN/PNP NO/NC,,KJT,,,USD,2,,,3 Days,Active
-,45,MVG-IN-FIS-J8QS-01,Inductive Sensors-J8QS-2 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,46,MVG-IN-FIS-J8QS-02,Inductive Sensors-J8QS-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,47,MVG-IN-FIS-J12MQS-01,Inductive Sensors-J12MQS-2/4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,48,MVG-IN-FIS-J12QS-01,Inductive Sensors-J12QS-4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,49,MVG-IN-FIS-J12QS-02,Inductive Sensors-J12QS-2/4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,50,MVG-IN-FIS-J18MQS-01,Inductive Sensors-J18MQS-5/8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,51,MVG-IN-FIS-J18QS-01,Inductive Sensors-J18QS-8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,52,MVG-IN-FIS-J30MQS-01,Inductive Sensors-J30MQS-10 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,53,MVG-IN-FIS-J30QS-01,Inductive Sensors-J30QS-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,54,MVG-IN-HTS-J8GW-01,Inductive Sensors-J8GW-1 mm NPN/PNP NO/NC,,KJT,,,USD,2,,,3 Days,Active
-,55,MVG-IN-HTS-J8GW-02,Inductive Sensors-J8GW-2 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,56,MVG-IN-HTS-J12GW-01,Inductive Sensors-J12GW-1 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,57,MVG-IN-HTS-J18GW-01,Inductive Sensors-J18GW-1 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,58,MVG-IN-HTS-J18GW-02,Inductive Sensors-J18GW-5 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,59,MVG-IN-HTS-J18GW-03,Inductive Sensors-J18GW-8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,60,MVG-IN-HTS-J18GW-04,Inductive Sensors-J18GW-5/8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,61,MVG-IN-HTS-J30GWM-01,Inductive Sensors-J30GWM-10 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,62,MVG-IN-HTS-J30GWN-01,Inductive Sensors-J30GWN-10 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,63,MVG-IN-HTS-J30GW-01,Inductive Sensors-J30GW-1 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,64,MVG-IN-HTS-J30GW-02,Inductive Sensors-J30GW-5-8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,65,MVG-IN-HTS-J30GW-03,Inductive Sensors-J30GW-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,66,MVG-IN-HTS-J30*55-01,Inductive Sensors-J30*55-10 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,67,MVG-IN-HTS-J30*55-02,Inductive Sensors-J30*55-15 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,68,MVG-IN-HTS-J30*78-01,Inductive Sensors-J30*78-10 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,69,MVG-IN-HTS-J30*78-02,Inductive Sensors-J30*78-15 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,70,MVG-IN-LF-J8DW-01,Inductive Sensors-J8DW-2 mm NPN/PNP NO/NC,,KJT,,,USD,2,,,3 Days,Active
-,71,MVG-IN-LF-J8GW-01,Inductive Sensors-J8GW-2 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,72,MVG-IN-LF-J12W-01,Inductive Sensors-J12W-2 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,73,MVG-IN-LF-J12DW-01,Inductive Sensors-J12DW-4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,74,MVG-IN-LF-J30DW-01,Inductive Sensors-J30DW-10-22 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,75,MVG-IN-LF-J30GW-01,Inductive Sensors-J30GW-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,76,MVG-IN-LF-J30*55-01,Inductive Sensors-J30*55-10 mm PNP/NPN NO/NC,,KJT,,,USD,,,,3 Days,Active
-,77,MVG-IN-LF-J30*55-02,Inductive Sensors-J30*55-10 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,78,MVG-IN-LF-J30*55-03,Inductive Sensors-J30*55-15 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,79,MVG-IN-LF-J30*55-04,Inductive Sensors-J30*55-15 mm PNP/NPN NO/NC,,KJT,,,USD,,,,3 Days,Active
-,80,MVG-IN-LF-J30*78-01,Inductive Sensors-J30*78-10 mm PNP/NPN NO/NC/ NO+NC,,KJT,,,USD,,,,3 Days,Active
-,81,MVG-IN-LF-J30*78-02,Inductive Sensors-J30*78-10 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,82,MVG-IN-LF-J30*78-03,Inductive Sensors-J30*78-10 mm PNP/NPN NO/NC,,KJT,,,USD,,,,3 Days,Active
-,83,MVG-IN-LF-J30*78-04,Inductive Sensors-J30*78-15 mm NO/NC,,KJT,,,USD,,,,3 Days,Active
-,84,MVG-IN-WIS-M8-01,Inductive Sensors-M8-1 mm PNP NO/NC,,KJT,,,USD,3,,,3 Days,Active
-,85,MVG-IN-WIS-M8-02,Inductive Sensors-M8-2 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,86,MVG-IN-WIS-M12-01,Inductive Sensors-M12-2 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,87,MVG-IN-WIS-M12-02,Inductive Sensors-M12-4 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,88,MVG-IN-WIS-M18-01,Inductive Sensors-M18-5 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,89,MVG-IN-WIS-M18-02,Inductive Sensors-M18-8 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,90,MVG-IN-WIS-M30*1.5-01,Inductive Sensors-M30-10 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,91,MVG-IN-WIS-M30*1.5-02,Inductive Sensors-M30-15 mm PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,92,MVG-IN-RHS-Y8S-01,Inductive Sensors-Y8S-2.5 mm NPN/PNP NO/NC,,KJT,,,USD,Not available in packaging list,,,3 Days,Active
-,93,MVG-IN-RHS-Y8X-01,Inductive Sensors-Y8X-2.5 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,94,MVG-IN-RHS-Y9-01,Inductive Sensors-Y9-2.5 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,95,MVG-IN-RHS-Y10S-01,Inductive Sensors-Y10S-2.5/4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,96,MVG-IN-RHS-Y10X-01,Inductive Sensors-Y10X-2.5/4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,97,MVG-IN-RHS-Y17-01,Inductive Sensors-Y17-5/8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,98,MVG-IN-RHS-Y17A-01,Inductive Sensors-Y17A-5/8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,99,MVG-IN-RHS-Y18-01,Inductive Sensors-Y18-4 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,100,MVG-IN-RHS-Y18A-01,Inductive Sensors-Y18-5/8 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,101,MVG-IN-RHS-Y25-01,Inductive Sensors-Y25-10/15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,102,MVG-IN-RHS-BF40-01,Inductive Sensors-BF40-15/40 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,103,MVG-IN-RHS-BF40-C-01,Inductive Sensors-BF40-C-15/20/30 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,104,MVG-IN-RHS-BFT40-01,Inductive Sensors-BFT40-15/20/25 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,105,MVG-IN-RHS-BFT80-01,Inductive Sensors-BFT80-40/50 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,106,MVG-IN-ANN-T6-01,Inductive Sensors-T6-6 mm NPN/PNP NO/NC,,KJT,,,USD,Not available in packaging list,,,3 Days,Active
-,107,MVG-IN-ANN-T6C-01,Inductive Sensors-T6C-6 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,108,MVG-IN-ANN-T10-01,Inductive Sensors-T10-10 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,109,MVG-IN-ANN-T10C-01,Inductive Sensors-T10C-10 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,110,MVG-IN-ANN-T15-01,Inductive Sensors-T15-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,111,MVG-IN-ANN-T15C-01,Inductive Sensors-T15C-15 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,112,MVG-IN-ANN-T21-01,Inductive Sensors-T21-21 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,113,MVG-IN-ANN-T21C-01,Inductive Sensors-T21C-21 mm NPN/PNP NO/NC,,KJT,,,USD,,,,3 Days,Active
-,114,MVG-IN-EDD-WJ18A,Inductive Sensors-WJ18A-1-4 mm PNP,Image Not Found as the Product was not present in the delivery nor in the packaging list,KJT,,,USD,Not available in packaging list,,,3 Days,Active
-,115,MVG-IN-EDD-WJ18B,Inductive Sensors-WJ18B-0-7 mm PNP,,KJT,,,USD,,,,3 Days,Active
-,116,MVG-IN-EDD-WJ18C,Inductive Sensors-WJ18C-7-20 mm PNP,,KJT,,,USD,,,,3 Days,Active
-,117,MVG-IN-EDD-WJ18D,Inductive Sensors-WJ18D-7-20 mm PNP,,KJT,,,USD,,,,3 Days,Active
+Category,S.No,Product Code,Product Description
+Conventional Sensors,1,SR-IN-00001,Inductive Sensors-M8-2 mm-NPN NO - J8 - Flush - Plug-in
+Conventional Sensors,2,SR-IN-00002,Inductive Sensors-M8-2 mm-NPN NC - J8 - Flush - Plug-in
+Conventional Sensors,3,SR-IN-00003,Inductive Sensors-M8-2 mm-PNP NO - J8 - Flush - Plug-in
+Conventional Sensors,4,SR-IN-00004,Inductive Sensors-M8-2 mm-PNP NC - J8 - Flush - Plug-in
+Conventional Sensors,5,SR-IN-00005,Inductive Sensors-M8-4 mm-NPN NO - J8 - Flush - Plug-in
+Conventional Sensors,6,SR-IN-00006,Inductive Sensors-M8-4 mm-NPN NC - J8 - Flush - Plug-in
+Conventional Sensors,7,SR-IN-00007,Inductive Sensors-M8-4 mm-PNP NO - J8 - Flush - Plug-in
+Conventional Sensors,8,SR-IN-00008,Inductive Sensors-M8-4 mm-PNP NC - J8 - Flush - Plug-in
+Conventional Sensors,9,SR-IN-00009,Inductive Sensors-M8-6 mm-NPN NO - J8 - Flush - Plug-in
+Conventional Sensors,10,SR-IN-00010,Inductive Sensors-M8-6 mm-NPN NC - J8 - Flush - Plug-in
+Conventional Sensors,11,SR-IN-00011,Inductive Sensors-M8-6 mm-PNP NO - J8 - Flush - Plug-in
+Conventional Sensors,12,SR-IN-00012,Inductive Sensors-M8-6 mm-PNP NC - J8 - Flush - Plug-in
+Conventional Sensors,13,SR-IN-00013,Inductive Sensors-M8-2 mm-NPN NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,14,SR-IN-00014,Inductive Sensors-M8-2 mm-NPN NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,15,SR-IN-00015,Inductive Sensors-M8-2 mm-PNP NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,16,SR-IN-00016,Inductive Sensors-M8-2 mm-PNP NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,17,SR-IN-00017,Inductive Sensors-M8-4 mm-NPN NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,18,SR-IN-00018,Inductive Sensors-M8-4 mm-NPN NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,19,SR-IN-00019,Inductive Sensors-M8-4 mm-PNP NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,20,SR-IN-00020,Inductive Sensors-M8-4 mm-PNP NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,21,SR-IN-00021,Inductive Sensors-M8-6 mm-NPN NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,22,SR-IN-00022,Inductive Sensors-M8-6 mm-NPN NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,23,SR-IN-00023,Inductive Sensors-M8-6 mm-PNP NO - J8 - Non Flush - Non-Buried
+Conventional Sensors,24,SR-IN-00024,Inductive Sensors-M8-6 mm-PNP NC - J8 - Non Flush - Non-Buried
+Conventional Sensors,25,SR-IN-00025,Inductive Sensors-M8-1 mm-NPN NO - J8M - Flush - Embedded
+Conventional Sensors,26,SR-IN-00026,Inductive Sensors-M8-1 mm-NPN NC - J8M - Flush - Embedded
+Conventional Sensors,27,SR-IN-00027,Inductive Sensors-M8-1 mm-PNP NO - J8M - Flush - Embedded
+Conventional Sensors,28,SR-IN-00028,Inductive Sensors-M8-1 mm-PNP NC - J8M - Flush - Embedded
+Conventional Sensors,29,SR-IN-00029,Inductive Sensors-M8-2 mm-NPN NO - J8M - Flush - Embedded
+Conventional Sensors,30,SR-IN-00030,Inductive Sensors-M8-2 mm-NPN NC - J8M - Flush - Embedded
+Conventional Sensors,31,SR-IN-00031,Inductive Sensors-M8-2 mm-PNP NO - J8M - Flush - Embedded
+Conventional Sensors,32,SR-IN-00032,Inductive Sensors-M8-2 mm-PNP NC - J8M - Flush - Embedded
+Conventional Sensors,33,SR-IN-00033,Inductive Sensors-M8-3 mm-NPN NO - J8M - Flush - Embedded
+Conventional Sensors,34,SR-IN-00034,Inductive Sensors-M8-3 mm-NPN NC - J8M - Flush - Embedded
+Conventional Sensors,35,SR-IN-00035,Inductive Sensors-M8-3 mm-PNP NO - J8M - Flush - Embedded
+Conventional Sensors,36,SR-IN-00036,Inductive Sensors-M8-3 mm-PNP NC - J8M - Flush - Embedded
+Conventional Sensors,37,SR-IN-00037,Inductive Sensors-M8-1 mm-NPN NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,38,SR-IN-00038,Inductive Sensors-M8-1 mm-NPN NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,39,SR-IN-00039,Inductive Sensors-M8-1 mm-PNP NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,40,SR-IN-00040,Inductive Sensors-M8-1 mm-PNP NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,41,SR-IN-00041,Inductive Sensors-M8-2 mm-NPN NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,42,SR-IN-00042,Inductive Sensors-M8-2 mm-NPN NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,43,SR-IN-00043,Inductive Sensors-M8-2 mm-PNP NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,44,SR-IN-00044,Inductive Sensors-M8-2 mm-PNP NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,45,SR-IN-00045,Inductive Sensors-M8-3 mm-NPN NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,46,SR-IN-00046,Inductive Sensors-M8-3 mm-NPN NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,47,SR-IN-00047,Inductive Sensors-M8-3 mm-PNP NO - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,48,SR-IN-00048,Inductive Sensors-M8-3 mm-PNP NC - J8D - Flush - Ultra-Short Embedded
+Conventional Sensors,49,SR-IN-00049,Inductive Sensors-M12-4 mm-NPN NO - J12 - Flush - Plug-in
+Conventional Sensors,50,SR-IN-00050,Inductive Sensors-M12-4 mm-NPN NC - J12 - Flush - Plug-in
+Conventional Sensors,51,SR-IN-00051,Inductive Sensors-M12-4 mm-PNP NO - J12 - Flush - Plug-in
+Conventional Sensors,52,SR-IN-00052,Inductive Sensors-M12-4 mm-PNP NC - J12 - Flush - Plug-in
+Conventional Sensors,53,SR-IN-00053,Inductive Sensors-M12-4 mm-NPN NO - J12 - Non Flush - Non-Buried
+Conventional Sensors,54,SR-IN-00054,Inductive Sensors-M12-4 mm-NPN NC - J12 - Non Flush - Non-Buried
+Conventional Sensors,55,SR-IN-00055,Inductive Sensors-M12-4 mm-PNP NO - J12 - Non Flush - Non-Buried
+Conventional Sensors,56,SR-IN-00056,Inductive Sensors-M12-4 mm-PNP NC - J12 - Non Flush - Non-Buried
+Conventional Sensors,57,SR-IN-00057,Inductive Sensors-M12-2 mm-NPN NO - J12M - Flush - Embedded
+Conventional Sensors,58,SR-IN-00058,Inductive Sensors-M12-2 mm-NPN NC - J12M - Flush - Embedded
+Conventional Sensors,59,SR-IN-00059,Inductive Sensors-M12-2 mm-PNP NO - J12M - Flush - Embedded
+Conventional Sensors,60,SR-IN-00060,Inductive Sensors-M12-2 mm-PNP NC - J12M - Flush - Embedded
+Conventional Sensors,61,SR-IN-00061,Inductive Sensors-M12-1 mm-NPN NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,62,SR-IN-00062,Inductive Sensors-M12-1 mm-NPN NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,63,SR-IN-00063,Inductive Sensors-M12-1 mm-PNP NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,64,SR-IN-00064,Inductive Sensors-M12-1 mm-PNP NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,65,SR-IN-00065,Inductive Sensors-M12-2 mm-NPN NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,66,SR-IN-00066,Inductive Sensors-M12-2 mm-NPN NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,67,SR-IN-00067,Inductive Sensors-M12-2 mm-PNP NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,68,SR-IN-00068,Inductive Sensors-M12-2 mm-PNP NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,69,SR-IN-00069,Inductive Sensors-M12-3 mm-NPN NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,70,SR-IN-00070,Inductive Sensors-M12-3 mm-NPN NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,71,SR-IN-00071,Inductive Sensors-M12-3 mm-PNP NO - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,72,SR-IN-00072,Inductive Sensors-M12-3 mm-PNP NC - J12M - Flush - AC Plastic Cylindrical
+Conventional Sensors,73,SR-IN-00073,Inductive Sensors-M18-8 mm-NPN NO - J18 - Flush - Plug-in
+Conventional Sensors,74,SR-IN-00074,Inductive Sensors-M18-8 mm-NPN NC - J18 - Flush - Plug-in
+Conventional Sensors,75,SR-IN-00075,Inductive Sensors-M18-8 mm-PNP NO - J18 - Flush - Plug-in
+Conventional Sensors,76,SR-IN-00076,Inductive Sensors-M18-8 mm-PNP NC - J18 - Flush - Plug-in
+Conventional Sensors,77,SR-IN-00077,Inductive Sensors-M18-8 mm-NPN NO - J18 - Non Flush - Non-Buried
+Conventional Sensors,78,SR-IN-00078,Inductive Sensors-M18-8 mm-NPN NC - J18 - Non Flush - Non-Buried
+Conventional Sensors,79,SR-IN-00079,Inductive Sensors-M18-8 mm-PNP NO - J18 - Non Flush - Non-Buried
+Conventional Sensors,80,SR-IN-00080,Inductive Sensors-M18-8 mm-PNP NC - J18 - Non Flush - Non-Buried
+Conventional Sensors,81,SR-IN-00081,Inductive Sensors-M18-5 mm-NPN NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,82,SR-IN-00082,Inductive Sensors-M18-5 mm-NPN NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,83,SR-IN-00083,Inductive Sensors-M18-5 mm-PNP NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,84,SR-IN-00084,Inductive Sensors-M18-5 mm-PNP NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,85,SR-IN-00085,Inductive Sensors-M18-8 mm-NPN NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,86,SR-IN-00086,Inductive Sensors-M18-8 mm-NPN NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,87,SR-IN-00087,Inductive Sensors-M18-8 mm-PNP NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,88,SR-IN-00088,Inductive Sensors-M18-8 mm-PNP NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,89,SR-IN-00089,Inductive Sensors-M18-12 mm-NPN NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,90,SR-IN-00090,Inductive Sensors-M18-12 mm-NPN NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,91,SR-IN-00091,Inductive Sensors-M18-12 mm-PNP NO - J18 - Flush - 3-Wire DC
+Conventional Sensors,92,SR-IN-00092,Inductive Sensors-M18-12 mm-PNP NC - J18 - Flush - 3-Wire DC
+Conventional Sensors,93,SR-IN-00093,Inductive Sensors-M18-5 mm-NPN NO - J18M - Flush - Embedded
+Conventional Sensors,94,SR-IN-00094,Inductive Sensors-M18-5 mm-NPN NC - J18M - Flush - Embedded
+Conventional Sensors,95,SR-IN-00095,Inductive Sensors-M18-5 mm-PNP NO - J18M - Flush - Embedded
+Conventional Sensors,96,SR-IN-00096,Inductive Sensors-M18-5 mm-PNP NC - J18M - Flush - Embedded
+Conventional Sensors,97,SR-IN-00097,Inductive Sensors-M30-15 mm-NPN NO - J30 - Flush - Plug-in
+Conventional Sensors,98,SR-IN-00098,Inductive Sensors-M30-15 mm-NPN NC - J30 - Flush - Plug-in
+Conventional Sensors,99,SR-IN-00099,Inductive Sensors-M30-15 mm-PNP NO - J30 - Flush - Plug-in
+Conventional Sensors,100,SR-IN-00100,Inductive Sensors-M30-15 mm-PNP NC - J30 - Flush - Plug-in
+Conventional Sensors,101,SR-IN-00101,Inductive Sensors-M30-15 mm-NPN NO - J30 - Non Flush - Non-Buried
+Conventional Sensors,102,SR-IN-00102,Inductive Sensors-M30-15 mm-NPN NC - J30 - Non Flush - Non-Buried
+Conventional Sensors,103,SR-IN-00103,Inductive Sensors-M30-15 mm-PNP NO - J30 - Non Flush - Non-Buried
+Conventional Sensors,104,SR-IN-00104,Inductive Sensors-M30-15 mm-PNP NC - J30 - Non Flush - Non-Buried
+Conventional Sensors,105,SR-IN-00105,Inductive Sensors-M30-10 mm-NPN NO - J30M - Flush - Embedded
+Conventional Sensors,106,SR-IN-00106,Inductive Sensors-M30-10 mm-NPN NC - J30M - Flush - Embedded
+Conventional Sensors,107,SR-IN-00107,Inductive Sensors-M30-10 mm-PNP NO - J30M - Flush - Embedded
+Conventional Sensors,108,SR-IN-00108,Inductive Sensors-M30-10 mm-PNP NC - J30M - Flush - Embedded
+Extra Distance Series,109,SR-IN-00109,Inductive Sensors - Extra Distance - J6.5MT - 2 mm - NPN NO - Flush
+Extra Distance Series,110,SR-IN-00110,Inductive Sensors - Extra Distance - J6.5MT - 2 mm - NPN NC - Flush
+Extra Distance Series,111,SR-IN-00111,Inductive Sensors - Extra Distance - J6.5MT - 2 mm - PNP NO - Flush
+Extra Distance Series,112,SR-IN-00112,Inductive Sensors - Extra Distance - J6.5MT - 2 mm - PNP NC - Flush
+Extra Distance Series,113,SR-IN-00113,Inductive Sensors - Extra Distance - J6.5MT - 3 mm - NPN NO - Flush
+Extra Distance Series,114,SR-IN-00114,Inductive Sensors - Extra Distance - J6.5MT - 3 mm - NPN NC - Flush
+Extra Distance Series,115,SR-IN-00115,Inductive Sensors - Extra Distance - J6.5MT - 3 mm - PNP NO - Flush
+Extra Distance Series,116,SR-IN-00116,Inductive Sensors - Extra Distance - J6.5MT - 3 mm - PNP NC - Flush
+Extra Distance Series,117,SR-IN-00117,Inductive Sensors - Extra Distance - J6.5MT - 4 mm - NPN NO - Non Flush
+Extra Distance Series,118,SR-IN-00118,Inductive Sensors - Extra Distance - J6.5MT - 4 mm - NPN NC - Non Flush
+Extra Distance Series,119,SR-IN-00119,Inductive Sensors - Extra Distance - J6.5MT - 4 mm - PNP NO - Non Flush
+Extra Distance Series,120,SR-IN-00120,Inductive Sensors - Extra Distance - J6.5MT - 4 mm - PNP NC - Non Flush
+Extra Distance Series,121,SR-IN-00121,Inductive Sensors - Extra Distance - J6.5MT - 6 mm - NPN NO - Non Flush
+Extra Distance Series,122,SR-IN-00122,Inductive Sensors - Extra Distance - J6.5MT - 6 mm - NPN NC - Non Flush
+Extra Distance Series,123,SR-IN-00123,Inductive Sensors - Extra Distance - J6.5MT - 6 mm - PNP NO - Non Flush
+Extra Distance Series,124,SR-IN-00124,Inductive Sensors - Extra Distance - J6.5MT - 6 mm - PNP NC - Non Flush
+Extra Distance Series,125,SR-IN-00125,Inductive Sensors - Extra Distance - J8MT - 2 mm - NPN NO - Flush
+Extra Distance Series,126,SR-IN-00126,Inductive Sensors - Extra Distance - J8MT - 2 mm - NPN NC - Flush
+Extra Distance Series,127,SR-IN-00127,Inductive Sensors - Extra Distance - J8MT - 2 mm - PNP NO - Flush
+Extra Distance Series,128,SR-IN-00128,Inductive Sensors - Extra Distance - J8MT - 2 mm - PNP NC - Flush
+Extra Distance Series,129,SR-IN-00129,Inductive Sensors - Extra Distance - J8MT - 3 mm - NPN NO - Flush
+Extra Distance Series,130,SR-IN-00130,Inductive Sensors - Extra Distance - J8MT - 3 mm - NPN NC - Flush
+Extra Distance Series,131,SR-IN-00131,Inductive Sensors - Extra Distance - J8MT - 3 mm - PNP NO - Flush
+Extra Distance Series,132,SR-IN-00132,Inductive Sensors - Extra Distance - J8MT - 3 mm - PNP NC - Flush
+Extra Distance Series,133,SR-IN-00133,Inductive Sensors - Extra Distance - J12MT - 4 mm - NPN NO - Non Flush
+Extra Distance Series,134,SR-IN-00134,Inductive Sensors - Extra Distance - J12MT - 4 mm - NPN NC - Non Flush
+Extra Distance Series,135,SR-IN-00135,Inductive Sensors - Extra Distance - J12MT - 4 mm - PNP NO - Non Flush
+Extra Distance Series,136,SR-IN-00136,Inductive Sensors - Extra Distance - J12MT - 4 mm - PNP NC - Non Flush
+Extra Distance Series,137,SR-IN-00137,Inductive Sensors - Extra Distance - J12MT - 6 mm - NPN NO - Non Flush
+Extra Distance Series,138,SR-IN-00138,Inductive Sensors - Extra Distance - J12MT - 6 mm - NPN NC - Non Flush
+Extra Distance Series,139,SR-IN-00139,Inductive Sensors - Extra Distance - J12MT - 6 mm - PNP NO - Non Flush
+Extra Distance Series,140,SR-IN-00140,Inductive Sensors - Extra Distance - J12MT - 6 mm - PNP NC - Non Flush
+Extra Distance Series,141,SR-IN-00141,Inductive Sensors - Extra Distance - J12T - 8 mm - NPN NO - Non Flush
+Extra Distance Series,142,SR-IN-00142,Inductive Sensors - Extra Distance - J12T - 8 mm - NPN NC - Non Flush
+Extra Distance Series,143,SR-IN-00143,Inductive Sensors - Extra Distance - J12T - 8 mm - PNP NO - Non Flush
+Extra Distance Series,144,SR-IN-00144,Inductive Sensors - Extra Distance - J12T - 8 mm - PNP NC - Non Flush
+Extra Distance Series,145,SR-IN-00145,Inductive Sensors - Extra Distance - J12T - 12 mm - NPN NO - Non Flush
+Extra Distance Series,146,SR-IN-00146,Inductive Sensors - Extra Distance - J12T - 12 mm - NPN NC - Non Flush
+Extra Distance Series,147,SR-IN-00147,Inductive Sensors - Extra Distance - J12T - 12 mm - PNP NO - Non Flush
+Extra Distance Series,148,SR-IN-00148,Inductive Sensors - Extra Distance - J12T - 12 mm - PNP NC - Non Flush
+Extra Distance Series,149,SR-IN-00149,Inductive Sensors - Extra Distance - J18T - 16 mm - NPN NO - Non Flush
+Extra Distance Series,150,SR-IN-00150,Inductive Sensors - Extra Distance - J18T - 16 mm - NPN NC - Non Flush
+Extra Distance Series,151,SR-IN-00151,Inductive Sensors - Extra Distance - J18T - 16 mm - PNP NO - Non Flush
+Extra Distance Series,152,SR-IN-00152,Inductive Sensors - Extra Distance - J18T - 16 mm - PNP NC - Non Flush
+Extra Distance Series,153,SR-IN-00153,Inductive Sensors - Extra Distance - J18T - 20 mm - NPN NO - Non Flush
+Extra Distance Series,154,SR-IN-00154,Inductive Sensors - Extra Distance - J18T - 20 mm - NPN NC - Non Flush
+Extra Distance Series,155,SR-IN-00155,Inductive Sensors - Extra Distance - J18T - 20 mm - PNP NO - Non Flush
+Extra Distance Series,156,SR-IN-00156,Inductive Sensors - Extra Distance - J18T - 20 mm - PNP NC - Non Flush
+Extra Distance Series,157,SR-IN-00157,Inductive Sensors - Extra Distance - J18MT - 8 mm - NPN NO - Flush
+Extra Distance Series,158,SR-IN-00158,Inductive Sensors - Extra Distance - J18MT - 8 mm - NPN NC - Flush
+Extra Distance Series,159,SR-IN-00159,Inductive Sensors - Extra Distance - J18MT - 8 mm - PNP NO - Flush
+Extra Distance Series,160,SR-IN-00160,Inductive Sensors - Extra Distance - J18MT - 8 mm - PNP NC - Flush
+Extra Distance Series,161,SR-IN-00161,Inductive Sensors - Extra Distance - J18MT - 12 mm - NPN NO - Flush
+Extra Distance Series,162,SR-IN-00162,Inductive Sensors - Extra Distance - J18MT - 12 mm - NPN NC - Flush
+Extra Distance Series,163,SR-IN-00163,Inductive Sensors - Extra Distance - J18MT - 12 mm - PNP NO - Flush
+Extra Distance Series,164,SR-IN-00164,Inductive Sensors - Extra Distance - J18MT - 12 mm - PNP NC - Flush
+Extra Distance Series,165,SR-IN-00165,Inductive Sensors - Extra Distance - J30T - 25 mm - NPN NO - Non Flush
+Extra Distance Series,166,SR-IN-00166,Inductive Sensors - Extra Distance - J30T - 25 mm - NPN NC - Non Flush
+Extra Distance Series,167,SR-IN-00167,Inductive Sensors - Extra Distance - J30T - 25 mm - PNP NO - Non Flush
+Extra Distance Series,168,SR-IN-00168,Inductive Sensors - Extra Distance - J30T - 25 mm - PNP NC - Non Flush
+Extra Distance Series,169,SR-IN-00169,Inductive Sensors - Extra Distance - J30T - 40 mm - NPN NO - Non Flush
+Extra Distance Series,170,SR-IN-00170,Inductive Sensors - Extra Distance - J30T - 40 mm - NPN NC - Non Flush
+Extra Distance Series,171,SR-IN-00171,Inductive Sensors - Extra Distance - J30T - 40 mm - PNP NO - Non Flush
+Extra Distance Series,172,SR-IN-00172,Inductive Sensors - Extra Distance - J30T - 40 mm - PNP NC - Non Flush
+Extra Distance Series,173,SR-IN-00173,Inductive Sensors - Extra Distance - J30T - 15 mm - NPN NO
+Extra Distance Series,174,SR-IN-00174,Inductive Sensors - Extra Distance - J30T - 15 mm - NPN NC
+Extra Distance Series,175,SR-IN-00175,Inductive Sensors - Extra Distance - J30T - 15 mm - PNP NO
+Extra Distance Series,176,SR-IN-00176,Inductive Sensors - Extra Distance - J30T - 15 mm - PNP NC
+Extra Distance Series,177,SR-IN-00177,Inductive Sensors - Extra Distance - J30T - 22 mm - NPN NO
+Extra Distance Series,178,SR-IN-00178,Inductive Sensors - Extra Distance - J30T - 22 mm - NPN NC
+Extra Distance Series,179,SR-IN-00179,Inductive Sensors - Extra Distance - J30T - 22 mm - PNP NO
+Extra Distance Series,180,SR-IN-00180,Inductive Sensors - Extra Distance - J30T - 22 mm - PNP NC
+Extra Distance Series,181,SR-IN-00181,Inductive Sensors - Extra Distance - J30T - 20 mm - NPN NO
+Extra Distance Series,182,SR-IN-00182,Inductive Sensors - Extra Distance - J30T - 20 mm - NPN NC
+Extra Distance Series,183,SR-IN-00183,Inductive Sensors - Extra Distance - J30T - 20 mm - PNP NO
+Extra Distance Series,184,SR-IN-00184,Inductive Sensors - Extra Distance - J30T - 20 mm - PNP NC
+Extra Distance Series,185,SR-IN-00185,Inductive Sensors - Extra Distance - J30T - 25 mm - NPN NO
+Extra Distance Series,186,SR-IN-00186,Inductive Sensors - Extra Distance - J30T - 25 mm - NPN NC
+Extra Distance Series,187,SR-IN-00187,Inductive Sensors - Extra Distance - J30T - 25 mm - PNP NO
+Analog Series,188,SR-IN-00188,Inductive Sensors - Analog Series - WJ12C - 0.1-3 mm - 0-10V - Flush
+Analog Series,189,SR-IN-00189,Inductive Sensors - Analog Series - WJ12C - 0.1-3 mm - 4-20mA - Flush
+Analog Series,190,SR-IN-00190,Inductive Sensors-WJ12C-0.1-4 mm Analog - 0-10V - Non Flush
+Analog Series,191,SR-IN-00191,Inductive Sensors-WJ12C-0.1-4 mm Analog - 4-20mA - Non Flush
+Analog Series,192,SR-IN-00192,Inductive Sensors-WJ12C-1-4 mm Analog - 0-10V - Non Flush
+Analog Series,193,SR-IN-00193,Inductive Sensors-WJ12C-1-4 mm Analog - 4-20mA - Non Flush
+Analog Series,194,SR-IN-00194,Inductive Sensors-WJ18C-0.1-5 mm Analog - 0-10V - Flush
+Analog Series,195,SR-IN-00195,Inductive Sensors-WJ18C-0.1-5 mm Analog - 4-20mA - Flush
+Analog Series,196,SR-IN-00196,Inductive Sensors-WJ18C-0.1-8 mm Analog - 0-10V - Non Flush
+Analog Series,197,SR-IN-00197,Inductive Sensors-WJ18C-0.1-8 mm Analog - 4-20mA - Non Flush
+Analog Series,198,SR-IN-00198,Inductive Sensors-WJ18C-1-4 mm Analog - 0-10V - Flush
+Analog Series,199,SR-IN-00199,Inductive Sensors-WJ18C-1-4 mm Analog - 4-20mA - Flush
+Analog Series,200,SR-IN-00200,Inductive Sensors-WJ18C-1-7 mm Analog - 0-10V - Non Flush
+Analog Series,201,SR-IN-00201,Inductive Sensors-WJ18C-1-7 mm Analog - 4-20mA - Non Flush
+Analog Series,202,SR-IN-00202,Inductive Sensors-WJ30C-0.1-13 mm Analog - 0-10V - Flush
+Analog Series,203,SR-IN-00203,Inductive Sensors-WJ30C-0.1-13 mm Analog - 0-10V - Non Flush
+Analog Series,204,SR-IN-00204,Inductive Sensors-WJ30C-0.1-13 mm Analog - 4-20mA - Flush
+Analog Series,205,SR-IN-00205,Inductive Sensors-WJ30C-0.1-13 mm Analog - 4-20mA - Non Flush
+Analog Series,206,SR-IN-00206,Inductive Sensors-WJ30C-7-14 mm Analog - 0-10V - Flush
+Analog Series,207,SR-IN-00207,Inductive Sensors-WJ30C-7-14 mm Analog - 0-10V - Non Flush
+Analog Series,208,SR-IN-00208,Inductive Sensors-WJ30C-7-14 mm Analog - 4-20mA - Flush
+Analog Series,209,SR-IN-00209,Inductive Sensors-WJ30C-7-14 mm Analog - 4-20mA - Non Flush
+Analog Series,210,SR-IN-00210,Inductive Sensors-WJ30C-5-10 mm Analog - 0-10V - Flush
+Analog Series,211,SR-IN-00211,Inductive Sensors-WJ30C-5-10 mm Analog - 4-20mA - Flush
+Analog Series,212,SR-IN-00212,Inductive Sensors-WJ30C-5-10 mm Analog - 0-10V - Non Flush
+Analog Series,213,SR-IN-00213,Inductive Sensors-WJ30C-5-10 mm Analog - 4-20mA - Non Flush
+Analog Series,214,SR-IN-00214,Inductive Sensors-WJ40C-5-10 mm Analog - 0-10V
+Analog Series,215,SR-IN-00215,Inductive Sensors-WJ40C-5-10 mm Analog - 4-20mA
+Analog Series,216,SR-IN-00216,Inductive Sensors-WJ40C-5-15 mm Analog - 0-10V
+Analog Series,217,SR-IN-00217,Inductive Sensors-WJ40C-5-15 mm Analog - 4-20mA
+Analog Series,218,SR-IN-00218,Inductive Sensors-WJ40C-5-20 mm Analog - 0-10V
+Analog Series,219,SR-IN-00219,Inductive Sensors-WJ40C-5-20 mm Analog - 4-20mA
+Analog Series,220,SR-IN-00220,Inductive Sensors-WJ40C-10-30 mm Analog - 0-10V
+Analog Series,221,SR-IN-00221,Inductive Sensors-WJ40C-10-30 mm Analog - 4-20mA
+Analog Series,222,SR-IN-00222,Inductive Sensors-M30*61.5-1-10 mm Analog - 0-10V - Flush
+Analog Series,223,SR-IN-00223,Inductive Sensors-M30*61.5-1-10 mm Analog - 4-20mA - Flush
+Analog Series,224,SR-IN-00224,Inductive Sensors-M30*69.5-1.6-15 mm Output NM - Non Flush
+Full Inox Series,225,SR-IN-00225,Inductive Sensors - Full Inox - J8MQS - M8 - 1 mm - Flush - NPN - NO
+Full Inox Series,226,SR-IN-00226,Inductive Sensors - Full Inox - J8MQS - M8 - 1 mm - Flush - NPN - NC
+Full Inox Series,227,SR-IN-00227,Inductive Sensors - Full Inox - J8MQS - M8 - 1 mm - Flush - PNP - NO
+Full Inox Series,228,SR-IN-00228,Inductive Sensors - Full Inox - J8MQS - M8 - 1 mm - Flush - PNP - NC
+Full Inox Series,229,SR-IN-00229,Inductive Sensors - Full Inox - J8MQS - M8 - 2 mm - Flush - NPN - NO
+Full Inox Series,230,SR-IN-00230,Inductive Sensors - Full Inox - J8MQS - M8 - 2 mm - Flush - NPN - NC
+Full Inox Series,231,SR-IN-00231,Inductive Sensors - Full Inox - J8MQS - M8 - 2 mm - Flush - PNP - NO
+Full Inox Series,232,SR-IN-00232,Inductive Sensors - Full Inox - J8MQS - M8 - 2 mm - Flush - PNP - NC
+Full Inox Series,233,SR-IN-00233,Inductive Sensors - Full Inox - J8QS - M8 - 2 mm - Non Flush - NPN - NO
+Full Inox Series,234,SR-IN-00234,Inductive Sensors - Full Inox - J8QS - M8 - 2 mm - Non Flush - NPN - NC
+Full Inox Series,235,SR-IN-00235,Inductive Sensors - Full Inox - J8QS - M8 - 2 mm - Non Flush - PNP - NO
+Full Inox Series,236,SR-IN-00236,Inductive Sensors - Full Inox - J8QS - M8 - 2 mm - Non Flush - PNP - NC
+Full Inox Series,237,SR-IN-00237,Inductive Sensors - Full Inox - J8QS - M8 - 15 mm - Non Flush - NPN - NO
+Full Inox Series,238,SR-IN-00238,Inductive Sensors - Full Inox - J8QS - M8 - 15 mm - Non Flush - NPN - NC
+Full Inox Series,239,SR-IN-00239,Inductive Sensors - Full Inox - J8QS - M8 - 15 mm - Non Flush - PNP - NO
+Full Inox Series,240,SR-IN-00240,Inductive Sensors - Full Inox - J8QS - M8 - 15 mm - Non Flush - PNP - NC
+Full Inox Series,241,SR-IN-00241,Inductive Sensors - Full Inox - J12MQS - M12 - 2 mm - Flush - NPN - NO
+Full Inox Series,242,SR-IN-00242,Inductive Sensors - Full Inox - J12MQS - M12 - 2 mm - Flush - NPN - NC
+Full Inox Series,243,SR-IN-00243,Inductive Sensors - Full Inox - J12MQS - M12 - 2 mm - Flush - PNP - NO
+Full Inox Series,244,SR-IN-00244,Inductive Sensors - Full Inox - J12MQS - M12 - 2 mm - Flush - PNP - NC
+Full Inox Series,245,SR-IN-00245,Inductive Sensors - Full Inox - J12MQS - M12 - 4 mm - Flush - NPN - NO
+Full Inox Series,246,SR-IN-00246,Inductive Sensors - Full Inox - J12MQS - M12 - 4 mm - Flush - NPN - NC
+Full Inox Series,247,SR-IN-00247,Inductive Sensors - Full Inox - J12MQS - M12 - 4 mm - Flush - PNP - NO
+Full Inox Series,248,SR-IN-00248,Inductive Sensors - Full Inox - J12MQS - M12 - 4 mm - Flush - PNP - NC
+Full Inox Series,249,SR-IN-00249,Inductive Sensors - Full Inox - J12QS - M12 - 4 mm - Non Flush - NPN - NO
+Full Inox Series,250,SR-IN-00250,Inductive Sensors - Full Inox - J12QS - M12 - 4 mm - Non Flush - NPN - NC
+Full Inox Series,251,SR-IN-00251,Inductive Sensors - Full Inox - J12QS - M12 - 4 mm - Non Flush - PNP - NO
+Full Inox Series,252,SR-IN-00252,Inductive Sensors - Full Inox - J12QS - M12 - 4 mm - Non Flush - PNP - NC
+Full Inox Series,253,SR-IN-00253,Inductive Sensors - Full Inox - J18MQS - M18 - 5 mm - Flush - NPN - NO
+Full Inox Series,254,SR-IN-00254,Inductive Sensors - Full Inox - J18MQS - M18 - 5 mm - Flush - NPN - NC
+Full Inox Series,255,SR-IN-00255,Inductive Sensors - Full Inox - J18MQS - M18 - 5 mm - Flush - PNP - NO
+Full Inox Series,256,SR-IN-00256,Inductive Sensors - Full Inox - J18MQS - M18 - 5 mm - Flush - PNP - NC
+Full Inox Series,257,SR-IN-00257,Inductive Sensors - Full Inox - J18MQS - M18 - 8 mm - Flush - NPN - NO
+Full Inox Series,258,SR-IN-00258,Inductive Sensors - Full Inox - J18MQS - M18 - 8 mm - Flush - NPN - NC
+Full Inox Series,259,SR-IN-00259,Inductive Sensors - Full Inox - J18MQS - M18 - 8 mm - Flush - PNP - NO
+Full Inox Series,260,SR-IN-00260,Inductive Sensors - Full Inox - J18MQS - M18 - 8 mm - Flush - PNP - NC
+Full Inox Series,261,SR-IN-00261,Inductive Sensors - Full Inox - J18QS - M18 - 8 mm - Non Flush - NPN - NO
+Full Inox Series,262,SR-IN-00262,Inductive Sensors - Full Inox - J18QS - M18 - 8 mm - Non Flush - NPN - NC
+Full Inox Series,263,SR-IN-00263,Inductive Sensors - Full Inox - J18QS - M18 - 8 mm - Non Flush - PNP - NO
+Full Inox Series,264,SR-IN-00264,Inductive Sensors - Full Inox - J18QS - M18 - 8 mm - Non Flush - PNP - NC
+Full Inox Series,265,SR-IN-00265,Inductive Sensors - Full Inox - J30MQS - M30 - 10 mm - Flush - NPN - NO
+Full Inox Series,266,SR-IN-00266,Inductive Sensors - Full Inox - J30MQS - M30 - 10 mm - Flush - NPN - NC
+Full Inox Series,267,SR-IN-00267,Inductive Sensors - Full Inox - J30MQS - M30 - 10 mm - Flush - PNP - NO
+Full Inox Series,268,SR-IN-00268,Inductive Sensors - Full Inox - J30MQS - M30 - 10 mm - Flush - PNP - NC
+Full Inox Series,269,SR-IN-00269,Inductive Sensors - Full Inox - J30QS - M30 - 15 mm - Non Flush - NPN - NO
+Full Inox Series,270,SR-IN-00270,Inductive Sensors - Full Inox - J30QS - M30 - 15 mm - Non Flush - NPN - NC
+Full Inox Series,271,SR-IN-00271,Inductive Sensors - Full Inox - J30QS - M30 - 15 mm - Non Flush - PNP - NO
+Full Inox Series,272,SR-IN-00272,Inductive Sensors - Full Inox - J30QS - M30 - 15 mm - Non Flush - PNP - NC
+Full Inox Series,273,SR-IN-00273,Inductive Sensors - Full Inox - M12-FMH - M12 - 2 mm - Flush - Full Metal Housing - 10-36V DC - NPN - NO
+Full Inox Series,274,SR-IN-00274,Inductive Sensors - Full Inox - M12-FMH - M12 - 2 mm - Flush - Full Metal Housing - 10-36V DC - NPN - NC
+Full Inox Series,275,SR-IN-00275,Inductive Sensors - Full Inox - M12-FMH - M12 - 2 mm - Flush - Full Metal Housing - 10-36V DC - PNP - NO
+Full Inox Series,276,SR-IN-00276,Inductive Sensors - Full Inox - M12-FMH - M12 - 2 mm - Flush - Full Metal Housing - 10-36V DC - PNP - NC
+Full Inox Series,277,SR-IN-00277,Inductive Sensors - Full Inox - M12-FMH - M12 - 4 mm - Non Flush - Full Metal Housing - 10-36V DC - NPN - NO
+Full Inox Series,278,SR-IN-00278,Inductive Sensors - Full Inox - M12-FMH - M12 - 4 mm - Non Flush - Full Metal Housing - 10-36V DC - NPN - NC
+Full Inox Series,279,SR-IN-00279,Inductive Sensors - Full Inox - M12-FMH - M12 - 4 mm - Non Flush - Full Metal Housing - 10-36V DC - PNP - NO
+Full Inox Series,280,SR-IN-00280,Inductive Sensors - Full Inox - M12-FMH - M12 - 4 mm - Non Flush - Full Metal Housing - 10-36V DC - PNP - NC
+High Temperature Series,281,SR-IN-00281,Inductive Sensors - High Temperature - J8GW - M8 - 1 mm - Flush - NPN - NO
+High Temperature Series,282,SR-IN-00282,Inductive Sensors - High Temperature - J8GW - M8 - 1 mm - Flush - NPN - NC
+High Temperature Series,283,SR-IN-00283,Inductive Sensors - High Temperature - J8GW - M8 - 1 mm - Flush - PNP - NO
+High Temperature Series,284,SR-IN-00284,Inductive Sensors - High Temperature - J8GW - M8 - 1 mm - Flush - PNP - NC
+High Temperature Series,285,SR-IN-00285,Inductive Sensors - High Temperature - J8GW - M8 - 2 mm - Non Flush - NPN - NO
+High Temperature Series,286,SR-IN-00286,Inductive Sensors - High Temperature - J8GW - M8 - 2 mm - Non Flush - NPN - NC
+High Temperature Series,287,SR-IN-00287,Inductive Sensors - High Temperature - J8GW - M8 - 2 mm - Non Flush - PNP - NO
+High Temperature Series,288,SR-IN-00288,Inductive Sensors - High Temperature - J8GW - M8 - 2 mm - Non Flush - PNP - NC
+High Temperature Series,289,SR-IN-00289,Inductive Sensors - High Temperature - J12GW - M12 - 1 mm - Flush - NPN - NO
+High Temperature Series,290,SR-IN-00290,Inductive Sensors - High Temperature - J12GW - M12 - 1 mm - Flush - NPN - NC
+High Temperature Series,291,SR-IN-00291,Inductive Sensors - High Temperature - J12GW - M12 - 1 mm - Flush - PNP - NO
+High Temperature Series,292,SR-IN-00292,Inductive Sensors - High Temperature - J12GW - M12 - 1 mm - Flush - PNP - NC
+High Temperature Series,293,SR-IN-00293,Inductive Sensors - High Temperature - J12GW - M12 - 2 mm - Non Flush - NPN - NO
+High Temperature Series,294,SR-IN-00294,Inductive Sensors - High Temperature - J12GW - M12 - 2 mm - Non Flush - NPN - NC
+High Temperature Series,295,SR-IN-00295,Inductive Sensors - High Temperature - J12GW - M12 - 2 mm - Non Flush - PNP - NO
+High Temperature Series,296,SR-IN-00296,Inductive Sensors - High Temperature - J12GW - M12 - 2 mm - Non Flush - PNP - NC
+High Temperature Series,297,SR-IN-00297,Inductive Sensors - High Temperature - J18GW - M18 - 1 mm - Flush - NPN - NO
+High Temperature Series,298,SR-IN-00298,Inductive Sensors - High Temperature - J18GW - M18 - 1 mm - Flush - NPN - NC
+High Temperature Series,299,SR-IN-00299,Inductive Sensors - High Temperature - J18GW - M18 - 1 mm - Flush - PNP - NO
+High Temperature Series,300,SR-IN-00300,Inductive Sensors - High Temperature - J18GW - M18 - 1 mm - Flush - PNP - NC
+High Temperature Series,301,SR-IN-00301,Inductive Sensors - High Temperature - J18GW - M18 - 5 mm - Non Flush - NPN - NO
+High Temperature Series,302,SR-IN-00302,Inductive Sensors - High Temperature - J18GW - M18 - 5 mm - Non Flush - NPN - NC
+High Temperature Series,303,SR-IN-00303,Inductive Sensors - High Temperature - J18GW - M18 - 5 mm - Non Flush - PNP - NO
+High Temperature Series,304,SR-IN-00304,Inductive Sensors - High Temperature - J18GW - M18 - 5 mm - Non Flush - PNP - NC
+High Temperature Series,305,SR-IN-00305,Inductive Sensors - High Temperature - J18GW - M18 - 8 mm - Non Flush - NPN - NO
+High Temperature Series,306,SR-IN-00306,Inductive Sensors - High Temperature - J18GW - M18 - 8 mm - Non Flush - NPN - NC
+High Temperature Series,307,SR-IN-00307,Inductive Sensors - High Temperature - J18GW - M18 - 8 mm - Non Flush - PNP - NO
+High Temperature Series,308,SR-IN-00308,Inductive Sensors - High Temperature - J18GW - M18 - 8 mm - Non Flush - PNP - NC
+High Temperature Series,309,SR-IN-00309,Inductive Sensors - High Temperature - J30GWM - M30 - 10 mm - Flush - NPN - NO
+High Temperature Series,310,SR-IN-00310,Inductive Sensors - High Temperature - J30GWM - M30 - 10 mm - Flush - NPN - NC
+High Temperature Series,311,SR-IN-00311,Inductive Sensors - High Temperature - J30GWM - M30 - 10 mm - Flush - PNP - NO
+High Temperature Series,312,SR-IN-00312,Inductive Sensors - High Temperature - J30GWM - M30 - 10 mm - Flush - PNP - NC
+High Temperature Series,313,SR-IN-00313,Inductive Sensors - High Temperature - J30GWN - M30 - 10 mm - Non Flush - NPN - NO
+High Temperature Series,314,SR-IN-00314,Inductive Sensors - High Temperature - J30GWN - M30 - 10 mm - Non Flush - NPN - NC
+High Temperature Series,315,SR-IN-00315,Inductive Sensors - High Temperature - J30GWN - M30 - 10 mm - Non Flush - PNP - NO
+High Temperature Series,316,SR-IN-00316,Inductive Sensors - High Temperature - J30GWN - M30 - 10 mm - Non Flush - PNP - NC
+High Temperature Series,317,SR-IN-00317,Inductive Sensors - High Temperature - J30GW - M30 - 5 mm - Non Flush - NPN - NO
+High Temperature Series,318,SR-IN-00318,Inductive Sensors - High Temperature - J30GW - M30 - 5 mm - Non Flush - NPN - NC
+High Temperature Series,319,SR-IN-00319,Inductive Sensors - High Temperature - J30GW - M30 - 5 mm - Non Flush - PNP - NO
+High Temperature Series,320,SR-IN-00320,Inductive Sensors - High Temperature - J30GW - M30 - 5 mm - Non Flush - PNP - NC
+High Temperature Series,321,SR-IN-00321,Inductive Sensors - High Temperature - J30GW - M30 - 8 mm - Non Flush - NPN - NO
+High Temperature Series,322,SR-IN-00322,Inductive Sensors - High Temperature - J30GW - M30 - 8 mm - Non Flush - NPN - NC
+High Temperature Series,323,SR-IN-00323,Inductive Sensors - High Temperature - J30GW - M30 - 8 mm - Non Flush - PNP - NO
+High Temperature Series,324,SR-IN-00324,Inductive Sensors - High Temperature - J30GW - M30 - 8 mm - Non Flush - PNP - NC
+High Temperature Series,325,SR-IN-00325,Inductive Sensors - High Temperature - J30GW - M30 - 15 mm - Non Flush - NPN - NO
+High Temperature Series,326,SR-IN-00326,Inductive Sensors - High Temperature - J30GW - M30 - 15 mm - Non Flush - NPN - NC
+High Temperature Series,327,SR-IN-00327,Inductive Sensors - High Temperature - J30GW - M30 - 15 mm - Non Flush - PNP - NO
+High Temperature Series,328,SR-IN-00328,Inductive Sensors - High Temperature - J30GW - M30 - 15 mm - Non Flush - PNP - NC
+High Temperature Series,329,SR-IN-00329,Inductive Sensors - High Temperature - J30-55 - M30 - 10 mm - Flush - NPN - NO
+High Temperature Series,330,SR-IN-00330,Inductive Sensors - High Temperature - J30-55 - M30 - 10 mm - Flush - NPN - NC
+High Temperature Series,331,SR-IN-00331,Inductive Sensors - High Temperature - J30-55 - M30 - 10 mm - Flush - PNP - NO
+High Temperature Series,332,SR-IN-00332,Inductive Sensors - High Temperature - J30-55 - M30 - 10 mm - Flush - PNP - NC
+High Temperature Series,333,SR-IN-00333,Inductive Sensors - High Temperature - J30-55 - M30 - 15 mm - Non Flush - NPN - NO
+High Temperature Series,334,SR-IN-00334,Inductive Sensors - High Temperature - J30-55 - M30 - 15 mm - Non Flush - NPN - NC
+High Temperature Series,335,SR-IN-00335,Inductive Sensors - High Temperature - J30-55 - M30 - 15 mm - Non Flush - PNP - NO
+High Temperature Series,336,SR-IN-00336,Inductive Sensors - High Temperature - J30-55 - M30 - 15 mm - Non Flush - PNP - NC
+High Temperature Series,337,SR-IN-00337,Inductive Sensors - High Temperature - J30-78 - M30 - 10 mm - Flush - NPN - NO
+High Temperature Series,338,SR-IN-00338,Inductive Sensors - High Temperature - J30-78 - M30 - 10 mm - Flush - NPN - NC
+High Temperature Series,339,SR-IN-00339,Inductive Sensors - High Temperature - J30-78 - M30 - 10 mm - Flush - PNP - NO
+High Temperature Series,340,SR-IN-00340,Inductive Sensors - High Temperature - J30-78 - M30 - 10 mm - Flush - PNP - NC
+High Temperature Series,341,SR-IN-00341,Inductive Sensors - High Temperature - J30-78 - M30 - 15 mm - Non Flush - NPN - NO
+High Temperature Series,342,SR-IN-00342,Inductive Sensors - High Temperature - J30-78 - M30 - 15 mm - Non Flush - NPN - NC
+High Temperature Series,343,SR-IN-00343,Inductive Sensors - High Temperature - J30-78 - M30 - 15 mm - Non Flush - PNP - NO
+High Temperature Series,344,SR-IN-00344,Inductive Sensors - High Temperature - J30-78 - M30 - 15 mm - Non Flush - PNP - NC
+Low Form Series,345,SR-IN-00345,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,346,SR-IN-00346,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,347,SR-IN-00347,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,348,SR-IN-00348,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,349,SR-IN-00349,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,350,SR-IN-00350,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,351,SR-IN-00351,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,352,SR-IN-00352,Inductive Sensors - Low Form / Low Temperature - J8DW - M8 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,353,SR-IN-00353,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,354,SR-IN-00354,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,355,SR-IN-00355,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,356,SR-IN-00356,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,357,SR-IN-00357,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,358,SR-IN-00358,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,359,SR-IN-00359,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,360,SR-IN-00360,Inductive Sensors - Low Form / Low Temperature - J8GW - M8 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,361,SR-IN-00361,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,362,SR-IN-00362,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,363,SR-IN-00363,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,364,SR-IN-00364,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,365,SR-IN-00365,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,366,SR-IN-00366,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,367,SR-IN-00367,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,368,SR-IN-00368,Inductive Sensors - Low Form / Low Temperature - J12W - M12 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,369,SR-IN-00369,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,370,SR-IN-00370,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,371,SR-IN-00371,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,372,SR-IN-00372,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,373,SR-IN-00373,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,374,SR-IN-00374,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,375,SR-IN-00375,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,376,SR-IN-00376,Inductive Sensors - Low Form / Low Temperature - J12DW - M12 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,377,SR-IN-00377,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,378,SR-IN-00378,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,379,SR-IN-00379,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,380,SR-IN-00380,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,381,SR-IN-00381,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,382,SR-IN-00382,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,383,SR-IN-00383,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,384,SR-IN-00384,Inductive Sensors - Low Form / Low Temperature - J30DW - M30 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,385,SR-IN-00385,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,386,SR-IN-00386,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,387,SR-IN-00387,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,388,SR-IN-00388,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,389,SR-IN-00389,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,390,SR-IN-00390,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,391,SR-IN-00391,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,392,SR-IN-00392,Inductive Sensors - Low Form / Low Temperature - J30GW - M30 - Non Flush - PNP - NC - -50 to +70°C
+Low Form Series,393,SR-IN-00393,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 10 mm - Flush - NPN - NO - -40 to +80°C
+Low Form Series,394,SR-IN-00394,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 10 mm - Flush - NPN - NC - -40 to +80°C
+Low Form Series,395,SR-IN-00395,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 10 mm - Flush - PNP - NO - -40 to +80°C
+Low Form Series,396,SR-IN-00396,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 10 mm - Flush - PNP - NC - -40 to +80°C
+Low Form Series,397,SR-IN-00397,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 15 mm - Non Flush - NPN - NO - -40 to +80°C
+Low Form Series,398,SR-IN-00398,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 15 mm - Non Flush - NPN - NC - -40 to +80°C
+Low Form Series,399,SR-IN-00399,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 15 mm - Non Flush - PNP - NO - -40 to +80°C
+Low Form Series,400,SR-IN-00400,Inductive Sensors - Low Form / Low Temperature - J30-55 - M30 - 15 mm - Non Flush - PNP - NC - -40 to +80°C
+Low Form Series,401,SR-IN-00401,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 10 mm - Flush - NPN - NO - -40 to +80°C
+Low Form Series,402,SR-IN-00402,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 10 mm - Flush - NPN - NC - -40 to +80°C
+Low Form Series,403,SR-IN-00403,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 10 mm - Flush - PNP - NO - -40 to +80°C
+Low Form Series,404,SR-IN-00404,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 10 mm - Flush - PNP - NC - -40 to +80°C
+Low Form Series,405,SR-IN-00405,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 15 mm - Non Flush - NPN - NO - -40 to +80°C
+Low Form Series,406,SR-IN-00406,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 15 mm - Non Flush - NPN - NC - -40 to +80°C
+Low Form Series,407,SR-IN-00407,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 15 mm - Non Flush - PNP - NO - -40 to +80°C
+Low Form Series,408,SR-IN-00408,Inductive Sensors - Low Form / Low Temperature - J30-78 - M30 - 15 mm - Non Flush - PNP - NC - -40 to +80°C
+Low Form Series,409,SR-IN-00409,Inductive Sensors - Low Form / Low Temperature - M18 - Flush - NPN - NO - -50 to +70°C
+Low Form Series,410,SR-IN-00410,Inductive Sensors - Low Form / Low Temperature - M18 - Flush - NPN - NC - -50 to +70°C
+Low Form Series,411,SR-IN-00411,Inductive Sensors - Low Form / Low Temperature - M18 - Flush - PNP - NO - -50 to +70°C
+Low Form Series,412,SR-IN-00412,Inductive Sensors - Low Form / Low Temperature - M18 - Flush - PNP - NC - -50 to +70°C
+Low Form Series,413,SR-IN-00413,Inductive Sensors - Low Form / Low Temperature - M18 - Non Flush - NPN - NO - -50 to +70°C
+Low Form Series,414,SR-IN-00414,Inductive Sensors - Low Form / Low Temperature - M18 - Non Flush - NPN - NC - -50 to +70°C
+Low Form Series,415,SR-IN-00415,Inductive Sensors - Low Form / Low Temperature - M18 - Non Flush - PNP - NO - -50 to +70°C
+Low Form Series,416,SR-IN-00416,Inductive Sensors - Low Form / Low Temperature - M18 - Non Flush - PNP - NC - -50 to +70°C
+Weld-Immune Series,417,SR-IN-00417,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Flush (Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,418,SR-IN-00418,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Flush (Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,419,SR-IN-00419,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Flush (Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,420,SR-IN-00420,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Flush (Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,421,SR-IN-00421,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Non Flush (Non-Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,422,SR-IN-00422,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Non Flush (Non-Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,423,SR-IN-00423,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Non Flush (Non-Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,424,SR-IN-00424,Inductive Sensors - Weld-Immune Series - M8 - 1.5 mm - Non Flush (Non-Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,425,SR-IN-00425,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Flush (Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,426,SR-IN-00426,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Flush (Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,427,SR-IN-00427,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Flush (Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,428,SR-IN-00428,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Flush (Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,429,SR-IN-00429,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Non Flush (Non-Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,430,SR-IN-00430,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Non Flush (Non-Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,431,SR-IN-00431,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Non Flush (Non-Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,432,SR-IN-00432,Inductive Sensors - Weld-Immune Series - M12 - 2 mm - Non Flush (Non-Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,433,SR-IN-00433,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Flush (Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,434,SR-IN-00434,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Flush (Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,435,SR-IN-00435,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Flush (Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,436,SR-IN-00436,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Flush (Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,437,SR-IN-00437,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Non Flush (Non-Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,438,SR-IN-00438,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Non Flush (Non-Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,439,SR-IN-00439,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Non Flush (Non-Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,440,SR-IN-00440,Inductive Sensors - Weld-Immune Series - M18 - 4 mm - Non Flush (Non-Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,441,SR-IN-00441,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Flush (Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,442,SR-IN-00442,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Flush (Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,443,SR-IN-00443,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Flush (Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,444,SR-IN-00444,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Flush (Embedded) - PNP - NC - PTFE Coated
+Weld-Immune Series,445,SR-IN-00445,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Non Flush (Non-Embedded) - NPN - NO - PTFE Coated
+Weld-Immune Series,446,SR-IN-00446,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Non Flush (Non-Embedded) - NPN - NC - PTFE Coated
+Weld-Immune Series,447,SR-IN-00447,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Non Flush (Non-Embedded) - PNP - NO - PTFE Coated
+Weld-Immune Series,448,SR-IN-00448,Inductive Sensors - Weld-Immune Series - M30 - 10 mm - Non Flush (Non-Embedded) - PNP - NC - PTFE Coated
+Rectangular Housing Series,449,SR-IN-00449,Inductive Sensors - Rectangular Housing Series - Y8S - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,450,SR-IN-00450,Inductive Sensors - Rectangular Housing Series - Y8S - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,451,SR-IN-00451,Inductive Sensors - Rectangular Housing Series - Y8S - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,452,SR-IN-00452,Inductive Sensors - Rectangular Housing Series - Y8S - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,453,SR-IN-00453,Inductive Sensors - Rectangular Housing Series - Y8X - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,454,SR-IN-00454,Inductive Sensors - Rectangular Housing Series - Y8X - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,455,SR-IN-00455,Inductive Sensors - Rectangular Housing Series - Y8X - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,456,SR-IN-00456,Inductive Sensors - Rectangular Housing Series - Y8X - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,457,SR-IN-00457,Inductive Sensors - Rectangular Housing Series - Y9 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,458,SR-IN-00458,Inductive Sensors - Rectangular Housing Series - Y9 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,459,SR-IN-00459,Inductive Sensors - Rectangular Housing Series - Y9 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,460,SR-IN-00460,Inductive Sensors - Rectangular Housing Series - Y9 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,461,SR-IN-00461,Inductive Sensors - Rectangular Housing Series - Y10S - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,462,SR-IN-00462,Inductive Sensors - Rectangular Housing Series - Y10S - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,463,SR-IN-00463,Inductive Sensors - Rectangular Housing Series - Y10S - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,464,SR-IN-00464,Inductive Sensors - Rectangular Housing Series - Y10S - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,465,SR-IN-00465,Inductive Sensors - Rectangular Housing Series - Y10X - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,466,SR-IN-00466,Inductive Sensors - Rectangular Housing Series - Y10X - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,467,SR-IN-00467,Inductive Sensors - Rectangular Housing Series - Y10X - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,468,SR-IN-00468,Inductive Sensors - Rectangular Housing Series - Y10X - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,469,SR-IN-00469,Inductive Sensors - Rectangular Housing Series - Y17 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,470,SR-IN-00470,Inductive Sensors - Rectangular Housing Series - Y17 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,471,SR-IN-00471,Inductive Sensors - Rectangular Housing Series - Y17 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,472,SR-IN-00472,Inductive Sensors - Rectangular Housing Series - Y17 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,473,SR-IN-00473,Inductive Sensors - Rectangular Housing Series - Y17A - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,474,SR-IN-00474,Inductive Sensors - Rectangular Housing Series - Y17A - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,475,SR-IN-00475,Inductive Sensors - Rectangular Housing Series - Y17A - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,476,SR-IN-00476,Inductive Sensors - Rectangular Housing Series - Y17A - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,477,SR-IN-00477,Inductive Sensors - Rectangular Housing Series - Y18 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,478,SR-IN-00478,Inductive Sensors - Rectangular Housing Series - Y18 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,479,SR-IN-00479,Inductive Sensors - Rectangular Housing Series - Y18 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,480,SR-IN-00480,Inductive Sensors - Rectangular Housing Series - Y18 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,481,SR-IN-00481,Inductive Sensors - Rectangular Housing Series - Y18A - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,482,SR-IN-00482,Inductive Sensors - Rectangular Housing Series - Y18A - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,483,SR-IN-00483,Inductive Sensors - Rectangular Housing Series - Y18A - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,484,SR-IN-00484,Inductive Sensors - Rectangular Housing Series - Y18A - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,485,SR-IN-00485,Inductive Sensors - Rectangular Housing Series - Y25 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,486,SR-IN-00486,Inductive Sensors - Rectangular Housing Series - Y25 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,487,SR-IN-00487,Inductive Sensors - Rectangular Housing Series - Y25 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,488,SR-IN-00488,Inductive Sensors - Rectangular Housing Series - Y25 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,489,SR-IN-00489,Inductive Sensors - Rectangular Housing Series - BF40 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,490,SR-IN-00490,Inductive Sensors - Rectangular Housing Series - BF40 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,491,SR-IN-00491,Inductive Sensors - Rectangular Housing Series - BF40 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,492,SR-IN-00492,Inductive Sensors - Rectangular Housing Series - BF40 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,493,SR-IN-00493,Inductive Sensors - Rectangular Housing Series - BF40-C - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,494,SR-IN-00494,Inductive Sensors - Rectangular Housing Series - BF40-C - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,495,SR-IN-00495,Inductive Sensors - Rectangular Housing Series - BF40-C - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,496,SR-IN-00496,Inductive Sensors - Rectangular Housing Series - BF40-C - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,497,SR-IN-00497,Inductive Sensors - Rectangular Housing Series - BFT40 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,498,SR-IN-00498,Inductive Sensors - Rectangular Housing Series - BFT40 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,499,SR-IN-00499,Inductive Sensors - Rectangular Housing Series - BFT40 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,500,SR-IN-00500,Inductive Sensors - Rectangular Housing Series - BFT40 - Non Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,501,SR-IN-00501,Inductive Sensors - Rectangular Housing Series - BFT80 - Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,502,SR-IN-00502,Inductive Sensors - Rectangular Housing Series - BFT80 - Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,503,SR-IN-00503,Inductive Sensors - Rectangular Housing Series - BFT80 - Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,504,SR-IN-00504,Inductive Sensors - Rectangular Housing Series - BFT80 - Flush - PNP - NC - 10-36V DC - IP67
+Rectangular Housing Series,505,SR-IN-00505,Inductive Sensors - Rectangular Housing Series - BFT80 - Non Flush - NPN - NO - 10-36V DC - IP67
+Rectangular Housing Series,506,SR-IN-00506,Inductive Sensors - Rectangular Housing Series - BFT80 - Non Flush - NPN - NC - 10-36V DC - IP67
+Rectangular Housing Series,507,SR-IN-00507,Inductive Sensors - Rectangular Housing Series - BFT80 - Non Flush - PNP - NO - 10-36V DC - IP67
+Rectangular Housing Series,508,SR-IN-00508,Inductive Sensors - Rectangular Housing Series - BFT80 - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,509,SR-IN-00509,Inductive Sensors - Annular Series - T6 - 6 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,510,SR-IN-00510,Inductive Sensors - Annular Series - T6 - 6 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,511,SR-IN-00511,Inductive Sensors - Annular Series - T6 - 6 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,512,SR-IN-00512,Inductive Sensors - Annular Series - T6 - 6 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,513,SR-IN-00513,Inductive Sensors - Annular Series - T6C - 6 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,514,SR-IN-00514,Inductive Sensors - Annular Series - T6C - 6 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,515,SR-IN-00515,Inductive Sensors - Annular Series - T6C - 6 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,516,SR-IN-00516,Inductive Sensors - Annular Series - T6C - 6 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,517,SR-IN-00517,Inductive Sensors - Annular Series - T10 - 10 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,518,SR-IN-00518,Inductive Sensors - Annular Series - T10 - 10 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,519,SR-IN-00519,Inductive Sensors - Annular Series - T10 - 10 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,520,SR-IN-00520,Inductive Sensors - Annular Series - T10 - 10 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,521,SR-IN-00521,Inductive Sensors - Annular Series - T10C - 10 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,522,SR-IN-00522,Inductive Sensors - Annular Series - T10C - 10 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,523,SR-IN-00523,Inductive Sensors - Annular Series - T10C - 10 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,524,SR-IN-00524,Inductive Sensors - Annular Series - T10C - 10 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,525,SR-IN-00525,Inductive Sensors - Annular Series - T15 - 15 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,526,SR-IN-00526,Inductive Sensors - Annular Series - T15 - 15 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,527,SR-IN-00527,Inductive Sensors - Annular Series - T15 - 15 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,528,SR-IN-00528,Inductive Sensors - Annular Series - T15 - 15 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,529,SR-IN-00529,Inductive Sensors - Annular Series - T15C - 15 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,530,SR-IN-00530,Inductive Sensors - Annular Series - T15C - 15 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,531,SR-IN-00531,Inductive Sensors - Annular Series - T15C - 15 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,532,SR-IN-00532,Inductive Sensors - Annular Series - T15C - 15 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,533,SR-IN-00533,Inductive Sensors - Annular Series - T21 - 21 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,534,SR-IN-00534,Inductive Sensors - Annular Series - T21 - 21 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,535,SR-IN-00535,Inductive Sensors - Annular Series - T21 - 21 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,536,SR-IN-00536,Inductive Sensors - Annular Series - T21 - 21 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Annular Series,537,SR-IN-00537,Inductive Sensors - Annular Series - T21C - 21 mm Detection Distance - Non Flush - NPN - NO - 10-36V DC - IP67
+Annular Series,538,SR-IN-00538,Inductive Sensors - Annular Series - T21C - 21 mm Detection Distance - Non Flush - NPN - NC - 10-36V DC - IP67
+Annular Series,539,SR-IN-00539,Inductive Sensors - Annular Series - T21C - 21 mm Detection Distance - Non Flush - PNP - NO - 10-36V DC - IP67
+Annular Series,540,SR-IN-00540,Inductive Sensors - Annular Series - T21C - 21 mm Detection Distance - Non Flush - PNP - NC - 10-36V DC - IP67
+Eddy Current Series,541,SR-IN-00541,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - 0-10V Output - IP68
+Eddy Current Series,542,SR-IN-00542,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - 0-5V Output - IP68
+Eddy Current Series,543,SR-IN-00543,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - ±5V Output - IP68
+Eddy Current Series,544,SR-IN-00544,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - 0-20mA Output - IP68
+Eddy Current Series,545,SR-IN-00545,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - 4-20mA Output - IP68
+Eddy Current Series,546,SR-IN-00546,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - USB Output - IP68
+Eddy Current Series,547,SR-IN-00547,Inductive Sensors - Eddy Current Series - MG-WJ18A - 1-4 mm Sensing Distance - Flush - CAN Output - IP68
+Eddy Current Series,548,SR-IN-00548,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - 0-10V Output - IP68
+Eddy Current Series,549,SR-IN-00549,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - 0-5V Output - IP68
+Eddy Current Series,550,SR-IN-00550,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - ±5V Output - IP68
+Eddy Current Series,551,SR-IN-00551,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - 0-20mA Output - IP68
+Eddy Current Series,552,SR-IN-00552,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - 4-20mA Output - IP68
+Eddy Current Series,553,SR-IN-00553,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - USB Output - IP68
+Eddy Current Series,554,SR-IN-00554,Inductive Sensors - Eddy Current Series - MG-WJ18B - 0-7 mm Sensing Distance - Non Flush - CAN Output - IP68
+Eddy Current Series,555,SR-IN-00555,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - 0-10V Output - IP68
+Eddy Current Series,556,SR-IN-00556,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - 0-5V Output - IP68
+Eddy Current Series,557,SR-IN-00557,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - ±5V Output - IP68
+Eddy Current Series,558,SR-IN-00558,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - 0-20mA Output - IP68
+Eddy Current Series,559,SR-IN-00559,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - 4-20mA Output - IP68
+Eddy Current Series,560,SR-IN-00560,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - USB Output - IP68
+Eddy Current Series,561,SR-IN-00561,Inductive Sensors - Eddy Current Series - MG-WJ18C - Non Flush - CAN Output - IP68
+Eddy Current Series,562,SR-IN-00562,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - 0-10V Output - IP68
+Eddy Current Series,563,SR-IN-00563,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - 0-5V Output - IP68
+Eddy Current Series,564,SR-IN-00564,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - ±5V Output - IP68
+Eddy Current Series,565,SR-IN-00565,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - 0-20mA Output - IP68
+Eddy Current Series,566,SR-IN-00566,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - 4-20mA Output - IP68
+Eddy Current Series,567,SR-IN-00567,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - USB Output - IP68
+Eddy Current Series,568,SR-IN-00568,Inductive Sensors - Eddy Current Series - MG-WJ18D - 7-20 mm Sensing Distance - Non Flush - CAN Output - IP68

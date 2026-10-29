@@ -219,17 +219,10 @@ export const ItemMasterPage: React.FC = () => {
   // Download official CSV template
   const downloadCsvTemplate = () => {
     const csvContent =
-      ',,,,,,,,,,,,,\r\n' +
-      ',S.no,Product code,Product Description,Picture,Supplier,BOM,Standard Cost,Currency,Unit,Landed cost,Standard Price,Lead Time,Status\r\n' +
-      ',,,,,KJT,Supplier Name,,,,,,,Part no is (Active)\r\n' +
-      ',,,,,,Material code,,,,,,,(Obsolete)\r\n' +
-      ',,,,,,Material Description,,,,,,,(Superceded)\r\n' +
-      ',,,,,,Quantity per piece,,,,,,,\r\n' +
-      ',,,,,,Unit,,,,,,,\r\n' +
-      ',,,,,,Cost/ Unit,,,,,,,\r\n' +
-      ',1,WLI-SNS-001,Water Level Magnetic Float Sensor (SS316),,KJT,Supplier Name,1200,INR,PCS,1350,2450,5,Active\r\n' +
-      ',2,WLI-DSP-002,Digital LED Tank Indicator Display 4-20mA,,KJT,Material code,2500,INR,PCS,2700,4800,7,Active\r\n' +
-      ',3,WLI-VAL-003,Automatic Solenoid Inlet Valve 1-inch,,KJT,Material Description,850,INR,PCS,950,1750,3,Active\r\n';
+      'Category,S.No,Product Code,Product Description,Picture,Supplier,BOM,Standard Cost,Currency,Unit,Landed cost,Standard Price,Lead Time,Status\r\n' +
+      'Conventional Sensors,1,SR-IN-00001,Inductive Sensors-M8-2 mm-NPN NO - J8 - Flush - Plug-in,,KJT,,0,USD,PCS,0,0,3 days,ACTIVE\r\n' +
+      'Conventional Sensors,2,SR-IN-00002,Inductive Sensors-M8-2 mm-NPN NC - J8 - Flush - Plug-in,,KJT,,0,USD,PCS,0,0,3 days,ACTIVE\r\n' +
+      'Extra Distance Series,109,SR-IN-00109,Inductive Sensors - Extra Distance - J6.5MT - 2 mm - NPN NO - Flush,,KJT,,0,USD,PCS,0,0,3 days,ACTIVE\r\n';
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -299,7 +292,7 @@ export const ItemMasterPage: React.FC = () => {
 
       let codeIdx = getIndex(['product code', 'item code', 'itemcode', 'code', 'part no', 'part', 'model']);
       let descIdx = getIndex(['product description', 'description', 'desc', 'product name', 'item name', 'name']);
-      const catIdx = getIndex(['category', 'product category', 'type']);
+      let catIdx = getIndex(['category', 'product category', 'series', 'product line', 'type']);
       const picIdx = getIndex(['picture', 'image', 'photo']);
       const supIdx = getIndex(['supplier', 'vendor']);
       const bomIdx = getIndex(['bom', 'ppq']);
@@ -310,6 +303,15 @@ export const ItemMasterPage: React.FC = () => {
       const priceIdx = getIndex(['standard price', 'price', 'rate']);
       const leadIdx = getIndex(['lead time', 'lead']);
       const statusIdx = getIndex(['status']);
+
+      // Intelligent detection for header format ",S.No,Product Code,Product Description" or "Category,S.No..."
+      if (headers.length >= 4 && (headers[0] === '' || headers[0] === 'category' || headers[0] === 'series')) {
+        if (headers[1].includes('s.no') || headers[1].includes('sno') || headers[1] === 's no') {
+          catIdx = 0;
+          codeIdx = 2;
+          descIdx = 3;
+        }
+      }
 
       // If code column not found by name, fallback intelligently
       if (codeIdx === -1) {
@@ -433,6 +435,15 @@ export const ItemMasterPage: React.FC = () => {
 
   const columns: Column<Item>[] = [
     {
+      header: 'Category / Series',
+      accessorKey: 'category',
+      render: (item) => (
+        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap">
+          {item.category || 'Conventional Sensors'}
+        </span>
+      ),
+    },
+    {
       header: 'S.no',
       accessorKey: 'sno',
       render: (_item, idx) => (
@@ -445,7 +456,7 @@ export const ItemMasterPage: React.FC = () => {
       header: 'Product code',
       accessorKey: 'itemCode',
       render: (item) => (
-        <span className="font-mono text-xs font-semibold text-emerald-700">
+        <span className="font-mono text-xs font-semibold text-emerald-700 whitespace-nowrap">
           {item.itemCode}
         </span>
       ),
@@ -454,7 +465,7 @@ export const ItemMasterPage: React.FC = () => {
       header: 'Product Description',
       accessorKey: 'description',
       render: (item) => (
-        <div className="max-w-[220px]">
+        <div className="max-w-[280px]">
           <p className="text-sm font-semibold text-slate-900 truncate" title={item.description}>
             {item.description}
           </p>
@@ -991,6 +1002,7 @@ export const ItemMasterPage: React.FC = () => {
                   <table className="w-full text-left text-[11px]">
                     <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
                       <tr>
+                        <th className="p-2">Category</th>
                         <th className="p-2">Picture</th>
                         <th className="p-2">Product code</th>
                         <th className="p-2">Product Description</th>
@@ -1003,6 +1015,7 @@ export const ItemMasterPage: React.FC = () => {
                     <tbody className="divide-y divide-slate-100 text-slate-700">
                       {previewItems.slice(0, 5).map((p, idx) => (
                         <tr key={idx} className="hover:bg-slate-50/60">
+                          <td className="p-2 font-medium text-emerald-800">{p.category || 'Conventional Sensors'}</td>
                           <td className="p-2">
                             {p.imageUrl ? (
                               <img src={p.imageUrl} alt="" className="w-7 h-7 rounded-md object-cover border border-slate-200" />
