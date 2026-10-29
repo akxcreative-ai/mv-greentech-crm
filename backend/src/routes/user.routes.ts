@@ -374,17 +374,34 @@ router.delete('/:id', requireRole('ADMINISTRATOR'), async (req: Request, res: Re
     try {
       const user = await prisma.user.findUnique({ where: { id } });
       if (user) {
-        await prisma.$transaction([
+        // Find administrator to reassign non-nullable user foreign keys (e.g. Quotations, Leads created)
+        const fallbackAdmin = await prisma.user.findFirst({
+          where: { role: 'ADMINISTRATOR', id: { not: id } },
+        });
+        const reassignUserId = req.user?.id && req.user.id !== id ? req.user.id : fallbackAdmin?.id;
+
+        const transactionOperations: any[] = [
           prisma.lead.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
           prisma.customer.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
           prisma.customerVisit.deleteMany({ where: { userId: id } }),
           prisma.followUp.deleteMany({ where: { userId: id } }),
           prisma.salesTarget.deleteMany({ where: { userId: id } }),
+          prisma.notification.deleteMany({ where: { userId: id } }),
           prisma.leadActivity.deleteMany({ where: { userId: id } }),
           prisma.leadAssignment.deleteMany({ where: { userId: id } }),
-          prisma.auditLog.deleteMany({ where: { userId: id } }),
-          prisma.user.delete({ where: { id } }),
-        ]);
+          prisma.auditLog.updateMany({ where: { userId: id }, data: { userId: null } }),
+        ];
+
+        if (reassignUserId) {
+          transactionOperations.push(
+            prisma.lead.updateMany({ where: { createdById: id }, data: { createdById: reassignUserId } }),
+            prisma.quotation.updateMany({ where: { userId: id }, data: { userId: reassignUserId } })
+          );
+        }
+
+        transactionOperations.push(prisma.user.delete({ where: { id } }));
+
+        await prisma.$transaction(transactionOperations);
 
         userStore.delete(id);
 
@@ -395,7 +412,12 @@ router.delete('/:id', requireRole('ADMINISTRATOR'), async (req: Request, res: Re
         return;
       }
     } catch (dbErr: any) {
-      console.warn('DB delete error, checking fallback:', dbErr);
+      console.error('DB delete error:', dbErr);
+      res.status(500).json({
+        success: false,
+        error: dbErr?.message || 'Failed to permanently delete user from database.',
+      });
+      return;
     }
 
     const memDeleted = userStore.delete(id);

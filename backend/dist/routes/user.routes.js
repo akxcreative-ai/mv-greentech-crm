@@ -333,17 +333,27 @@ router.delete('/:id', (0, auth_1.requireRole)('ADMINISTRATOR'), async (req, res,
         try {
             const user = await prisma_1.prisma.user.findUnique({ where: { id } });
             if (user) {
-                await prisma_1.prisma.$transaction([
+                // Find administrator to reassign non-nullable user foreign keys (e.g. Quotations, Leads created)
+                const fallbackAdmin = await prisma_1.prisma.user.findFirst({
+                    where: { role: 'ADMINISTRATOR', id: { not: id } },
+                });
+                const reassignUserId = req.user?.id && req.user.id !== id ? req.user.id : fallbackAdmin?.id;
+                const transactionOperations = [
                     prisma_1.prisma.lead.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
                     prisma_1.prisma.customer.updateMany({ where: { accountOwnerId: id }, data: { accountOwnerId: null } }),
                     prisma_1.prisma.customerVisit.deleteMany({ where: { userId: id } }),
                     prisma_1.prisma.followUp.deleteMany({ where: { userId: id } }),
                     prisma_1.prisma.salesTarget.deleteMany({ where: { userId: id } }),
+                    prisma_1.prisma.notification.deleteMany({ where: { userId: id } }),
                     prisma_1.prisma.leadActivity.deleteMany({ where: { userId: id } }),
                     prisma_1.prisma.leadAssignment.deleteMany({ where: { userId: id } }),
-                    prisma_1.prisma.auditLog.deleteMany({ where: { userId: id } }),
-                    prisma_1.prisma.user.delete({ where: { id } }),
-                ]);
+                    prisma_1.prisma.auditLog.updateMany({ where: { userId: id }, data: { userId: null } }),
+                ];
+                if (reassignUserId) {
+                    transactionOperations.push(prisma_1.prisma.lead.updateMany({ where: { createdById: id }, data: { createdById: reassignUserId } }), prisma_1.prisma.quotation.updateMany({ where: { userId: id }, data: { userId: reassignUserId } }));
+                }
+                transactionOperations.push(prisma_1.prisma.user.delete({ where: { id } }));
+                await prisma_1.prisma.$transaction(transactionOperations);
                 userStore_1.userStore.delete(id);
                 res.json({
                     success: true,
@@ -353,7 +363,12 @@ router.delete('/:id', (0, auth_1.requireRole)('ADMINISTRATOR'), async (req, res,
             }
         }
         catch (dbErr) {
-            console.warn('DB delete error, checking fallback:', dbErr);
+            console.error('DB delete error:', dbErr);
+            res.status(500).json({
+                success: false,
+                error: dbErr?.message || 'Failed to permanently delete user from database.',
+            });
+            return;
         }
         const memDeleted = userStore_1.userStore.delete(id);
         if (memDeleted) {

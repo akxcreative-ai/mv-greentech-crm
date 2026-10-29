@@ -30,6 +30,18 @@
 - **Symptom:** Attempting to delete an item previously quoted in an inquiry caused foreign key violation errors.
 - **Permanent Solution:** Backend route `DELETE /v1/items/:id` in `backend/src/routes/item.routes.ts` safely unlinks references in `QuotationItem` and `OrderItem` before deleting the item record.
 
+### 1.5. User Deletion Foreign Key & False "User not found" Resolution
+- **Symptom:** Deleting employee accounts (e.g., Arjun Kumar) from the `/users` table failed with an alert saying "User not found".
+- **Root Cause:**
+  1. The user had linked records in the `Quotation` table (`userId`), `Notification` table, and `Lead` table (`createdById`).
+  2. In `backend/src/routes/user.routes.ts`, the deletion transaction did not reassign quotations or delete notifications, causing PostgreSQL to throw a foreign key constraint violation.
+  3. The catch block swallowed the database error and fell back to `userStore.delete()`, which returned false for database-backed users and falsely returned `404 User not found`.
+- **Permanent Solution:**
+  1. Updated `DELETE /v1/users/:id` to find an administrator (`req.user.id` or system administrator) and automatically reassign non-nullable references (`Quotation.userId`, `Lead.createdById`) to the admin.
+  2. Cascade-deletes all associated notifications, visits, follow-ups, targets, assignments, activities, and nullifies lead/customer owner fields.
+  3. Returns clear 500 error messages if a DB error occurs rather than masquerading as a 404 "User not found".
+
+
 ---
 
 ## 2. Live Production Data Context

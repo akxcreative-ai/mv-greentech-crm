@@ -17,6 +17,7 @@
 | **Our Products Category Filter** | ✅ Done | Modal dialog covering all 17 MV GREENTECH sensor & meter product lines. |
 | **Flexible CSV / Excel Import** | ✅ Done | Auto-detects delimiters (`,`, `;`, `\t`), validates headers, prevents duplicate keys. |
 | **Safe Item Deletion** | ✅ Done | `DELETE /v1/items/:id` endpoint with safe relation unlinking. |
+| **Safe User & Account Deletion** | ✅ Done | Reassigns linked Quotations & Leads to Admin, unlinks customers, cleanly cascades user deletion. |
 | **Printer-Style Pagination** | ✅ Done | Custom Page jump (`Page [ ] of 12 [Go]`), Custom Row finder (`Find Row #: [ ]`), Solid Green buttons (`#059669`). |
 | **Auto-Scroll to Column 1** | ✅ Done | Automatically scrolls to leftmost column on page transitions. |
 | **Max Page Size Ceiling (500)** | ✅ Done | Updated across all 10 backend route controllers. |
