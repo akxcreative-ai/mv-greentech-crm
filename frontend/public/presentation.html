@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MV GREENTECH CRM & ERP — Executive Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #064e3b;
+      --primary-light: #10b981;
+      --accent: #0f172a;
+      --bg: #0b1329;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at top right, #064e3b 0%, #0b1329 50%, #020617 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Presentation Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(11, 19, 41, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      padding: 4px;
+      border-radius: 10px;
+      object-fit: contain;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--primary-light);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      background: #059669;
+      color: #ffffff;
+      border: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn:hover {
+      background: #10b981;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ffffff;
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--primary-light);
+      background: rgba(5, 150, 105, 0.15);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid rgba(5, 150, 105, 0.3);
+    }
+
+    /* Main Slide Stage */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1150px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(5, 150, 105, 0.15);
+      animation: fadeIn 0.35s ease-out;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Typography */
+    .slide-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary-light);
+      background: rgba(5, 150, 105, 0.15);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+
+    .slide-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+    }
+
+    .slide-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* Card Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: all 0.25s ease;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(5, 150, 105, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      margin-top: 0.75rem;
+    }
+
+    /* Tables */
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background: rgba(5, 150, 105, 0.2);
+      padding: 0.9rem 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Key Value Stats */
+    .stat-box {
+      background: rgba(5, 150, 105, 0.1);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      padding: 1.25rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #34d399;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Title Slide Special */
+    .title-slide {
+      text-align: center;
+      padding: 4.5rem 2rem;
+    }
+
+    .title-slide .brand-logo-large {
+      width: 110px;
+      height: 110px;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 24px;
+      margin: 0 auto 1.5rem auto;
+      box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4);
+    }
+
+    /* Footer Navigation Keys */
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: rgba(11, 19, 41, 0.7);
+    }
+
+    @media print {
+      body { background: #ffffff; color: #000000; }
+      header, footer, .nav-controls { display: none !important; }
+      .slide { display: block !important; page-break-after: always; box-shadow: none; border: 1px solid #ccc; color: #000; background: #fff; margin-bottom: 2rem; }
+      .slide-title { color: #059669; }
+      .card { border: 1px solid #ddd; background: #f9f9f9; color: #000; }
+      .card-title { color: #111; }
+      td, th { color: #111; border-color: #ddd; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <img src="/logo.png" alt="MV GREENTECH" class="brand-logo">
+      <div>
+        <div class="brand-title">MV GREENTECH CRM & ERP</div>
+        <div class="brand-sub">Executive Architecture Presentation</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn btn-outline" onclick="prevSlide()">◀ Previous</button>
+      <div class="slide-counter" id="slideCounter">Slide 1 / 10</div>
+      <button class="btn" onclick="nextSlide()">Next ▶</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <a href="https://mv-greentech-crm.vercel.app" target="_blank" class="btn">🚀 Open Live CRM</a>
+    </div>
+  </header>
+
+  <!-- Slide Stage -->
+  <main>
+
+    <!-- SLIDE 1: Title -->
+    <div class="slide active title-slide">
+      <img src="/logo.png" alt="MV GREENTECH Logo" class="brand-logo-large">
+      <span class="slide-tag">Enterprise System v2.0 • Live Production</span>
+      <h1 class="slide-title" style="font-size: 3rem; margin-top: 0.5rem;">MV GREENTECH PRIVATE LIMITED</h1>
+      <p class="slide-desc" style="max-width: 650px; margin: 0.5rem auto 2.5rem auto; font-size: 1.15rem;">
+        Enterprise Industrial CRM & Cloud ERP System Architecture. Unifying 568 Sensors, Instant GST Quotations, Field Operations, and Financial Governance.
+      </p>
+      <div class="grid-4" style="max-width: 850px; margin: 0 auto;">
+        <div class="stat-box">
+          <div class="stat-num">568</div>
+          <div class="stat-label">Live Sensor SKUs</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">&lt; 60s</div>
+          <div class="stat-label">Quotation Turnaround</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Team Capacity</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Cloud Synchronized</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Business Objectives -->
+    <div class="slide">
+      <span class="slide-tag">Slide 02 • Core Objectives</span>
+      <h2 class="slide-title">Transforming Industrial Sales Operations</h2>
+      <p class="slide-desc">MV GREENTECH CRM replaces scattered spreadsheets and manual processes with a single, high-performance operational engine.</p>
+      
+      <div class="grid-2">
+        <div class="card" style="border-left: 4px solid #ef4444;">
+          <div class="card-icon">⚠️</div>
+          <div class="card-title">Previous Operational Roadblocks</div>
+          <div class="card-desc">
+            • Quotations took 24–48 hours to draft manually in Excel.<br>
+            • Customer inquiries got forgotten with zero follow-up tracking.<br>
+            • Field visit notes were lost without accountability.<br>
+            • Management had no real-time visibility into actual monthly revenue pipeline.
+          </div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid #10b981;">
+          <div class="card-icon">✅</div>
+          <div class="card-title">CRM System Solutions Implemented</div>
+          <div class="card-desc">
+            • <strong>Instant Quotation PDF:</strong> Generated with GST and bank details in under 60 seconds.<br>
+            • <strong>Zero Lead Leakage:</strong> Enforced Sales Head assignment and red overdue alerts.<br>
+            • <strong>Verified Field Meeting Logs:</strong> Time-stamped minutes and follow-up reminders.<br>
+            • <strong>Executive Intelligence:</strong> Live P&L, won deal values, and quota attainment.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Team Structure & Roles -->
+    <div class="slide">
+      <span class="slide-tag">Slide 03 • Organization & Governance</span>
+      <h2 class="slide-title">Role-Based Access Control (RBAC) Architecture</h2>
+      <p class="slide-desc">Tailored specifically for MV GREENTECH's operations: 4 Salespersons, 1 Sales Head, and Management.</p>
+      
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-icon">👑</div>
+          <div class="card-title">Directors (2–3)</div>
+          <div class="card-desc">
+            • Executive revenue analytics<br>
+            • High-value deal approvals<br>
+            • Forex & currency control<br>
+            • Master company profile & stamps
+          </div>
+          <span class="badge-pill">Full Governance</span>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <div class="card-title">Administrator (1)</div>
+          <div class="card-desc">
+            • User credential management<br>
+            • Database CSV catalog imports<br>
+            • Security audit log tracking<br>
+            • Safe cascade user deletion
+          </div>
+          <span class="badge-pill">System Control</span>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">👔</div>
+          <div class="card-title">Sales Head (1)</div>
+          <div class="card-desc">
+            • Inquiry & lead assignment<br>
+            • Rep performance auditing<br>
+            • Quotation margin review<br>
+            • Team sales target tracking
+          </div>
+          <span class="badge-pill">Team Supervisor</span>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🟢</div>
+          <div class="card-title">Sales Reps (4)</div>
+          <div class="card-desc">
+            • Assigned leads & customer calls<br>
+            • On-site visit logs & minutes<br>
+            • 60s Quotation PDF dispatch<br>
+            • Order conversion & quota closing
+          </div>
+          <span class="badge-pill">Field Execution</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Director Dashboard -->
+    <div class="slide">
+      <span class="slide-tag">Slide 04 • Executive View</span>
+      <h2 class="slide-title">Executive Dashboard (/director/dashboard)</h2>
+      <p class="slide-desc">High-level financial intelligence, revenue forecasts, and real-time win-rate analytics.</p>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">📊 Revenue & Pipeline Health</div>
+          <div class="card-desc">
+            Aggregates total open enquiry value vs. confirmed won orders in real time. Eliminates end-of-month manual tallying.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎯 Win Rate & Conversion Funnel</div>
+          <div class="card-desc">
+            Visualizes lead drop-off across stages (General Lead → Technical Discovery → Quotation Submitted → PO Won).
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🏆 Top Representative Leaderboard</div>
+          <div class="card-desc">
+            Ranks the 4 salespersons by revenue closed, visit velocity, and quota percentage achievement.
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container" style="margin-top: 1.5rem;">
+        <table>
+          <thead>
+            <tr>
+              <th>Executive Metric</th>
+              <th>Current Live Value</th>
+              <th>Strategic Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Pipeline Enquiry Value</td>
+              <td style="color:#34d399; font-weight:700;">₹ 48,50,000+</td>
+              <td>Forecasts manufacturing, vendor purchasing, and cash-flow requirements.</td>
+            </tr>
+            <tr>
+              <td>Won Order Value</td>
+              <td style="color:#34d399; font-weight:700;">₹ 28,40,000+</td>
+              <td>Measures actual revenue booked against corporate targets.</td>
+            </tr>
+            <tr>
+              <td>Active Enquiries</td>
+              <td>38 Open Deals</td>
+              <td>Identifies stalled negotiations requiring Director intervention.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Sales Head Desk -->
+    <div class="slide">
+      <span class="slide-tag">Slide 05 • Sales Leadership</span>
+      <h2 class="slide-title">Sales Head Workspace (/sales-head/dashboard)</h2>
+      <p class="slide-desc">Supervising pipeline velocity, allocating leads across 4 representatives, and preventing margin erosion.</p>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">1. Dynamic Lead Balancing</div>
+          <div class="card-desc">
+            When new inquiries arrive via web, phone, or Indiamart, the Sales Head selects an available sales representative and assigns the account with 1 click.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">2. Quotation Margin Approvals</div>
+          <div class="card-desc">
+            Any quotation with discounts or custom credit terms is routed to the Sales Head for margin verification before the client receives the PDF.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">3. Overdue Follow-Up Radar</div>
+          <div class="card-desc">
+            If any representative fails to contact a client on their scheduled date, the deal is flagged in bright red on the Sales Head desk for audit.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">4. Quota Allocation & Velocity</div>
+          <div class="card-desc">
+            Sets and reviews monthly revenue quotas for the 4 representatives, ensuring team targets stay on track.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Salesperson Desk -->
+    <div class="slide">
+      <span class="slide-tag">Slide 06 • Daily Field Execution</span>
+      <h2 class="slide-title">My Sales Desk (/salesperson/dashboard)</h2>
+      <p class="slide-desc">Action-oriented dashboard for field engineers and sales representatives to organize their daily routine.</p>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🔔</div>
+          <div class="card-title">Today's Follow-ups</div>
+          <div class="card-desc">
+            Lists exact customer calls and plant visits scheduled for today with direct contact numbers and previous conversation notes.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <div class="card-title">Client Visit Logs</div>
+          <div class="card-desc">
+            Log on-site factory visit minutes immediately from mobile devices: client feedback, technical requirements, and next action items.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Instant Quotation Builder</div>
+          <div class="card-desc">
+            Select sensors directly from the 568 catalog items and generate an authorized PDF on the spot while at the customer's desk.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: 568 Sensors Catalog -->
+    <div class="slide">
+      <span class="slide-tag">Slide 07 • Engineering Catalog</span>
+      <h2 class="slide-title">Item Master — 568 Live Sensor SKUs</h2>
+      <p class="slide-desc">Comprehensive catalog covering all 10 industrial sensor series directly in the Neon cloud database.</p>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">10 Official Sensor Series Live:</div>
+          <div class="card-desc" style="font-size: 0.85rem; line-height: 1.8;">
+            1. <strong>Conventional Sensors:</strong> M8, M12, M18, M30 (SR-IN-00001 – 00108)<br>
+            2. <strong>Extra Distance Series:</strong> 2x to 4x sensing range (SR-IN-00109 – 00187)<br>
+            3. <strong>Analog Series:</strong> 0-10V & 4-20mA linear outputs (SR-IN-00188 – 00224)<br>
+            4. <strong>Full Inox Series:</strong> 100% Stainless steel food-grade (SR-IN-00225 – 00280)<br>
+            5. <strong>High Temp Series:</strong> Up to +180°C operation (SR-IN-00281 – 00344)<br>
+            6. <strong>Low Form Series:</strong> Down to -50°C freezing conditions (SR-IN-00345 – 00416)<br>
+            7. <strong>Weld-Immune Series:</strong> PTFE anti-spatter coating (SR-IN-00417 – 00448)<br>
+            8. <strong>Rectangular Housing:</strong> Block format Y8, Y10, BF40 (SR-IN-00449 – 00508)<br>
+            9. <strong>Annular Ring Series:</strong> Wire and screw detection (SR-IN-00509 – 00540)<br>
+            10. <strong>Eddy Current Displacement:</strong> Micron precision (SR-IN-00541 – 00568)
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Printer-Style Navigation Innovation:</div>
+          <div class="card-desc">
+            • <strong>Page Jump:</strong> Type `Page [ 25 ] of 57` and click <strong>[ Go ]</strong>.<br>
+            • <strong>Row Finder:</strong> Type `Find Row #: [ 250 ]` and click <strong>[ Find ]</strong> to immediately display that exact sensor.<br>
+            • <strong>Auto-Scroll Left:</strong> Snaps back to column 1 on page change.<br>
+            • <strong>CSV / Excel Import & Export:</strong> Bulk catalog upload with duplicate protection.
+          </div>
+          <span class="badge-pill">Solid Green #059669 Controls</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Quotation & PDF Engine -->
+    <div class="slide">
+      <span class="slide-tag">Slide 08 • Commercial Documents</span>
+      <h2 class="slide-title">Professional Quotation & PDF Generator</h2>
+      <p class="slide-desc">Generates high-resolution, GST-compliant industrial quotations ready for corporate purchasing departments.</p>
+      
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Automated Tax Math</div>
+          <div class="card-desc">
+            Auto-calculates CGST (9%) + SGST (9%) for intra-state or IGST (18%) for inter-state deliveries. Supports custom discounts and delivery terms.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Corporate Branding</div>
+          <div class="card-desc">
+            Includes official MV GREENTECH header, registered CIN, GSTIN, HDFC Bank RTGS details, manufacturer warranty terms, and Director signatures.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">One-Click PO Conversion</div>
+          <div class="card-desc">
+            Once customer approves the quotation, a single click converts it into a confirmed <strong>Sales Order</strong>, crediting representative quota.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Mobile App Installation -->
+    <div class="slide">
+      <span class="slide-tag">Slide 09 • Mobile Deployment</span>
+      <h2 class="slide-title">Mobile App Installation (PWA / Android & iOS)</h2>
+      <p class="slide-desc">Seamless mobile installation via Google Chrome and Safari with official MV GREENTECH logo.</p>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📱 3-Step Mobile Installation:</div>
+          <div class="card-desc">
+            1. Open <strong>https://mv-greentech-crm.vercel.app</strong> in mobile Google Chrome.<br>
+            2. Tap the 3 dots <strong>(⋮)</strong> and select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.<br>
+            3. The official <strong>MV GREENTECH logo</strong> appears on the mobile home screen.<br>
+            4. Tapping the logo opens the CRM in full-screen standalone mode without any browser URL bars!
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡ Over-The-Air (OTA) Updates:</div>
+          <div class="card-desc">
+            • <strong>Zero Re-installation:</strong> When an update is pushed on the cloud, mobile users automatically receive it on their next app opening.<br>
+            • <strong>Ultra-Lightweight:</strong> Uses only 1–2 MB storage (no phone lag).<br>
+            • <strong>iPhone Ready:</strong> Works on Safari via "Add to Home Screen".
+          </div>
+          <span class="badge-pill">Cross-Platform Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Summary & Readiness -->
+    <div class="slide title-slide">
+      <span class="slide-tag">Slide 10 • Ready for Production</span>
+      <h2 class="slide-title">System Live & 100% Operational</h2>
+      <p class="slide-desc" style="max-width: 600px; margin: 0 auto 2rem auto;">
+        MV GREENTECH CRM & ERP is fully configured, secured, and ready for your 12-person team (4 Salespersons, 1 Sales Head, and Directors).
+      </p>
+
+      <div class="grid-3" style="max-width: 850px; margin: 0 auto 2.5rem auto;">
+        <div class="stat-box">
+          <div class="stat-num">Vercel</div>
+          <div class="stat-label">Global Edge Frontend</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">Render</div>
+          <div class="stat-label">Node.js API Server</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">Neon</div>
+          <div class="stat-label">PostgreSQL Relational Cloud</div>
+        </div>
+      </div>
+
+      <a href="https://mv-greentech-crm.vercel.app" target="_blank" class="btn" style="font-size: 1.1rem; padding: 0.8rem 2rem;">
+        Launch MV GREENTECH CRM Portal 🚀
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div>MV GREENTECH PRIVATE LIMITED • Confidential Enterprise Document</div>
+    <div>Use <strong>◀</strong> and <strong>▶</strong> keys to navigate slides | Press <strong>Ctrl + P</strong> to export as PDF</div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+
+    function updateSlide(n) {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (n + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+      counter.innerText = `Slide ${currentSlide + 1} / ${slides.length}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextSlide() {
+      updateSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      updateSlide(currentSlide - 1);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+  </script>
+
+</body>
+</html>
