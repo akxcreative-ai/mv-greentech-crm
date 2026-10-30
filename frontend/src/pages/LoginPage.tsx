@@ -222,8 +222,8 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-md">
         {/* Brand header */}
         <div className="text-center mb-6">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-green-500 items-center justify-center mb-4 shadow-xl shadow-emerald-600/20">
-            <Layers className="w-8 h-8 text-white" />
+          <div className="inline-flex w-20 h-20 rounded-2xl bg-white p-2.5 items-center justify-center mb-4 shadow-xl shadow-emerald-900/10 border border-emerald-100">
+            <img src="/logo.png" alt="MV Greentech Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">MV GREENTECH PVT LTD</h1>
           <p className="text-sm text-emerald-700 font-semibold tracking-wider mt-1 uppercase">

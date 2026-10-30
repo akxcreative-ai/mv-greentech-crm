@@ -41,6 +41,15 @@
   2. Cascade-deletes all associated notifications, visits, follow-ups, targets, assignments, activities, and nullifies lead/customer owner fields.
   3. Returns clear 500 error messages if a DB error occurs rather than masquerading as a 404 "User not found".
 
+### 1.6. Mobile Chrome PWA & Web App Install Icon
+- **Requirement:** When users click "Add to Home screen" or "Install App" in Google Chrome on mobile devices, the official MV GREENTECH logo must appear as the home screen application icon.
+- **Implementation:**
+  1. Processed and cropped official MV GREENTECH logo to high-resolution square assets: `pwa-192x192.png`, `pwa-512x512.png`, `pwa-maskable-192x192.png`, `pwa-maskable-512x512.png`, `apple-touch-icon.png`, `favicon-32x32.png`, `favicon-16x16.png`, and `logo.png`.
+  2. Added Web App Manifest `manifest.json` configured with `display: "standalone"`, `theme_color: "#059669"`, and proper maskable icon safe margins.
+  3. Registered lightweight Service Worker `sw.js` in `main.tsx` to satisfy Google Chrome's PWA installability requirements.
+  4. Updated `Sidebar.tsx` and `LoginPage.tsx` to display the official MV GREENTECH logo.
+
+
 
 ---
 

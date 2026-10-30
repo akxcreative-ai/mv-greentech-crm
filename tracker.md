@@ -27,6 +27,7 @@
 | **Sales Order Conversion** | ✅ Done | One-click transition from Quotation to Order with status tracking. |
 | **Customer Visit Logs** | ✅ Done | Date filtering, action item logging, customer association. |
 | **Company Settings Sync** | ✅ Done | Director updates company address, GSTIN, CIN, bank details live across documents. |
+| **Mobile PWA & App Installation** | ✅ Done | Chrome & Safari "Install App / Add to Home screen" with official MV GREENTECH logo icons. |
 
 ---
 

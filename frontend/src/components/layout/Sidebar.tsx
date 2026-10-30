@@ -137,8 +137,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-emerald-700/40 shrink-0">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-950/40">
-            <Layers className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-950/40 border border-emerald-200">
+            <img src="/logo.png" alt="MV Greentech Logo" className="w-full h-full object-contain" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col truncate">
