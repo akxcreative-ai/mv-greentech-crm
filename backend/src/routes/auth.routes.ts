@@ -50,12 +50,16 @@ router.post(
 
         const isPasswordValid = await bcrypt.compare(password, dbUser.password);
         if (isPasswordValid) {
+          const loginTime = new Date();
           try {
             await prisma.user.update({
               where: { id: dbUser.id },
-              data: { lastLogin: new Date() },
+              data: { lastLogin: loginTime },
             });
-          } catch {}
+          } catch (err) {
+            console.warn('Failed to update lastLogin on password login:', err);
+          }
+          userStore.update(dbUser.id, { lastLogin: loginTime });
 
           const token = jwt.sign(
             {
@@ -80,6 +84,7 @@ router.post(
                 lastName: dbUser.lastName,
                 role: dbUser.role,
                 isActive: dbUser.isActive,
+                lastLogin: loginTime,
                 createdAt: dbUser.createdAt,
                 updatedAt: dbUser.updatedAt,
               },
@@ -188,6 +193,20 @@ router.get(
             updatedAt: true,
           },
         });
+
+        // Always update lastLogin on active user session visit (throttled by 1 min to prevent DB spam)
+        if (user) {
+          const now = new Date();
+          const last = user.lastLogin ? new Date(user.lastLogin).getTime() : 0;
+          if (now.getTime() - last > 60000) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { lastLogin: now },
+            });
+            user.lastLogin = now;
+            userStore.update(user.id, { lastLogin: now });
+          }
+        }
       } catch (dbErr) {
         console.warn('DB error in /me:', dbErr);
       }
@@ -386,6 +405,17 @@ router.post('/verify-otp-login', async (req: Request, res: Response, next: NextF
       return;
     }
 
+    const loginTime = new Date();
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: loginTime },
+      });
+    } catch (err) {
+      console.warn('Failed to update lastLogin on OTP login:', err);
+    }
+    userStore.update(user.id, { lastLogin: loginTime });
+
     const token = jwt.sign(
       {
         id: user.id,
@@ -409,6 +439,7 @@ router.post('/verify-otp-login', async (req: Request, res: Response, next: NextF
           lastName: user.lastName,
           role: user.role,
           isActive: user.isActive,
+          lastLogin: loginTime,
           isEmailVerified: user.isEmailVerified,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,

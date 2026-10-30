@@ -79,13 +79,17 @@ router.post('/login', (0, validate_1.validate)(loginSchema), async (req, res, ne
             }
             const isPasswordValid = await bcryptjs_1.default.compare(password, dbUser.password);
             if (isPasswordValid) {
+                const loginTime = new Date();
                 try {
                     await prisma_1.prisma.user.update({
                         where: { id: dbUser.id },
-                        data: { lastLogin: new Date() },
+                        data: { lastLogin: loginTime },
                     });
                 }
-                catch { }
+                catch (err) {
+                    console.warn('Failed to update lastLogin on password login:', err);
+                }
+                userStore_1.userStore.update(dbUser.id, { lastLogin: loginTime });
                 const token = jsonwebtoken_1.default.sign({
                     id: dbUser.id,
                     email: dbUser.email,
@@ -104,6 +108,7 @@ router.post('/login', (0, validate_1.validate)(loginSchema), async (req, res, ne
                             lastName: dbUser.lastName,
                             role: dbUser.role,
                             isActive: dbUser.isActive,
+                            lastLogin: loginTime,
                             createdAt: dbUser.createdAt,
                             updatedAt: dbUser.updatedAt,
                         },
@@ -198,6 +203,19 @@ router.get('/me', auth_1.verifyToken, async (req, res, next) => {
                     updatedAt: true,
                 },
             });
+            // Always update lastLogin on active user session visit (throttled by 1 min to prevent DB spam)
+            if (user) {
+                const now = new Date();
+                const last = user.lastLogin ? new Date(user.lastLogin).getTime() : 0;
+                if (now.getTime() - last > 60000) {
+                    await prisma_1.prisma.user.update({
+                        where: { id: user.id },
+                        data: { lastLogin: now },
+                    });
+                    user.lastLogin = now;
+                    userStore_1.userStore.update(user.id, { lastLogin: now });
+                }
+            }
         }
         catch (dbErr) {
             console.warn('DB error in /me:', dbErr);
@@ -365,6 +383,17 @@ router.post('/verify-otp-login', async (req, res, next) => {
             res.json({ success: true, data: { token, user: fallbackUser } });
             return;
         }
+        const loginTime = new Date();
+        try {
+            await prisma_1.prisma.user.update({
+                where: { id: user.id },
+                data: { lastLogin: loginTime },
+            });
+        }
+        catch (err) {
+            console.warn('Failed to update lastLogin on OTP login:', err);
+        }
+        userStore_1.userStore.update(user.id, { lastLogin: loginTime });
         const token = jsonwebtoken_1.default.sign({
             id: user.id,
             email: user.email,
@@ -383,6 +412,7 @@ router.post('/verify-otp-login', async (req, res, next) => {
                     lastName: user.lastName,
                     role: user.role,
                     isActive: user.isActive,
+                    lastLogin: loginTime,
                     isEmailVerified: user.isEmailVerified,
                     createdAt: user.createdAt,
                     updatedAt: user.updatedAt,

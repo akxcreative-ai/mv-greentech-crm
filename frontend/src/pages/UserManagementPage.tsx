@@ -41,6 +41,7 @@ export const UserManagementPage: React.FC = () => {
     queryKey: ['users', { page, limit, search }],
     queryFn: () => usersApi.list({ page, limit, search: search || undefined }),
     placeholderData: (previousData) => previousData,
+    refetchInterval: 5000, // Live poll every 5s so new logins update immediately
   });
 
   const {
@@ -162,15 +163,30 @@ export const UserManagementPage: React.FC = () => {
       accessorKey: 'lastLogin',
       render: (u) => {
         if (!u.lastLogin) {
-          return <span className="text-xs text-white/40">Never</span>;
+          return (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-500">
+              Never
+            </span>
+          );
         }
         const d = new Date(u.lastLogin);
+        const diffMs = Date.now() - d.getTime();
+        const isRecent = diffMs < 5 * 60 * 1000; // Logged in within 5 minutes
+
         return (
           <div className="text-xs leading-tight">
-            <span className="text-white/80 font-medium block">
-              {d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </span>
-            <span className="text-emerald-400 font-mono text-[11px] block mt-0.5">
+            <div className="flex items-center gap-1.5">
+              {isRecent && (
+                <span className="relative flex h-2 w-2" title="Active now / Logged in recently">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+              )}
+              <span className="text-slate-900 font-semibold block">
+                {d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
+            </div>
+            <span className="text-emerald-700 font-mono text-[11px] block mt-0.5 font-bold">
               {d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
             </span>
           </div>

@@ -49,6 +49,18 @@
   3. Registered lightweight Service Worker `sw.js` in `main.tsx` to satisfy Google Chrome's PWA installability requirements.
   4. Updated `Sidebar.tsx` and `LoginPage.tsx` to display the official MV GREENTECH logo.
 
+### 1.7. Real-Time Dynamic Login Timestamp Updates Across Sessions
+- **Symptom / Request:** User wanted the "LAST LOGIN" timestamp to update every single time any employee logs in or opens the CRM, without freezing on the first login date.
+- **Root Cause:**
+  1. In `auth.routes.ts`, `POST /login` updated `lastLogin` only on initial password login, but subsequent visits with stored JWT tokens called `/v1/auth/me` which never updated `lastLogin`.
+  2. `POST /verify-otp-login` was missing `lastLogin` update completely.
+  3. `UserManagementPage.tsx` cached users query for 60s and lacked polling, requiring manual refresh.
+- **Permanent Solution:**
+  1. Updated `auth.routes.ts` in `POST /login`, `POST /verify-otp-login`, and `GET /me` (throttled by 1 min to prevent DB spam) to update `lastLogin: new Date()` in both Neon PostgreSQL and `userStore`.
+  2. Updated `UserManagementPage.tsx` with a 5-second polling interval (`refetchInterval: 5000`) and added a live pulsing emerald dot (`●`) for users active within the last 5 minutes.
+  3. Cleaned `Never` badge contrast for employees who haven't logged in yet.
+
+
 
 
 ---
