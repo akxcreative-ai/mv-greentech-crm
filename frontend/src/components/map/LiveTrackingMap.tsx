@@ -104,12 +104,39 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
       zoomControl: false,
     });
 
-    // Sleek CartoDB Positron Tiles (Google Maps style clean aesthetic)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    // Real Google Maps Streets Tiles (No watermark, 100% crisp & free)
+    const googleRoads = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: '&copy; Google Maps',
+    });
+
+    // Real Google Hybrid (Satellite + Roads)
+    const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution: '&copy; Google Maps Satellite',
+    });
+
+    // Official OpenStreetMap Free Layer (Fallback)
+    const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      subdomains: 'abcd',
-    }).addTo(map);
+      attribution: '&copy; OpenStreetMap contributors',
+    });
+
+    // Default to Google Streets
+    googleRoads.addTo(map);
+
+    // Add Map Layer Switcher on Top Left
+    L.control.layers(
+      {
+        '🗺️ Google Streets': googleRoads,
+        '🛰️ Google Satellite': googleHybrid,
+        '🌍 OpenStreetMap': osmLayer,
+      },
+      undefined,
+      { position: 'topleft' }
+    ).addTo(map);
 
     // Zoom controls on top right
     L.control.zoom({ position: 'topright' }).addTo(map);
