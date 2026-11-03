@@ -126,7 +126,10 @@ router.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { customerId, leadId, userId, visitDate, purpose, notes, outcome, nextAction } = req.body;
-      const targetUserId = req.user?.role === 'SALESPERSON' ? req.user.id : (userId || req.user!.id);
+      const targetUserId =
+        req.user?.role === 'SALESPERSON' || !userId || userId === 'self'
+          ? req.user!.id
+          : userId;
       const parsedVisitDate = new Date(visitDate);
 
       const visit = await prisma.customerVisit.create({

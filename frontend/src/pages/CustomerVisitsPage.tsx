@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MapPin, Plus, Calendar } from 'lucide-react';
-import { visitsApi, customersApi, leadsApi } from '../lib/api';
+import { MapPin, Plus, Calendar, User as UserIcon } from 'lucide-react';
+import { visitsApi, customersApi, leadsApi, usersApi } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
 import type { CustomerVisit, Column } from '../lib/types';
 import { DataTable } from '../components/ui/DataTable';
 import { GlassCard } from '../components/ui/GlassCard';
@@ -12,15 +13,22 @@ import { Select } from '../components/ui/Select';
 
 export const CustomerVisitsPage: React.FC = () => {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuth();
+  const isManager =
+    currentUser?.role === 'DIRECTOR' ||
+    currentUser?.role === 'ADMINISTRATOR' ||
+    currentUser?.role === 'SALES_HEAD';
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [dateFilter, setDateFilter] = useState('');
+  const [repFilter, setRepFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Form states
   const [customerId, setCustomerId] = useState('');
   const [leadId, setLeadId] = useState('');
+  const [assignedUserId, setAssignedUserId] = useState('');
   const [visitDate, setVisitDate] = useState('');
   const [purpose, setPurpose] = useState('');
   const [outcome, setOutcome] = useState('');
@@ -29,8 +37,14 @@ export const CustomerVisitsPage: React.FC = () => {
 
   // Fetch visits
   const { data: visitsResponse, isLoading } = useQuery({
-    queryKey: ['visits', { page, limit, dateFilter }],
-    queryFn: () => visitsApi.list({ page, limit, date: dateFilter || undefined }),
+    queryKey: ['visits', { page, limit, dateFilter, repFilter }],
+    queryFn: () =>
+      visitsApi.list({
+        page,
+        limit,
+        date: dateFilter || undefined,
+        userId: repFilter || undefined,
+      }),
     placeholderData: (previousData) => previousData,
   });
 
@@ -46,6 +60,13 @@ export const CustomerVisitsPage: React.FC = () => {
     queryFn: () => leadsApi.list({ limit: 100 }),
   });
 
+  // Fetch team members for Director/Admin/Sales Head
+  const { data: usersResponse } = useQuery({
+    queryKey: ['users-sales-select'],
+    queryFn: () => usersApi.list({ limit: 100 }),
+    enabled: isManager,
+  });
+
   const createMutation = useMutation({
     mutationFn: () =>
       visitsApi.create({
@@ -56,13 +77,14 @@ export const CustomerVisitsPage: React.FC = () => {
         outcome,
         notes,
         nextAction,
-        userId: 'self',
+        userId: isManager && assignedUserId ? assignedUserId : undefined,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visits'] });
       setIsModalOpen(false);
       setCustomerId('');
       setLeadId('');
+      setAssignedUserId('');
       setVisitDate('');
       setPurpose('');
       setOutcome('');
@@ -144,29 +166,51 @@ export const CustomerVisitsPage: React.FC = () => {
         </Button>
       </div>
 
-      {/* Date Filter Card */}
+      {/* Filter Card */}
       <GlassCard padding={false} className="p-4">
-        <div className="flex items-center gap-4 max-w-sm">
-          <Input
-            type="date"
-            label="Filter by Visit Date"
-            value={dateFilter}
-            onChange={(e) => {
-              setDateFilter(e.target.value);
-              setPage(1);
-            }}
-          />
-          {dateFilter && (
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="w-full sm:w-auto min-w-[200px]">
+            <Input
+              type="date"
+              label="Filter by Visit Date"
+              value={dateFilter}
+              onChange={(e) => {
+                setDateFilter(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+          {isManager && (
+            <div className="w-full sm:w-auto min-w-[240px]">
+              <Select
+                label="Filter by Sales Representative"
+                value={repFilter}
+                onChange={(e) => {
+                  setRepFilter(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="">All Team Members</option>
+                {usersResponse?.data?.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.firstName} {u.lastName} ({u.role})
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
+          {(dateFilter || repFilter) && (
             <Button
               variant="ghost"
               size="sm"
               className="mt-5"
               onClick={() => {
                 setDateFilter('');
+                setRepFilter('');
                 setPage(1);
               }}
             >
-              Clear
+              Reset Filters
             </Button>
           )}
         </div>
@@ -225,6 +269,21 @@ export const CustomerVisitsPage: React.FC = () => {
                 </option>
               ))}
             </Select>
+
+            {isManager && (
+              <Select
+                label="Assign Representative / Salesperson"
+                value={assignedUserId}
+                onChange={(e) => setAssignedUserId(e.target.value)}
+              >
+                <option value="">Myself ({currentUser?.firstName} {currentUser?.lastName})</option>
+                {usersResponse?.data?.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.firstName} {u.lastName} ({u.role})
+                  </option>
+                ))}
+              </Select>
+            )}
 
             <Input
               label="Visit Date"
