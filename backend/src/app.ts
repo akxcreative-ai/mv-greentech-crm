@@ -24,6 +24,7 @@ import notificationRoutes from './routes/notification.routes';
 import settingRoutes from './routes/setting.routes';
 import locationRoutes from './routes/location.routes';
 import auditLogRoutes from './routes/auditLog.routes';
+import trackingRoutes from './routes/tracking.routes';
 
 const app = express();
 
@@ -80,6 +81,7 @@ const registerRoutes = (prefix: string) => {
   app.use(`${prefix}/settings`, settingRoutes);
   app.use(`${prefix}/locations`, locationRoutes);
   app.use(`${prefix}/audit-logs`, auditLogRoutes);
+  app.use(`${prefix}/tracking`, trackingRoutes);
 };
 
 registerRoutes('/api/v1');

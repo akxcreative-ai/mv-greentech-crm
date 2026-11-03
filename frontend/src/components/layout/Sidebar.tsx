@@ -22,6 +22,7 @@ import {
   Layers,
   Globe,
   ShieldCheck,
+  Navigation,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '../../contexts/AuthContext';
@@ -69,6 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       case 'ADMINISTRATOR':
         return [
           { label: 'Admin Console', to: '/admin/dashboard', icon: LayoutDashboard },
+          { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
           { label: 'Employee Accounts', to: '/users', icon: UserCog },
           { label: 'Master Data & Forex', to: '/masters', icon: Globe },
           { label: 'Audit & Security Logs', to: '/audit-logs', icon: ShieldCheck },
@@ -79,6 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       case 'DIRECTOR':
         return [
           { label: 'Executive Dashboard', to: '/director/dashboard', icon: LayoutDashboard },
+          { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
           { label: 'Lead Pipeline', to: '/leads', icon: Target },
           { label: 'Quotations', to: '/quotations', icon: FileText },
           { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
@@ -95,6 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       case 'SALES_HEAD':
         return [
           { label: 'Sales Head Desk', to: '/sales-head/dashboard', icon: LayoutDashboard },
+          { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
           { label: 'Team Leads', to: '/leads', icon: Target },
           { label: 'Quotations Review', to: '/quotations', icon: FileText },
           { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },

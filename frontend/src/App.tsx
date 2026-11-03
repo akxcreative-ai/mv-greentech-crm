@@ -32,6 +32,7 @@ import { UserManagementPage } from './pages/UserManagementPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { MastersPage } from './pages/MastersPage';
+import { LiveTrackingPage } from './pages/LiveTrackingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,6 +119,14 @@ export function App() {
                 element={
                   <ProtectedRoute allowedRoles={['DIRECTOR', 'SALES_HEAD', 'ADMINISTRATOR']}>
                     <ReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="tracking"
+                element={
+                  <ProtectedRoute allowedRoles={['DIRECTOR', 'SALES_HEAD', 'ADMINISTRATOR']}>
+                    <LiveTrackingPage />
                   </ProtectedRoute>
                 }
               />

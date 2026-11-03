@@ -27,6 +27,7 @@ const notification_routes_1 = __importDefault(require("./routes/notification.rou
 const setting_routes_1 = __importDefault(require("./routes/setting.routes"));
 const location_routes_1 = __importDefault(require("./routes/location.routes"));
 const auditLog_routes_1 = __importDefault(require("./routes/auditLog.routes"));
+const tracking_routes_1 = __importDefault(require("./routes/tracking.routes"));
 const app = (0, express_1.default)();
 // Security
 app.use((0, helmet_1.default)({ contentSecurityPolicy: false }));
@@ -76,6 +77,7 @@ const registerRoutes = (prefix) => {
     app.use(`${prefix}/settings`, setting_routes_1.default);
     app.use(`${prefix}/locations`, location_routes_1.default);
     app.use(`${prefix}/audit-logs`, auditLog_routes_1.default);
+    app.use(`${prefix}/tracking`, tracking_routes_1.default);
 };
 registerRoutes('/api/v1');
 registerRoutes('/v1');

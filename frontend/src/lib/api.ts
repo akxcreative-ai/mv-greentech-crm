@@ -449,3 +449,39 @@ export const auditLogsApi = {
     return res.data;
   },
 };
+
+export const trackingApi = {
+  ping: async (data: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number | null;
+    heading?: number | null;
+    speed?: number | null;
+    battery?: number | null;
+    address?: string | null;
+    isTrackingActive?: boolean;
+  }): Promise<ApiResponse<any>> => {
+    const res = await api.post('/v1/tracking/ping', data);
+    return res.data;
+  },
+
+  toggle: async (active: boolean): Promise<ApiResponse<any>> => {
+    const res = await api.post('/v1/tracking/toggle', { active });
+    return res.data;
+  },
+
+  getLive: async (): Promise<ApiResponse<import('./types').LiveTrackUser[]>> => {
+    const res = await api.get('/v1/tracking/live');
+    return res.data;
+  },
+
+  getHistory: async (
+    userId: string,
+    date?: string
+  ): Promise<ApiResponse<import('./types').UserLocationPoint[]>> => {
+    const res = await api.get(`/v1/tracking/history/${userId}`, {
+      params: { date },
+    });
+    return res.data;
+  },
+};

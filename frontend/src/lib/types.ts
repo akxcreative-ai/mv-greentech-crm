@@ -374,3 +374,40 @@ export interface AuditLogItem {
     role: string;
   } | null;
 }
+
+export interface UserLocationPoint {
+  id: string;
+  userId: string;
+  latitude: number;
+  longitude: number;
+  accuracy?: number | null;
+  heading?: number | null;
+  speed?: number | null;
+  battery?: number | null;
+  address?: string | null;
+  timestamp: string;
+}
+
+export interface LiveTrackUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  lastLogin?: string | null;
+  lastLatitude?: number | null;
+  lastLongitude?: number | null;
+  lastHeading?: number | null;
+  lastSpeed?: number | null;
+  lastLocationAt?: string | null;
+  isTrackingActive: boolean;
+  customerVisits?: Array<{
+    id: string;
+    visitDate: string;
+    purpose?: string | null;
+    outcome?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  }>;
+}

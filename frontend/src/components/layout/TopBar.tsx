@@ -15,6 +15,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLocationTracker } from '../../hooks/useLocationTracker';
 import { useQuery } from '@tanstack/react-query';
 import { notificationsApi } from '../../lib/api';
 import { Badge } from '../ui/Badge';
@@ -25,6 +26,7 @@ interface TopBarProps {
 
 export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileSidebar }) => {
   const { user, logout } = useAuth();
+  const { isTracking, currentCoords, startTracking, stopTracking } = useLocationTracker();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -103,6 +105,42 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileSidebar }) => {
 
       {/* Right side: Quick Add, Notifications, User Profile */}
       <div className="flex items-center gap-3">
+        {/* GPS Live Duty Tracker Toggle */}
+        <button
+          onClick={() => {
+            if (isTracking) {
+              stopTracking();
+            } else {
+              startTracking();
+            }
+          }}
+          title={isTracking ? 'GPS Tracking Active (Click to pause)' : 'Enable GPS Live Tracking'}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+            isTracking
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100 shadow-sm'
+              : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+          }`}
+        >
+          <span className="flex h-2 w-2 relative">
+            {isTracking && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            )}
+            <span
+              className={`relative inline-flex rounded-full h-2 w-2 ${
+                isTracking ? 'bg-emerald-500' : 'bg-slate-400'
+              }`}
+            ></span>
+          </span>
+          <span className="hidden md:inline font-semibold">
+            {isTracking ? 'GPS Duty ON' : 'GPS Off'}
+          </span>
+          {isTracking && currentCoords?.speed !== undefined && currentCoords.speed > 0 && (
+            <span className="hidden lg:inline text-[10px] text-emerald-800 font-bold bg-emerald-200/60 px-1 rounded">
+              {currentCoords.speed} km/h
+            </span>
+          )}
+        </button>
+
         {/* Quick Add Dropdown */}
         <div className="relative" ref={quickAddRef}>
           <button

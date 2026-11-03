@@ -37,6 +37,15 @@ model User {
   notifications  Notification[]
   auditLogs      AuditLog[]
 
+  // Live GPS Tracking
+  lastLatitude      Float?
+  lastLongitude     Float?
+  lastHeading       Float?
+  lastSpeed         Float?
+  lastLocationAt    DateTime?
+  isTrackingActive  Boolean          @default(false)
+  locations         UserLocation[]
+
   @@index([role])
   @@index([isActive])
 }
@@ -242,6 +251,8 @@ model CustomerVisit {
   notes      String?
   outcome    String?
   nextAction String?
+  latitude   Float?
+  longitude  Float?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -249,6 +260,26 @@ model CustomerVisit {
 
   @@index([userId])
   @@index([visitDate])
+}
+
+// ─── LIVE GPS TRACKING ─────────────────────────────────────
+
+model UserLocation {
+  id        String   @id @default(uuid())
+  userId    String
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  heading   Float?
+  speed     Float?
+  battery   Int?
+  address   String?
+  timestamp DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timestamp])
+  @@index([timestamp])
 }
 
 // ─── ITEM MASTER ───────────────────────────────────────────
