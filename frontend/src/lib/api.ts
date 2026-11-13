@@ -61,7 +61,7 @@ export const authApi = {
     return res.data;
   },
   changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<ApiResponse<void>> => {
-    const res = await api.put('/v1/auth/password', data);
+    const res = await api.put('/v1/auth/change-password', data);
     return res.data;
   },
 };

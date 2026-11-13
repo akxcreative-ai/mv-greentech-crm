@@ -329,9 +329,17 @@ export const SettingsPage: React.FC = () => {
       {activeTab === 'security' && (
         <GlassCard title="Change Password">
           <div className="space-y-4 max-w-md">
+            {successMessage && activeTab === 'security' && (
+              <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <CheckCircle className="w-4 h-4 text-emerald-600" />
+                <span className="text-sm font-medium text-emerald-700">{successMessage}</span>
+              </div>
+            )}
+
             <Input
               label="Current Password"
               type="password"
+              placeholder="Enter your current password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
@@ -342,18 +350,33 @@ export const SettingsPage: React.FC = () => {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
+            {newPassword && newPassword.length < 6 && (
+              <p className="text-xs text-red-500 -mt-2">Password must be at least 6 characters long.</p>
+            )}
+            {newPassword && newPassword.length >= 6 && (
+              <p className="text-xs text-emerald-600 -mt-2">
+                ✓ Password strength: {newPassword.length >= 10 ? 'Strong' : newPassword.length >= 8 ? 'Good' : 'Acceptable'}
+              </p>
+            )}
             <Input
               label="Confirm New Password"
               type="password"
+              placeholder="Re-enter new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
+            {confirmPassword && newPassword !== confirmPassword && (
+              <p className="text-xs text-red-500 -mt-2">Passwords do not match.</p>
+            )}
+            {confirmPassword && newPassword === confirmPassword && confirmPassword.length > 0 && (
+              <p className="text-xs text-emerald-600 -mt-2">✓ Passwords match.</p>
+            )}
 
             <div className="flex justify-end pt-4 border-t border-slate-100">
               <Button
                 variant="primary"
                 leftIcon={<Lock className="w-4 h-4" />}
-                disabled={!currentPassword || !newPassword || newPassword !== confirmPassword}
+                disabled={!currentPassword || !newPassword || newPassword.length < 6 || newPassword !== confirmPassword}
                 isLoading={changePasswordMutation.isPending}
                 onClick={() => changePasswordMutation.mutate()}
               >
