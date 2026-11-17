@@ -411,3 +411,52 @@ export interface LiveTrackUser {
     longitude?: number | null;
   }>;
 }
+
+export interface TrainingMaterial {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  fileName: string;
+  fileType: 'PDF' | 'PPT' | 'IMAGE';
+  fileSize?: number | null;
+  mimeType: string;
+  isAllAccess: boolean;
+  isActive?: boolean;
+  createdById?: string;
+  createdAt: string;
+  updatedAt?: string;
+  createdBy?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    role?: string;
+  };
+  accessList?: Array<{
+    userId: string;
+    user?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      role?: string;
+    };
+  }>;
+  _count?: {
+    viewLogs: number;
+  };
+}
+
+export interface TrainingViewLog {
+  id: string;
+  trainingMaterialId: string;
+  userId: string;
+  viewedAt: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+  };
+}

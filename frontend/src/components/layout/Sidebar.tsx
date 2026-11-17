@@ -23,6 +23,7 @@ import {
   Globe,
   ShieldCheck,
   Navigation,
+  GraduationCap,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useAuth } from '../../contexts/AuthContext';
@@ -71,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
         return [
           { label: 'Admin Console', to: '/admin/dashboard', icon: LayoutDashboard },
           { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
+          { label: 'Training Portal', to: '/training', icon: GraduationCap },
           { label: 'Employee Accounts', to: '/users', icon: UserCog },
           { label: 'Master Data & Forex', to: '/masters', icon: Globe },
           { label: 'Audit & Security Logs', to: '/audit-logs', icon: ShieldCheck },
@@ -82,6 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
         return [
           { label: 'Executive Dashboard', to: '/director/dashboard', icon: LayoutDashboard },
           { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
+          { label: 'Sales Training & Portal', to: '/training', icon: GraduationCap },
           { label: 'Lead Pipeline', to: '/leads', icon: Target },
           { label: 'Quotations', to: '/quotations', icon: FileText },
           { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
@@ -99,6 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
         return [
           { label: 'Sales Head Desk', to: '/sales-head/dashboard', icon: LayoutDashboard },
           { label: 'Live Field Tracking', to: '/tracking', icon: Navigation },
+          { label: 'Sales Training & Portal', to: '/training', icon: GraduationCap },
           { label: 'Team Leads', to: '/leads', icon: Target },
           { label: 'Quotations Review', to: '/quotations', icon: FileText },
           { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },
@@ -115,6 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggleCollapse 
       default:
         return [
           { label: 'My Sales Desk', to: '/salesperson/dashboard', icon: LayoutDashboard },
+          { label: 'Sales Training & Docs', to: '/training', icon: GraduationCap },
           { label: 'My Leads', to: '/leads', icon: Target },
           { label: 'Quotations', to: '/quotations', icon: FileText },
           { label: 'Sales Orders', to: '/orders', icon: ShoppingCart },

@@ -25,6 +25,7 @@ import settingRoutes from './routes/setting.routes';
 import locationRoutes from './routes/location.routes';
 import auditLogRoutes from './routes/auditLog.routes';
 import trackingRoutes from './routes/tracking.routes';
+import trainingRoutes from './routes/training.routes';
 
 const app = express();
 
@@ -50,8 +51,8 @@ app.use(limiter);
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: { success: false, error: 'Too many attempts. Try again later.' } });
 
 // Parsing
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '35mb' }));
+app.use(express.urlencoded({ extended: true, limit: '35mb' }));
 app.use(compression());
 
 // Logging
@@ -82,6 +83,7 @@ const registerRoutes = (prefix: string) => {
   app.use(`${prefix}/locations`, locationRoutes);
   app.use(`${prefix}/audit-logs`, auditLogRoutes);
   app.use(`${prefix}/tracking`, trackingRoutes);
+  app.use(`${prefix}/training`, trainingRoutes);
 };
 
 registerRoutes('/api/v1');

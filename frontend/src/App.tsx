@@ -33,6 +33,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { MastersPage } from './pages/MastersPage';
 import { LiveTrackingPage } from './pages/LiveTrackingPage';
+import { TrainingMaterialsPage } from './pages/TrainingMaterialsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +114,7 @@ export function App() {
               <Route path="quotations/create" element={<CreateQuotationPage />} />
               <Route path="quotations/:id" element={<QuotationDetailPage />} />
               <Route path="orders" element={<OrdersPage />} />
+              <Route path="training" element={<TrainingMaterialsPage />} />
               <Route path="targets" element={<SalesTargetsPage />} />
               <Route
                 path="reports"

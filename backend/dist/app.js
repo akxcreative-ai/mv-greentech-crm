@@ -28,6 +28,7 @@ const setting_routes_1 = __importDefault(require("./routes/setting.routes"));
 const location_routes_1 = __importDefault(require("./routes/location.routes"));
 const auditLog_routes_1 = __importDefault(require("./routes/auditLog.routes"));
 const tracking_routes_1 = __importDefault(require("./routes/tracking.routes"));
+const training_routes_1 = __importDefault(require("./routes/training.routes"));
 const app = (0, express_1.default)();
 // Security
 app.use((0, helmet_1.default)({ contentSecurityPolicy: false }));
@@ -49,8 +50,8 @@ const limiter = (0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, ma
 app.use(limiter);
 const authLimiter = (0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, max: 20, message: { success: false, error: 'Too many attempts. Try again later.' } });
 // Parsing
-app.use(express_1.default.json({ limit: '10mb' }));
-app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.json({ limit: '35mb' }));
+app.use(express_1.default.urlencoded({ extended: true, limit: '35mb' }));
 app.use((0, compression_1.default)());
 // Logging
 if (process.env.NODE_ENV !== 'test') {
@@ -78,6 +79,7 @@ const registerRoutes = (prefix) => {
     app.use(`${prefix}/locations`, location_routes_1.default);
     app.use(`${prefix}/audit-logs`, auditLog_routes_1.default);
     app.use(`${prefix}/tracking`, tracking_routes_1.default);
+    app.use(`${prefix}/training`, training_routes_1.default);
 };
 registerRoutes('/api/v1');
 registerRoutes('/v1');

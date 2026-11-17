@@ -485,3 +485,57 @@ export const trackingApi = {
     return res.data;
   },
 };
+
+
+export const trainingApi = {
+  list: async (): Promise<ApiResponse<import('./types').TrainingMaterial[]>> => {
+    const res = await api.get('/v1/training/materials');
+    return res.data;
+  },
+
+  upload: async (formData: FormData): Promise<ApiResponse<import('./types').TrainingMaterial>> => {
+    const res = await api.post('/v1/training/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data;
+  },
+
+  updateAccess: async (
+    id: string,
+    data: {
+      title?: string;
+      description?: string;
+      category?: string;
+      isAllAccess: boolean;
+      allowedUserIds?: string[];
+    }
+  ): Promise<ApiResponse<import('./types').TrainingMaterial>> => {
+    const res = await api.put(`/v1/training/materials/${id}/access`, data);
+    return res.data;
+  },
+
+  delete: async (id: string): Promise<ApiResponse<any>> => {
+    const res = await api.delete(`/v1/training/materials/${id}`);
+    return res.data;
+  },
+
+  getViews: async (id: string): Promise<ApiResponse<import('./types').TrainingViewLog[]>> => {
+    const res = await api.get(`/v1/training/materials/${id}/views`);
+    return res.data;
+  },
+
+  fetchStreamBlob: async (id: string): Promise<Blob> => {
+    const token = localStorage.getItem('crm_token');
+    const response = await fetch(`/v1/training/materials/${id}/stream`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to load document: ${response.statusText}`);
+    }
+    return response.blob();
+  },
+};

@@ -46,6 +46,11 @@ model User {
   isTrackingActive  Boolean          @default(false)
   locations         UserLocation[]
 
+  // Training & Knowledge Base
+  createdTrainings  TrainingMaterial[] @relation("TrainingCreatedBy")
+  trainingAccess    TrainingAccess[]   @relation("UserTrainingAccess")
+  trainingLogs      TrainingViewLog[]  @relation("UserTrainingLogs")
+
   @@index([role])
   @@index([isActive])
 }
@@ -584,4 +589,60 @@ model CityMaster {
   @@unique([stateId, name])
   @@index([stateId])
   @@index([name])
+}
+
+// ─── TRAINING & SALES ENABLEMENT ───────────────────────────
+
+model TrainingMaterial {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  category    String   @default("General") // e.g. "Product Specs", "Sales Pitch", "Price List", "Objection Handling"
+  fileName    String
+  fileType    String   // "PDF", "PPT", "IMAGE"
+  fileSize    Int?     // bytes
+  mimeType    String
+  fileData    String?  @db.Text // Persistent base64 storage for cloud reliability
+  filePath    String?  // Optional local disk path
+  isAllAccess Boolean  @default(true) // If true, all salespersons can view
+  isActive    Boolean  @default(true)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User               @relation("TrainingCreatedBy", fields: [createdById], references: [id])
+  accessList  TrainingAccess[]
+  viewLogs    TrainingViewLog[]
+
+  @@index([category])
+  @@index([fileType])
+  @@index([isActive])
+  @@index([createdById])
+}
+
+model TrainingAccess {
+  id                 String           @id @default(uuid())
+  trainingMaterialId String
+  userId             String
+  createdAt          DateTime         @default(now())
+
+  trainingMaterial   TrainingMaterial @relation(fields: [trainingMaterialId], references: [id], onDelete: Cascade)
+  user               User             @relation("UserTrainingAccess", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([trainingMaterialId, userId])
+  @@index([userId])
+  @@index([trainingMaterialId])
+}
+
+model TrainingViewLog {
+  id                 String           @id @default(uuid())
+  trainingMaterialId String
+  userId             String
+  viewedAt           DateTime         @default(now())
+
+  trainingMaterial   TrainingMaterial @relation(fields: [trainingMaterialId], references: [id], onDelete: Cascade)
+  user               User             @relation("UserTrainingLogs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([trainingMaterialId])
+  @@index([userId])
 }
