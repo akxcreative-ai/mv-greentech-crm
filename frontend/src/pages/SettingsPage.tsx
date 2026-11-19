@@ -415,8 +415,15 @@ export const SettingsPage: React.FC = () => {
                   variant="primary"
                   leftIcon={<Send className="w-4 h-4" />}
                   isLoading={testEmailMutation.isPending}
-                  disabled={!testEmailTarget && !user?.email}
-                  onClick={() => testEmailMutation.mutate(testEmailTarget || user?.email || '')}
+                  disabled={!testEmailTarget.trim() || !testEmailTarget.includes('@')}
+                  onClick={() => {
+                    const email = testEmailTarget.trim();
+                    if (!email.includes('@') || !email.includes('.')) {
+                      setTestEmailStatus({ type: 'error', message: 'Please enter a valid email address (e.g. name@gmail.com)' });
+                      return;
+                    }
+                    testEmailMutation.mutate(email);
+                  }}
                   className="w-full sm:w-auto"
                 >
                   Send Test Email

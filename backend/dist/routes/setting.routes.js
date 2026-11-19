@@ -82,7 +82,14 @@ router.put('/:key', (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR'), (0, va
 router.post('/test-email', (0, auth_1.requireRole)('ADMINISTRATOR', 'DIRECTOR', 'SALES_HEAD'), async (req, res) => {
     try {
         const { recipientEmail } = req.body;
-        const target = recipientEmail || req.user.email;
+        const target = (recipientEmail || req.user.email || '').trim();
+        if (!target || !target.includes('@') || !target.includes('.')) {
+            res.status(400).json({
+                success: false,
+                error: 'Please enter a valid email address (e.g. yourname@gmail.com).',
+            });
+            return;
+        }
         await (0, email_service_1.sendEmail)({
             to: target,
             subject: 'MV GREENTECH CRM - Test Email Verification',

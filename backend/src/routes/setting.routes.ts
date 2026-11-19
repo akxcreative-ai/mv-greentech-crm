@@ -99,7 +99,15 @@ router.post(
   async (req: Request, res: Response): Promise<void> => {
     try {
       const { recipientEmail } = req.body;
-      const target = recipientEmail || req.user!.email;
+      const target = (recipientEmail || req.user!.email || '').trim();
+
+      if (!target || !target.includes('@') || !target.includes('.')) {
+        res.status(400).json({
+          success: false,
+          error: 'Please enter a valid email address (e.g. yourname@gmail.com).',
+        });
+        return;
+      }
 
       await sendEmail({
         to: target,
