@@ -352,6 +352,81 @@ export const SettingsPage: React.FC = () => {
         </GlassCard>
       )}
 
+      {/* Tab: EMAIL & SMTP SETTINGS */}
+      {activeTab === 'email' && (
+        <GlassCard title="Official Business Email & SMTP Configuration">
+          <div className="space-y-6 max-w-2xl text-slate-800">
+            {testEmailStatus && (
+              <div
+                className={`p-4 rounded-xl text-sm flex items-center gap-3 border ${
+                  testEmailStatus.type === 'success'
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                    : 'bg-rose-50 text-rose-800 border-rose-300'
+                }`}
+              >
+                {testEmailStatus.type === 'success' ? (
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-600" />
+                )}
+                <span>{testEmailStatus.message}</span>
+              </div>
+            )}
+
+            {/* Active Status Badge */}
+            <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-sm">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">Official Sender: sales@mvgreentechcrm.in</h4>
+                  <p className="text-xs text-slate-600">GoDaddy SMTP Server (smtpout.secureserver.net:465 SSL)</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold rounded-full">
+                Active & Verified
+              </span>
+            </div>
+
+            {/* Features description */}
+            <div className="text-xs text-slate-600 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <p className="font-semibold text-slate-800">What your CRM can do with this email:</p>
+              <p>• <strong>Quotations Dispatch:</strong> Send professional commercial quotation PDFs directly to customers.</p>
+              <p>• <strong>System Notifications:</strong> Send automated alerts, reports, and OTP verifications.</p>
+              <p>• <strong>Zero Spam Delivery:</strong> Configured with GoDaddy SPF, DKIM, and DMARC security records.</p>
+            </div>
+
+            {/* Test Email Section */}
+            <div className="pt-4 border-t border-slate-200 space-y-3">
+              <h4 className="text-sm font-bold text-slate-900">Send Test Verification Email</h4>
+              <p className="text-xs text-slate-500">
+                Verify that your CRM can successfully send an email to any inbox right now.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 items-center">
+                <div className="flex-1 w-full">
+                  <Input
+                    placeholder="Enter recipient email (e.g. your personal email)"
+                    value={testEmailTarget}
+                    onChange={(e) => setTestEmailTarget(e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant="primary"
+                  leftIcon={<Send className="w-4 h-4" />}
+                  isLoading={testEmailMutation.isPending}
+                  disabled={!testEmailTarget && !user?.email}
+                  onClick={() => testEmailMutation.mutate(testEmailTarget || user?.email || '')}
+                  className="w-full sm:w-auto"
+                >
+                  Send Test Email
+                </Button>
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      )}
+
       {/* Tab: SECURITY */}
       {activeTab === 'security' && (
         <GlassCard title="Change Password">
