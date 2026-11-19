@@ -251,6 +251,18 @@ export const quotationsApi = {
     const res = await api.get(`/v1/quotations/${id}/pdf`, { responseType: 'blob' });
     return res.data;
   },
+  sendEmail: async (
+    id: string,
+    data: {
+      recipientEmail?: string;
+      customSubject?: string;
+      customMessage?: string;
+      cc?: string;
+    }
+  ): Promise<ApiResponse<{ message: string }>> => {
+    const res = await api.post(`/v1/quotations/${id}/send-email`, data);
+    return res.data;
+  },
   convertToOrder: async (id: string): Promise<ApiResponse<Order>> => {
     const res = await api.post(`/v1/quotations/${id}/convert-order`);
     return res.data;
@@ -397,6 +409,10 @@ export const settingsApi = {
   },
   getByKey: async (key: string): Promise<ApiResponse<Setting>> => {
     const res = await api.get(`/v1/settings/${key}`);
+    return res.data;
+  },
+  testEmail: async (recipientEmail?: string): Promise<ApiResponse<{ message: string }>> => {
+    const res = await api.post('/v1/settings/test-email', { recipientEmail });
     return res.data;
   },
   update: async (key: string, value: Record<string, unknown> | string | number | boolean): Promise<ApiResponse<Setting>> => {

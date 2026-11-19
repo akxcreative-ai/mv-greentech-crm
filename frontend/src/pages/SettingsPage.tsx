@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Settings, Lock, Save, CheckCircle, Building2, User, ShieldCheck } from 'lucide-react';
+import { Settings, Lock, Save, CheckCircle, Building2, User, ShieldCheck, Mail, Send, AlertCircle } from 'lucide-react';
 import { settingsApi, authApi } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { GlassCard } from '../components/ui/GlassCard';
@@ -11,7 +11,9 @@ export const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuth();
   const queryClient = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<'company' | 'profile' | 'security'>('company');
+  const [activeTab, setActiveTab] = useState<'company' | 'profile' | 'security' | 'email'>('company');
+  const [testEmailTarget, setTestEmailTarget] = useState('');
+  const [testEmailStatus, setTestEmailStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Company settings state
@@ -102,6 +104,16 @@ export const SettingsPage: React.FC = () => {
   });
 
   // Change password
+  const testEmailMutation = useMutation({
+    mutationFn: (target: string) => settingsApi.testEmail(target || user?.email),
+    onSuccess: (res: any) => {
+      setTestEmailStatus({ type: 'success', message: res.message || 'Test email successfully sent!' });
+    },
+    onError: (err: any) => {
+      setTestEmailStatus({ type: 'error', message: err.response?.data?.error || err.message || 'Failed to send test email.' });
+    },
+  });
+
   const changePasswordMutation = useMutation({
     mutationFn: () => authApi.changePassword({ currentPassword, newPassword }),
     onSuccess: () => {
@@ -166,6 +178,21 @@ export const SettingsPage: React.FC = () => {
           <User className="w-4 h-4" />
           My Profile
           {activeTab === 'profile' && (
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
+          )}
+        </button>
+
+        <button
+          onClick={() => { setActiveTab('email'); setTestEmailStatus(null); }}
+          className={`pb-3 font-medium transition-colors relative cursor-pointer flex items-center gap-2 ${
+            activeTab === 'email'
+              ? 'text-emerald-700 font-semibold'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <Mail className="w-4 h-4" />
+          Email & SMTP (GoDaddy)
+          {activeTab === 'email' && (
             <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
           )}
         </button>

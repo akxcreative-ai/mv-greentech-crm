@@ -5,6 +5,7 @@ import { QuotationStatus, Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { verifyToken } from '../middleware/auth';
 import { validate } from '../middleware/validate';
+import { sendEmail } from '../lib/email.service';
 
 const router = Router();
 
@@ -163,45 +164,15 @@ const calculateTotals = (items: z.infer<typeof lineItemSchema>[]) => {
   };
 };
 
-// GET /:id/pdf - Generate PDF for quotation (Registered before /:id)
-router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    const quotation = await prisma.quotation.findUnique({
-      where: { id },
-      include: {
-        customer: true,
-        user: { select: { firstName: true, lastName: true, email: true, phone: true } },
-        items: {
-          orderBy: { sortOrder: 'asc' },
-        },
-      },
-    });
-
-    if (!quotation) {
-      res.status(404).json({ success: false, error: 'Quotation not found' });
-      return;
-    }
-
-    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
-      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to download this quotation' });
-      return;
-    }
-
+// Helper function to build PDF buffer for a quotation
+function buildQuotationPdfBuffer(quotation: any, companyData: any): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 40, size: 'A4' });
+    const buffers: Buffer[] = [];
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="Quotation-${quotation.quotationNumber}.pdf"`
-    );
-
-    // Fetch dynamic company profile settings
-    const companySetting = await prisma.setting.findUnique({
-      where: { key: 'company_profile' },
-    });
-    const companyData = (companySetting?.value as Record<string, any>) || {};
+    doc.on('data', (chunk) => buffers.push(chunk));
+    doc.on('end', () => resolve(Buffer.concat(buffers)));
+    doc.on('error', (err) => reject(err));
 
     const companyName = companyData.companyName || 'MV GREENTECH PVT LTD';
     const companyAddress = companyData.companyAddress || 'Plot No. 42, Green Industrial Park, Pune, Maharashtra 411019';
@@ -210,8 +181,6 @@ router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): 
     const bankName = companyData.bankName || 'HDFC Bank Ltd';
     const bankAccount = companyData.bankAccount || '50200067891234';
     const bankIfsc = companyData.bankIfsc || 'HDFC0001234';
-
-    doc.pipe(res);
 
     // Header: Dynamic Company Details
     doc
@@ -300,7 +269,7 @@ router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): 
     let currentY = tableTop + 24;
 
     // Line Items
-    quotation.items.forEach((item, index) => {
+    quotation.items.forEach((item: any, index: number) => {
       const isEven = index % 2 === 0;
       if (isEven) {
         doc.rect(40, currentY - 2, 515, 18).fillColor('#fafafa').fill();
@@ -389,7 +358,204 @@ router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): 
     }
 
     doc.end();
+  });
+}
+
+// GET /:id/pdf - Generate PDF for quotation (Registered before /:id)
+router.get('/:id/pdf', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const quotation = await prisma.quotation.findUnique({
+      where: { id },
+      include: {
+        customer: true,
+        user: { select: { firstName: true, lastName: true, email: true, phone: true } },
+        items: {
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
+    });
+
+    if (!quotation) {
+      res.status(404).json({ success: false, error: 'Quotation not found' });
+      return;
+    }
+
+    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to download this quotation' });
+      return;
+    }
+
+    const companySetting = await prisma.setting.findUnique({
+      where: { key: 'company_profile' },
+    });
+    const companyData = (companySetting?.value as Record<string, any>) || {};
+
+    const pdfBuffer = await buildQuotationPdfBuffer(quotation, companyData);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="Quotation-${quotation.quotationNumber}.pdf"`
+    );
+    res.setHeader('Content-Length', pdfBuffer.length);
+    res.end(pdfBuffer);
   } catch (error) {
+    next(error);
+  }
+});
+
+// POST /:id/send-email - Send quotation PDF to customer via official GoDaddy SMTP
+router.post('/:id/send-email', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { recipientEmail, customSubject, customMessage, cc } = req.body;
+
+    const quotation = await prisma.quotation.findUnique({
+      where: { id },
+      include: {
+        customer: {
+          include: {
+            contacts: true,
+          },
+        },
+        user: { select: { firstName: true, lastName: true, email: true, phone: true } },
+        items: {
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
+    });
+
+    if (!quotation) {
+      res.status(404).json({ success: false, error: 'Quotation not found' });
+      return;
+    }
+
+    if (req.user?.role === 'SALESPERSON' && quotation.userId !== req.user.id) {
+      res.status(403).json({ success: false, error: 'Access forbidden: You do not have permission to email this quotation' });
+      return;
+    }
+
+    // Determine target recipient
+    const targetEmail =
+      recipientEmail ||
+      quotation.customer.contacts.find((c) => c.isPrimary && c.email)?.email ||
+      quotation.customer.contacts.find((c) => c.email)?.email;
+
+    if (!targetEmail || !targetEmail.includes('@')) {
+      res.status(400).json({
+        success: false,
+        error: 'Please provide a valid recipient email address for the customer.',
+      });
+      return;
+    }
+
+    const companySetting = await prisma.setting.findUnique({
+      where: { key: 'company_profile' },
+    });
+    const companyData = (companySetting?.value as Record<string, any>) || {};
+    const companyName = companyData.companyName || 'MV GREENTECH PVT LTD';
+
+    const pdfBuffer = await buildQuotationPdfBuffer(quotation, companyData);
+
+    const subject =
+      customSubject ||
+      `Commercial Quotation #${quotation.quotationNumber} - ${companyName}`;
+
+    const formattedAmount = `${quotation.currency} ${Number(quotation.totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+    const htmlContent = `
+      <div style="font-family: Arial, 'Segoe UI', sans-serif; max-width: 650px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+        <div style="border-bottom: 3px solid #0f4c3a; padding-bottom: 16px; margin-bottom: 20px;">
+          <h2 style="color: #0f4c3a; margin: 0; font-size: 22px;">${companyName}</h2>
+          <p style="color: #64748b; font-size: 13px; margin: 4px 0 0 0;">Industrial Sensors &amp; Process Automation</p>
+        </div>
+
+        <p style="font-size: 15px; color: #1e293b;">Dear <strong>${quotation.customer.name}</strong>,</p>
+
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+          ${customMessage ? customMessage.replace(/\n/g, '<br/>') : 'Thank you for your enquiry. We are pleased to submit our formal commercial quotation for your requirement.'}
+        </p>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 20px 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;">Quotation Number:</td>
+              <td style="padding: 6px 0; font-weight: bold; color: #0f4c3a; text-align: right;">${quotation.quotationNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;">Quotation Date:</td>
+              <td style="padding: 6px 0; color: #334155; text-align: right;">${quotation.quotationDate.toISOString().split('T')[0]}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #64748b;">Valid Until:</td>
+              <td style="padding: 6px 0; color: #334155; text-align: right;">${quotation.validityDate.toISOString().split('T')[0]}</td>
+            </tr>
+            <tr style="border-top: 1px solid #cbd5e1;">
+              <td style="padding: 8px 0; font-weight: bold; color: #1e293b;">Total Amount:</td>
+              <td style="padding: 8px 0; font-weight: bold; font-size: 16px; color: #0f4c3a; text-align: right;">${formattedAmount}</td>
+            </tr>
+          </table>
+        </div>
+
+        <p style="font-size: 13px; color: #475569; line-height: 1.5;">
+          The detailed official commercial offer is attached as a PDF file with complete specifications, payment terms, and delivery schedules.
+        </p>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 13px; color: #475569;">
+          <p style="margin: 0; font-weight: bold; color: #1e293b;">Representative Details:</p>
+          <p style="margin: 4px 0 0 0;">${quotation.user.firstName} ${quotation.user.lastName}</p>
+          ${quotation.user.phone ? `<p style="margin: 2px 0 0 0;">Phone: ${quotation.user.phone}</p>` : ''}
+          <p style="margin: 2px 0 0 0;">Email: ${quotation.user.email}</p>
+        </div>
+
+        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 28px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+          This is an automated quotation dispatch from MV GREENTECH PVT LTD CRM.
+        </p>
+      </div>
+    `;
+
+    await sendEmail({
+      to: targetEmail,
+      cc: cc || undefined,
+      subject,
+      html: htmlContent,
+      attachments: [
+        {
+          filename: `Quotation-${quotation.quotationNumber}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        },
+      ],
+    });
+
+    // Automatically transition from DRAFT to SENT
+    if (quotation.status === 'DRAFT') {
+      await prisma.quotation.update({
+        where: { id },
+        data: { status: 'SENT' },
+      });
+    }
+
+    // Log lead activity if lead exists
+    if (quotation.leadId) {
+      await prisma.leadActivity.create({
+        data: {
+          leadId: quotation.leadId,
+          userId: req.user!.id,
+          type: 'QUOTATION_EMAILED',
+          description: `Quotation ${quotation.quotationNumber} emailed directly to ${targetEmail}`,
+          metadata: { quotationId: quotation.id, targetEmail },
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Quotation ${quotation.quotationNumber} successfully emailed to ${targetEmail}`,
+    });
+  } catch (error: any) {
     next(error);
   }
 });

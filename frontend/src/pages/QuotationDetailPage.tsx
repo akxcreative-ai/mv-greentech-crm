@@ -6,6 +6,10 @@ import {
   Download,
   ShoppingCart,
   XCircle,
+  Mail,
+  Send,
+  CheckCircle,
+  AlertCircle,
 } from 'lucide-react';
 import { quotationsApi } from '../lib/api';
 import type { QuotationStatus } from '../lib/types';
@@ -22,6 +26,43 @@ export const QuotationDetailPage: React.FC = () => {
 
   const [isLostModalOpen, setIsLostModalOpen] = useState(false);
   const [lostReason, setLostReason] = useState('');
+
+  // Email state
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [emailFeedback, setEmailFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const openEmailModal = () => {
+    if (!quotation) return;
+    setRecipientEmail(quotation.customer?.contacts?.find((c: any) => c.isPrimary && c.email)?.email || quotation.customer?.contacts?.[0]?.email || '');
+    setEmailSubject(`Commercial Quotation #${quotation.quotationNumber} - MV GREENTECH PVT LTD`);
+    setEmailMessage('Dear Customer,\n\nPlease find attached our official commercial quotation for your requirement. Let us know if you need any technical clarifications.\n\nRegards,\nMV GREENTECH PVT LTD');
+    setEmailFeedback(null);
+    setIsEmailModalOpen(true);
+  };
+
+  const sendEmailMutation = useMutation({
+    mutationFn: () => {
+      if (!quotation) throw new Error('No quotation found');
+      return quotationsApi.sendEmail(quotation.id, {
+        recipientEmail,
+        customSubject: emailSubject,
+        customMessage: emailMessage,
+      });
+    },
+    onSuccess: (res: any) => {
+      setEmailFeedback({ type: 'success', message: res.message || 'Quotation successfully emailed!' });
+      queryClient.invalidateQueries({ queryKey: ['quotation', id] });
+      setTimeout(() => {
+        setIsEmailModalOpen(false);
+      }, 2000);
+    },
+    onError: (err: any) => {
+      setEmailFeedback({ type: 'error', message: err.response?.data?.error || err.message || 'Failed to send email.' });
+    },
+  });
 
   // Fetch quotation
   const { data: quotationResponse, isLoading } = useQuery({
@@ -123,6 +164,15 @@ export const QuotationDetailPage: React.FC = () => {
             onClick={handleDownloadPdf}
           >
             Download PDF
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            leftIcon={<Mail className="w-4 h-4" />}
+            onClick={openEmailModal}
+          >
+            Email to Client
           </Button>
 
           {quotation.status !== 'CONVERTED' && quotation.status !== 'LOST' && (
@@ -299,6 +349,86 @@ export const QuotationDetailPage: React.FC = () => {
           </div>
         </div>
       </GlassCard>
+
+{/* EMAIL QUOTATION MODAL */}
+      <Modal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        title={`Email Quotation ${quotation?.quotationNumber || ''}`}
+      >
+        <div className="space-y-4 text-slate-800">
+          {emailFeedback && (
+            <div
+              className={`p-3 rounded-lg text-xs flex items-center gap-2 border ${
+                emailFeedback.type === 'success'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                  : 'bg-rose-50 text-rose-800 border-rose-300'
+              }`}
+            >
+              {emailFeedback.type === 'success' ? (
+                <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+              )}
+              <span>{emailFeedback.message}</span>
+            </div>
+          )}
+
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+            <p><strong>Customer:</strong> {quotation?.customer?.name}</p>
+            <p><strong>Sender:</strong> sales@mvgreentechcrm.in (GoDaddy Verified SMTP)</p>
+            <p><strong>Attachment:</strong> Quotation-{quotation?.quotationNumber}.pdf (Automatic)</p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Recipient Email *
+            </label>
+            <Input
+              placeholder="e.g. procurement@customercompany.com"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Email Subject *
+            </label>
+            <Input
+              value={emailSubject}
+              onChange={(e) => setEmailSubject(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
+              Custom Message / Note (Optional)
+            </label>
+            <textarea
+              rows={4}
+              value={emailMessage}
+              onChange={(e) => setEmailMessage(e.target.value)}
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+            <Button variant="ghost" onClick={() => setIsEmailModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              leftIcon={<Send className="w-4 h-4" />}
+              isLoading={sendEmailMutation.isPending}
+              disabled={!recipientEmail || !recipientEmail.includes('@')}
+              onClick={() => sendEmailMutation.mutate()}
+            >
+              Send PDF Email
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Lost Reason Modal */}
       <Modal
