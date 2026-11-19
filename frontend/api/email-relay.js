@@ -14,11 +14,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { to, subject, html, text, attachments } = req.body || {};
+    const { to, cc, subject, html, text, attachments } = req.body || {};
 
     if (!to) {
       return res.status(400).json({ success: false, error: 'Recipient email is required' });
     }
+
+    // Process attachments to reconstruct Buffers if serialized as JSON or base64
+    const processedAttachments = (attachments || []).map((att) => {
+      let content = att.content;
+      if (content && typeof content === 'object' && content.type === 'Buffer' && Array.isArray(content.data)) {
+        content = Buffer.from(content.data);
+      } else if (typeof content === 'string' && att.encoding === 'base64') {
+        content = Buffer.from(content, 'base64');
+      }
+      return {
+        ...att,
+        content,
+      };
+    });
 
     const transporter = nodemailer.createTransport({
       host: 'smtpout.secureserver.net',
@@ -38,15 +52,17 @@ export default async function handler(req, res) {
     const info = await transporter.sendMail({
       from: '"MV GREENTECH PVT LTD" <sales@mvgreentechcrm.in>',
       to,
+      cc: cc || undefined,
+      replyTo: 'sales@mvgreentechcrm.in',
       subject: subject || 'Message from MV GREENTECH CRM',
       text: text || '',
       html: html || text || '',
-      attachments: attachments || [],
+      attachments: processedAttachments,
     });
 
     return res.status(200).json({
       success: true,
-      message: `Email successfully delivered to ${to}`,
+      message: `Email successfully delivered to ${Array.isArray(to) ? to.join(', ') : to}`,
       messageId: info.messageId,
     });
   } catch (err) {

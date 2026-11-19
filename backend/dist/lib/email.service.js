@@ -10,15 +10,22 @@ async function sendEmail(options) {
     // First attempt: Call our dedicated Vercel Serverless Relay over HTTPS
     // Since cloud hosts (Render) block raw SMTP ports 25/465/587, HTTPS port 443 never gets blocked!
     try {
+        const formattedAttachments = options.attachments?.map((att) => ({
+            filename: att.filename,
+            contentType: att.contentType,
+            content: Buffer.isBuffer(att.content) ? att.content.toString('base64') : att.content,
+            encoding: Buffer.isBuffer(att.content) ? 'base64' : att.encoding,
+        }));
         const relayResponse = await fetch('https://mvgreentechcrm.in/api/email-relay', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 to: options.to,
+                cc: options.cc,
                 subject: options.subject,
                 html: options.html,
                 text: options.text,
-                attachments: options.attachments,
+                attachments: formattedAttachments,
             }),
         });
         if (relayResponse.ok) {

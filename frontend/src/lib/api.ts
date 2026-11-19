@@ -413,7 +413,7 @@ export const settingsApi = {
   },
   testEmail: async (recipientEmail?: string): Promise<ApiResponse<{ message: string }>> => {
     try {
-      const res = await api.post('/api/email-relay', {
+      const res = await axios.post('/api/email-relay', {
         to: recipientEmail,
         subject: 'MV GREENTECH CRM - Test Email Verification',
         html: `
