@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/email-relay",
+      "destination": "/api/email-relay"
+    },
+    {
       "source": "/v1/:path*",
       "destination": "https://mv-greentech-crm.onrender.com/v1/:path*"
     },
